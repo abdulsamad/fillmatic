@@ -2,6 +2,9 @@ import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
 import { log, handleFileInput, typeWithEffect, clientLog } from '@/utils'
+import { DEFAULT_CONFIG } from '@/consts'
+
+type Inputs = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 
 const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select' | 'textarea' => {
   switch (true) {
@@ -17,7 +20,7 @@ const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select'
 }
 
 // Generate appropriate value based on input type
-const generateValue = (type: HTMLInputTypeAttribute, element: HTMLElement): string | boolean => {
+const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
   switch (type) {
     case 'text':
     case 'search':
@@ -70,22 +73,28 @@ const generateValue = (type: HTMLInputTypeAttribute, element: HTMLElement): stri
 }
 
 // Autofill a single element based on its type
-export const autofillElement = async (element: HTMLElement) => {
-  const type = getElementType(element)
+export const autofillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => {
+  const type = getElementType(elem)
 
   if (type === 'file') {
-    await handleFileInput(element as HTMLInputElement)
+    await handleFileInput(elem as HTMLInputElement)
     return
   }
 
-  const value = generateValue(type, element)
-  const elem = element as HTMLInputElement
+  if (!config.forceAutofill && elem.value) {
+    log(`Skipping autofill for ${type} as it already has a value`)
+    return
+  }
+
+  const value = generateValue(type, elem)
 
   switch (type) {
     case 'checkbox':
     case 'radio':
-      elem.checked = value as boolean
-      log(`${type} set to: ${value}`)
+      if (elem instanceof HTMLInputElement) {
+        elem.checked = value as boolean
+        log(`${type} set to: ${value}`)
+      }
       break
 
     case 'color':
@@ -101,14 +110,14 @@ export const autofillElement = async (element: HTMLElement) => {
           await typeWithEffect(
             value as string,
             (val) => {
-              if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-                element.value = val
-              } else if (element instanceof HTMLSelectElement) {
-                const option = Array.from(element.options).find(
+              if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) {
+                elem.value = val
+              } else if (elem instanceof HTMLSelectElement) {
+                const option = Array.from(elem.options).find(
                   (opt) => opt.value === val || opt.text === val,
                 )
                 if (option) {
-                  element.value = option.value
+                  elem.value = option.value
                 }
               }
             },

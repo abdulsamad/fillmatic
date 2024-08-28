@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS } from '@/consts'
+import { DEFAULT_CONFIG } from '@/consts'
 
 export const typeWithEffect = (
   text: string,
@@ -15,7 +15,7 @@ export const typeWithEffect = (
           if (textArr.length === index + 1) {
             resolve()
           }
-        }, DEFAULT_SETTINGS.typeEffectSpeed * index)
+        }, DEFAULT_CONFIG.typeEffectSpeed * index)
       })
 
       return
