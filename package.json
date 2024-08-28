@@ -1,15 +1,17 @@
 {
   "name": "formatic",
-  "description": "formatic",
+  "description": "chrome extension for form filling",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "postbuild": "bestzip deploy/${npm_package_name}-v${npm_package_version}.zip apps/extension/build/*",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "bestzip": "^2.2.1",
     "prettier": "^3.2.5",
     "turbo": "^2.0.14",
     "typescript": "^5.4.5"
