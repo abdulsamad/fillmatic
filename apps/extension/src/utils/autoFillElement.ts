@@ -1,66 +1,31 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { log, handleFileInput, typeWithEffect } from '@/utils'
+import { log, handleFileInput, typeWithEffect, clientLog } from '@/utils'
 
-// Autofill a single element based on its type
-export async function autofillElement(element: HTMLElement) {
-  const type = getElementType(element)
-  log(`Autofilling ${type} element: ${element}`)
-
-  if (type === 'file') {
-    await handleFileInput(element as HTMLInputElement)
-  } else {
-    const value = generateValue(type, element)
-    log('Generated value: ' + value)
-
-    if (type === 'checkbox' || type === 'radio') {
-      ;(element as HTMLInputElement).checked = value as boolean
-      log(`${type} set to: ${value}`)
-    } else if (type === 'color') {
-      ;(element as HTMLInputElement).value = value as string
-      log(`Color set to: ${value}`)
-    } else if (type !== 'button' && type !== 'submit' && type !== 'reset') {
-      try {
-        await typeWithEffect(value as string, (val) => {
-          if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-            element.value = val
-          } else if (element instanceof HTMLSelectElement) {
-            const option = Array.from(element.options).find(
-              (opt) => opt.value === val || opt.text === val,
-            )
-            if (option) {
-              element.value = option.value
-            }
-          }
-        })
-        log('Finished typing effect')
-      } catch (error) {
-        log(`Error during type effect: ${error}`)
-      }
-    }
+const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select' | 'textarea' => {
+  switch (true) {
+    case element instanceof HTMLInputElement:
+      return element.type
+    case element instanceof HTMLSelectElement:
+      return 'select'
+    case element instanceof HTMLTextAreaElement:
+      return 'textarea'
+    default:
+      return ''
   }
-}
-
-function getElementType(element: HTMLElement): string {
-  if (element instanceof HTMLInputElement) {
-    return element.type
-  } else if (element instanceof HTMLSelectElement) {
-    return 'select'
-  } else if (element instanceof HTMLTextAreaElement) {
-    return 'textarea'
-  }
-  return ''
 }
 
 // Generate appropriate value based on input type
-function generateValue(type: HTMLInputTypeAttribute, element: HTMLElement): string | boolean {
+const generateValue = (type: HTMLInputTypeAttribute, element: HTMLElement): string | boolean => {
   switch (type) {
     case 'text':
     case 'search':
       return faker.lorem.word()
     case 'password':
-      return faker.internet.password()
+      const password = faker.internet.password()
+      clientLog('Generated password: ', password)
+      return password
     case 'email':
       return faker.internet.email()
     case 'number':
@@ -68,11 +33,11 @@ function generateValue(type: HTMLInputTypeAttribute, element: HTMLElement): stri
     case 'url':
       return faker.internet.url()
     case 'tel':
-      return faker.phone.number()
+      return faker.phone.number('501-###-###')
     case 'date':
       return faker.date.recent().toISOString().split('T')[0]
     case 'time':
-      return faker.date.recent().toTimeString().split(' ')[0]
+      return faker.date.recent().toTimeString().split(' ')[0].slice(0, 5)
     case 'datetime-local':
       return faker.date.recent().toISOString().slice(0, -1)
     case 'month':
@@ -89,7 +54,7 @@ function generateValue(type: HTMLInputTypeAttribute, element: HTMLElement): stri
     case 'select':
       if (element instanceof HTMLSelectElement) {
         const options = Array.from(element.options)
-        return faker.helpers.arrayElement(options).text
+        return faker.helpers.arrayElement(options).value
       }
       return ''
     case 'checkbox':
@@ -101,5 +66,57 @@ function generateValue(type: HTMLInputTypeAttribute, element: HTMLElement): stri
       return faker.number.int({ min: 1, max: 100 }).toString()
     default:
       return ''
+  }
+}
+
+// Autofill a single element based on its type
+export const autofillElement = async (element: HTMLElement) => {
+  const type = getElementType(element)
+
+  if (type === 'file') {
+    await handleFileInput(element as HTMLInputElement)
+    return
+  }
+
+  const value = generateValue(type, element)
+  const elem = element as HTMLInputElement
+
+  switch (type) {
+    case 'checkbox':
+    case 'radio':
+      elem.checked = value as boolean
+      log(`${type} set to: ${value}`)
+      break
+
+    case 'color':
+      elem.value = value as string
+      log(`Color set to: ${value}`)
+      break
+
+    default:
+      if (type !== 'button' && type !== 'submit' && type !== 'reset') {
+        try {
+          const elemsWithoutTypeEffect = ['week', 'month', 'date', 'time', 'datetime-local']
+
+          await typeWithEffect(
+            value as string,
+            (val) => {
+              if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+                element.value = val
+              } else if (element instanceof HTMLSelectElement) {
+                const option = Array.from(element.options).find(
+                  (opt) => opt.value === val || opt.text === val,
+                )
+                if (option) {
+                  element.value = option.value
+                }
+              }
+            },
+            !elemsWithoutTypeEffect.includes(type),
+          )
+        } catch (error) {
+          log(`Error during type effect: ${error}`)
+        }
+      }
   }
 }

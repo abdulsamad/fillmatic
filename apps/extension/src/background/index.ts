@@ -1,4 +1,5 @@
 import { getCurrentTab, log } from '@/utils'
+import { MESSAGES } from '@/consts'
 
 log('BACKGROUND SCRIPT is running...')
 
@@ -7,8 +8,7 @@ chrome.action.onClicked.addListener(async () => {
 
   if (!tab.id) return null
 
-  const response = chrome.tabs.sendMessage(tab.id, { greeting: 'hello' })
+  const { INIT_AUTOFILL_ALL } = MESSAGES
 
-  // do something with response here, not outside the function
-  console.log(response)
+  chrome.tabs.sendMessage(tab.id, INIT_AUTOFILL_ALL)
 })

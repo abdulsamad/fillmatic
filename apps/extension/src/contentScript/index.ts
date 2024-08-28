@@ -1,16 +1,21 @@
 import { log, initiateAutofill } from '@/utils'
+import { MESSAGES } from '@/consts'
 
 // Init Log
 log('CONTENT SCRIPT is running...')
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request: MESSAGES, sender, sendResponse) => {
   try {
     sender.tab ? log(`Tab Message`) : log(`Extension Message`)
 
-    await initiateAutofill()
+    const { INIT_AUTOFILL_ALL } = MESSAGES
 
-    if (request.greeting === 'hello') {
-      sendResponse({ farewell: 'goodbye' })
+    switch (request) {
+      case INIT_AUTOFILL_ALL:
+        await initiateAutofill()
+        break
+      default:
+        return null
     }
   } catch (err) {
     log(`Error during autofill: ${err}`)
