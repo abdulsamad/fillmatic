@@ -1,6 +1,7 @@
 import { log, gatherVisibleInputsInOrder, autofillElement } from '@/utils'
+import { Inputs } from '@/types'
 
-async function autofillSequentially(inputs: HTMLElement[]) {
+async function autofillSequentially(inputs: Inputs[]) {
   for (const input of inputs) {
     await autofillElement(input)
   }

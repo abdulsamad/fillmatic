@@ -3,8 +3,7 @@ import { faker } from '@faker-js/faker'
 
 import { log, handleFileInput, typeWithEffect, clientLog } from '@/utils'
 import { DEFAULT_CONFIG } from '@/consts'
-
-type Inputs = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+import { Inputs } from '@/types'
 
 const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select' | 'textarea' => {
   switch (true) {
