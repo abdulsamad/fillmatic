@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -18,8 +18,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vite/client", "@types/chrome", "@types/node", "@types/react", "@types/react-dom"]
   },
   "include": ["src"],
+  "exclude": ["src/manifest.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

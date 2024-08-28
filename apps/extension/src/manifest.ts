@@ -14,7 +14,7 @@ export default defineManifest({
     128: 'img/logo-128.png',
   },
   action: {
-    default_popup: 'popup.html',
+    // default_popup: 'popup.html',
     default_icon: 'img/logo-48.png',
   },
   // options_page: 'options.html',
@@ -26,6 +26,7 @@ export default defineManifest({
     {
       matches: ['http://*/*', 'https://*/*'],
       js: ['src/contentScript/index.ts'],
+      // all_frames: true,
     },
   ],
   side_panel: {
@@ -37,5 +38,5 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['sidePanel', 'storage', 'tabs'],
+  permissions: ['storage', 'activeTab'],
 })

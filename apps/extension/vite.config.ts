@@ -1,12 +1,17 @@
 import { defineConfig } from 'vite'
 import { crx } from '@crxjs/vite-plugin'
 import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import path from 'path'
 
 import manifest from './src/manifest'
 
 export default defineConfig(({ mode }) => {
   return {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
     build: {
       emptyOutDir: true,
       outDir: 'build',
@@ -16,7 +21,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-
-    plugins: [tsconfigPaths(), crx({ manifest }), react()],
+    plugins: [crx({ manifest }), react()],
   }
 })
