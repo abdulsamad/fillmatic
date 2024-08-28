@@ -2,6 +2,7 @@ export const isElementVisible = (element: Element): boolean => {
   if (!(element instanceof HTMLElement)) return false
 
   const style = window.getComputedStyle(element)
+
   return (
     style.display !== 'none' &&
     style.visibility !== 'hidden' &&

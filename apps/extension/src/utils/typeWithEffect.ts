@@ -1,18 +1,27 @@
-export const typeWithEffect = (text: string, cb: (str: string) => void): Promise<void> => {
+import { DEFAULT_SETTINGS } from '@/consts'
+
+export const typeWithEffect = (
+  text: string,
+  cb: (str: string) => void,
+  typeEffect = true,
+): Promise<void> => {
   return new Promise((resolve) => {
-    const textArr = text.split('')
-    const delay = 40
+    if (typeEffect) {
+      const textArr = text.split('')
+      textArr.forEach((str: string, index) => {
+        const slice = textArr.slice(0, index + 1).join('')
+        setTimeout(() => {
+          cb(slice)
+          if (textArr.length === index + 1) {
+            resolve()
+          }
+        }, DEFAULT_SETTINGS.typeEffectSpeed * index)
+      })
 
-    textArr.forEach((str: string, index) => {
-      const slice = textArr.slice(0, index + 1).join('')
+      return
+    }
 
-      setTimeout(() => {
-        cb(slice)
-
-        if (textArr.length === index + 1) {
-          resolve()
-        }
-      }, delay * index)
-    })
+    cb(text)
+    resolve()
   })
 }

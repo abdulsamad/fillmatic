@@ -59,8 +59,6 @@ export async function handleFileInput(input: HTMLInputElement) {
   const acceptTypes = input.accept ? input.accept.split(',') : []
   let file: File
 
-  console.log('DEBUG index:', acceptTypes)
-
   if (acceptTypes.length > 0) {
     file = createFileByAcceptType(acceptTypes)
   } else {
