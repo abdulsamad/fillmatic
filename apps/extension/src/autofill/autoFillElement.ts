@@ -1,7 +1,8 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { log, handleFileInput, typeWithEffect, clientLog } from '@/utils'
+import { log, typeWithEffect, clientLog } from '@/utils'
+import { handleFileInput } from '@/autofill'
 import { DEFAULT_CONFIG } from '@/consts'
 import { Inputs } from '@/types'
 

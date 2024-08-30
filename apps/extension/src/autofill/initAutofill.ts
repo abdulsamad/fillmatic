@@ -1,4 +1,5 @@
-import { log, gatherVisibleInputsInOrder, autofillElement } from '@/utils'
+import { log } from '@/utils'
+import { gatherVisibleInputsInOrder, autofillElement } from '@/autofill'
 import { Inputs } from '@/types'
 
 async function autofillSequentially(inputs: Inputs[]) {

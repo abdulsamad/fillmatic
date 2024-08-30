@@ -1,4 +1,5 @@
-import { log, initiateAutofill } from '@/utils'
+import { log } from '@/utils'
+import { initiateAutofill } from '@/autofill'
 import { MESSAGES } from '@/consts'
 
 // Init Log

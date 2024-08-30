@@ -1,5 +1,19 @@
-import { isElementVisible } from '@/utils/isElementVisible'
 import { Inputs } from '@/types'
+
+const isElementVisible = (element: Element): boolean => {
+  if (!(element instanceof HTMLElement)) return false
+
+  const style = window.getComputedStyle(element)
+
+  return (
+    style.display !== 'none' &&
+    style.visibility !== 'hidden' &&
+    style.opacity !== '0' &&
+    element.offsetWidth > 0 &&
+    element.offsetHeight > 0 &&
+    element.getClientRects().length > 0
+  )
+}
 
 // Gather all visible input elements in the order they appear in the DOM
 export const gatherVisibleInputsInOrder = (): Inputs[] => {
