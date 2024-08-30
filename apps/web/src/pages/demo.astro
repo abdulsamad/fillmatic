@@ -192,6 +192,50 @@ import Layout from '../layouts/Layout.astro';
 				onkeyup="console.log('file keyup')"
 			/>
 		</label>
+		<div class='radio-group'>
+			<label>
+				Radio 1:
+				<input
+					type='radio'
+					name='group1'
+					value='radio1'
+					onclick="console.log('radio1 clicked')"
+					onfocus="console.log('radio1 focused')"
+					onblur="console.log('radio1 blurred')"
+					onchange="console.log('radio1 changed')"
+					onkeydown="console.log('radio1 keydown')"
+					onkeyup="console.log('radio1 keyup')"
+				/>
+			</label>
+			<label>
+				Radio 2:
+				<input
+					type='radio'
+					name='group1'
+					value='radio2'
+					onclick="console.log('radio2 clicked')"
+					onfocus="console.log('radio2 focused')"
+					onblur="console.log('radio2 blurred')"
+					onchange="console.log('radio2 changed')"
+					onkeydown="console.log('radio2 keydown')"
+					onkeyup="console.log('radio2 keyup')"
+				/>
+			</label>
+			<label>
+				Radio 3:
+				<input
+					type='radio'
+					name='group1'
+					value='radio3'
+					onclick="console.log('radio3 clicked')"
+					onfocus="console.log('radio3 focused')"
+					onblur="console.log('radio3 blurred')"
+					onchange="console.log('radio3 changed')"
+					onkeydown="console.log('radio3 keydown')"
+					onkeyup="console.log('radio3 keyup')"
+				/>
+			</label>
+		</div>
 		<label>
 			Checkbox:
 			<input
@@ -205,21 +249,11 @@ import Layout from '../layouts/Layout.astro';
 			/>
 		</label>
 		<label>
-			Radio:
-			<input
-				type='radio'
-				onclick="console.log('radio clicked')"
-				onfocus="console.log('radio focused')"
-				onblur="console.log('radio blurred')"
-				onchange="console.log('radio changed')"
-				onkeydown="console.log('radio keydown')"
-				onkeyup="console.log('radio keyup')"
-			/>
-		</label>
-		<label>
 			Range:
 			<input
 				type='range'
+				min='0'
+				max='500'
 				onclick="console.log('range clicked')"
 				onfocus="console.log('range focused')"
 				onblur="console.log('range blurred')"
@@ -265,18 +299,17 @@ import Layout from '../layouts/Layout.astro';
 		</label>
 	</form>
 </Layout>
-
 <style>
 	body {
-		padding: 1rem;
+		padding: 3em 1rem;
 		border-radius: 1rem;
 		background: linear-gradient(
 			135deg,
-			#e0f7fa,
-			#80deea
-		); /* Softer gradient background */
-		color: #333333; /* Darker text color for better readability */
-		font-family: 'Arial', sans-serif;
+			#f5f7fa,
+			#c3cfe2
+		); /* Modern SaaS gradient background */
+		color: #2c3e50; /* Darker text color for better readability */
+		font-family: 'Roboto', sans-serif; /* Material UI font */
 	}
 
 	form {
@@ -293,6 +326,7 @@ import Layout from '../layouts/Layout.astro';
 		border-radius: 16px; /* Increased border radius */
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
 		border: none; /* Removed border */
+		overflow: hidden; /* Fix input overflow on right side */
 	}
 	label {
 		width: 100%;
@@ -300,24 +334,66 @@ import Layout from '../layouts/Layout.astro';
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.5rem;
-		color: #00796b; /* Softer text color */
+		color: #34495e; /* Modern SaaS text color */
 		font-weight: bold;
 	}
 	input {
 		width: 100%;
 		padding: 0.75rem;
-		border: 1px solid #b2dfdb; /* Softer border */
+		box-sizing: border-box;
+		border: 1px solid #dfe6e9; /* Softer border */
 		border-radius: 8px; /* Increased border radius */
-		background: #e0f2f1; /* Softer input background */
-		color: #333333; /* Darker text color */
+		background: #ecf0f1; /* Softer input background */
+		color: #2c3e50; /* Darker text color */
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Softer shadow */
 		transition:
 			background 0.3s ease,
 			border 0.3s ease; /* Smooth transition for background and border */
 	}
+
+	input[type='radio'],
+	input[type='checkbox'],
+	input[type='range'] {
+		display: inline-block;
+		margin-right: 1rem;
+		box-shadow: none; /* Remove shadow from checkbox and radio */
+	}
+
+	input[type='color'] {
+		display: inline-block;
+		margin-right: 1rem;
+		width: 50px;
+		height: 50px;
+		padding: 2px;
+		border: 2px solid #34495e; /* Modern SaaS border */
+		border-radius: 50%; /* Circular shape */
+		background: linear-gradient(
+			135deg,
+			#ecf0f1,
+			#34495e
+		); /* Gradient background */
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Softer shadow */
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease; /* Smooth transition for transform and shadow */
+		cursor: pointer; /* Pointer cursor on hover */
+	}
+
+	input[type='color']::-webkit-color-swatch {
+		border: none;
+		border-radius: 15px;
+		padding: 0;
+	}
+
+	.radio-group {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 1rem;
+	}
 	input:focus {
-		background: #b2dfdb; /* Softer focus background */
-		border: 1px solid #00796b; /* Softer focus border */
+		background: #dfe6e9; /* Softer focus background */
+		border: 1px solid #34495e; /* Modern SaaS focus border */
 		outline: none; /* Removed default outline */
 	}
 </style>
