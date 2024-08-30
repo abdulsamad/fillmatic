@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import { DEFAULT_CONFIG } from '@/consts'
 
 export * from './log'
-export * from './getName'
+export * from './generateNames'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

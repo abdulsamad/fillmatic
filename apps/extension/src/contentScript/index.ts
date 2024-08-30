@@ -14,6 +14,7 @@ chrome.runtime.onMessage.addListener(async (request: MESSAGES, sender, sendRespo
     switch (request) {
       case INIT_AUTOFILL_ALL:
         await initiateAutofill()
+
         break
       default:
         return null

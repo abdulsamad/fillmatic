@@ -1,8 +1,8 @@
 const namesByRegion = {
   // English Names
   english: {
-    firstNames: ['John', 'Jane', 'Michael', 'Emily', 'Robert', 'Linda'],
-    lastNames: ['Doe', 'Smith', 'Brown', 'Johnson', 'Taylor', 'Anderson'],
+    firstNames: ['John', 'Jane', 'Michael', 'Emily', 'Robert', 'Linda', 'Michael'],
+    lastNames: ['Doe', 'Smith', 'Brown', 'Johnson', 'Taylor', 'Anderson', 'Jackson'],
   },
   // Spanish Names
   spanish: {
@@ -102,14 +102,7 @@ const namesByRegion = {
   // Icelandic Names
   icelandic: {
     firstNames: ['Þór', 'Björn', 'Guðrún', 'Sigríður', 'Ólafur', 'Edda'],
-    lastNames: [
-      'Jónsson',
-      'Guðmundsdóttir',
-      'Einarsson',
-      'Ólafsdóttir',
-      'Þórðarson',
-      'Sigurðardóttir',
-    ],
+    lastNames: ['Jónsson', 'Guðmundsdóttir', 'Einarsson', 'Ólafsdóttir', 'Þórðarson', 'Sigurðardóttir'],
   },
   // Hungarian Names
   hungarian: {
@@ -149,9 +142,7 @@ export function generateNames(count: number = 1, region?: RegionTypes): Name[] {
 
     const maxNamesPerRegion = Math.min(firstNames.length, lastNames.length)
     if (names.length >= maxNamesPerRegion && region) {
-      console.warn(
-        `Maximum number of unique names (${maxNamesPerRegion}) for the specified region has been reached.`,
-      )
+      console.warn(`Maximum number of unique names (${maxNamesPerRegion}) for the specified region has been reached.`)
       break
     }
 
