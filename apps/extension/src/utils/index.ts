@@ -1,3 +1,4 @@
+import { HTMLInputTypeAttribute } from 'react'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -39,4 +40,17 @@ export const typeWithEffect = (text: string, cb: (str: string) => void, typeEffe
     cb(text)
     resolve()
   })
+}
+
+export const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select' | 'textarea' => {
+  switch (true) {
+    case element instanceof HTMLInputElement:
+      return element.type
+    case element instanceof HTMLSelectElement:
+      return 'select'
+    case element instanceof HTMLTextAreaElement:
+      return 'textarea'
+    default:
+      return ''
+  }
 }

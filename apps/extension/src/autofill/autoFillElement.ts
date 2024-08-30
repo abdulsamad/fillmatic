@@ -1,32 +1,45 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { log, typeWithEffect, clientLog } from '@/utils'
+import { log, typeWithEffect, clientLog, getElementType, generateNames } from '@/utils'
 import { handleFileInput } from '@/autofill'
 import { DEFAULT_CONFIG } from '@/consts'
 import { Inputs } from '@/types'
-
-const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | 'select' | 'textarea' => {
-  switch (true) {
-    case element instanceof HTMLInputElement:
-      return element.type
-    case element instanceof HTMLSelectElement:
-      return 'select'
-    case element instanceof HTMLTextAreaElement:
-      return 'textarea'
-    default:
-      return ''
-  }
-}
 
 // Generate appropriate value based on input type
 const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
   switch (type) {
     case 'text':
-    case 'search':
-      if (element instanceof HTMLInputElement && element.maxLength > 0) {
-        return faker.lorem.word().slice(0, element.maxLength)
+      if (element instanceof HTMLInputElement) {
+        const nameRegex = /name|full\s?name|first\s?name|last\s?name/i
+        if (nameRegex.test(element.name) || nameRegex.test(element.id) || nameRegex.test(element.placeholder)) {
+          if (
+            /full\s?name/i.test(element.name) ||
+            /full\s?name/i.test(element.id) ||
+            /full\s?name/i.test(element.placeholder)
+          ) {
+            const fullName = faker.person.fullName()
+            return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
+          } else if (
+            /first\s?name/i.test(element.name) ||
+            /first\s?name/i.test(element.id) ||
+            /first\s?name/i.test(element.placeholder)
+          ) {
+            const firstName = faker.person.firstName()
+            return element.maxLength > 0 ? firstName.slice(0, element.maxLength) : firstName
+          } else if (
+            /last\s?name/i.test(element.name) ||
+            /last\s?name/i.test(element.id) ||
+            /last\s?name/i.test(element.placeholder)
+          ) {
+            const lastName = faker.person.lastName()
+            return element.maxLength > 0 ? lastName.slice(0, element.maxLength) : lastName
+          }
+        }
+        return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
       }
+      return faker.lorem.word()
+    case 'search':
       return faker.lorem.word()
     case 'password':
       const password = faker.internet.password()
