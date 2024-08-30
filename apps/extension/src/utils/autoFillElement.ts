@@ -23,6 +23,9 @@ const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | 
   switch (type) {
     case 'text':
     case 'search':
+      if (element instanceof HTMLInputElement && element.maxLength > 0) {
+        return faker.lorem.word().slice(0, element.maxLength)
+      }
       return faker.lorem.word()
     case 'password':
       const password = faker.internet.password()
@@ -31,6 +34,11 @@ const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | 
     case 'email':
       return faker.internet.email()
     case 'number':
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? parseInt(element.min, 10) : 1
+        const max = element.max ? parseInt(element.max, 10) : 100
+        return faker.number.int({ min, max }).toString()
+      }
       return faker.number.int({ min: 1, max: 100 }).toString()
     case 'url':
       return faker.internet.url()
@@ -47,11 +55,12 @@ const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | 
     case 'week':
       const d = faker.date.recent()
       const onejan = new Date(d.getFullYear(), 0, 1)
-      const weekNum = Math.ceil(
-        ((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7,
-      )
+      const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
       return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
     case 'textarea':
+      if (element instanceof HTMLTextAreaElement && element.maxLength > 0) {
+        return faker.lorem.paragraph().slice(0, element.maxLength)
+      }
       return faker.lorem.paragraph()
     case 'select':
       if (element instanceof HTMLSelectElement) {
@@ -60,12 +69,43 @@ const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | 
       }
       return ''
     case 'checkbox':
+      const isSpecificCheckbox = (element: HTMLInputElement, regex: RegExp): boolean => {
+        const label = element.labels
+          ? Array.from(element.labels)
+              .map((label) => label.textContent)
+              .join(' ')
+          : ''
+        return regex.test(label) || regex.test(element.name)
+      }
+
+      if (element instanceof HTMLInputElement) {
+        const termsRegex = /agree|terms|conditions/i
+        if (isSpecificCheckbox(element, termsRegex)) {
+          return true
+        }
+        if (element.name) {
+          const checkboxes = document.querySelectorAll(`input[name="${element.name}"][type="checkbox"]`)
+          const randomCheckbox = faker.helpers.arrayElement(Array.from(checkboxes)) as HTMLInputElement
+          return randomCheckbox === element
+        }
+      }
+      return faker.datatype.boolean()
     case 'radio':
+      if (element instanceof HTMLInputElement && element.name) {
+        const radios = document.querySelectorAll(`input[name="${element.name}"][type="radio"]`)
+        const randomRadio = faker.helpers.arrayElement(Array.from(radios)) as HTMLInputElement
+        return randomRadio === element
+      }
       return faker.datatype.boolean()
     case 'color':
       return faker.color.rgb({ format: 'hex', prefix: '#' })
     case 'range':
-      return faker.number.int({ min: 1, max: 100 }).toString()
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? parseInt(element.min, 10) : 1
+        const max = element.max ? parseInt(element.max, 10) : 100
+        return faker.number.int({ min, max }).toString()
+      }
+      return ''
     default:
       return ''
   }
@@ -80,7 +120,10 @@ export const autofillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => 
     return
   }
 
-  if (!config.forceAutofill && elem.value) {
+  // Types that already have a value
+  const typesToIgnore = ['radio', 'checkbox', 'color', 'range', 'select']
+
+  if (!config.forceAutofill && elem.value && !typesToIgnore.includes(type)) {
     log(`Skipping autofill for ${type} as it already has a value`)
     return
   }
@@ -112,9 +155,7 @@ export const autofillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => 
               if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) {
                 elem.value = val
               } else if (elem instanceof HTMLSelectElement) {
-                const option = Array.from(elem.options).find(
-                  (opt) => opt.value === val || opt.text === val,
-                )
+                const option = Array.from(elem.options).find((opt) => opt.value === val || opt.text === val)
                 if (option) {
                   elem.value = option.value
                 }

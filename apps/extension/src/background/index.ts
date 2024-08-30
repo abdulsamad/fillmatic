@@ -10,5 +10,5 @@ chrome.action.onClicked.addListener(async () => {
 
   const { INIT_AUTOFILL_ALL } = MESSAGES
 
-  chrome.tabs.sendMessage(tab.id, INIT_AUTOFILL_ALL)
+  // chrome.tabs.sendMessage(tab.id, INIT_AUTOFILL_ALL)
 })
