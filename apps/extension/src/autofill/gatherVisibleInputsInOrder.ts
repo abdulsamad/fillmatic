@@ -1,6 +1,6 @@
 import { Inputs } from '@/types'
 
-const isElementVisible = (element: Element): boolean => {
+export const isElementVisible = (element: Element): boolean => {
   if (!(element instanceof HTMLElement)) return false
 
   const style = window.getComputedStyle(element)
@@ -15,16 +15,12 @@ const isElementVisible = (element: Element): boolean => {
   )
 }
 
-// Gather all visible input elements in the order they appear in the DOM
 export const gatherVisibleInputsInOrder = (): Inputs[] => {
   const allInputs = Array.from(
     document.querySelectorAll('input, select, textarea') as NodeListOf<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   )
-  const ignoredInputTypes = ['image', 'submit', 'button', 'reset', 'file']
-  const visibleInputs = allInputs
-    .filter((input) => !ignoredInputTypes.includes(input.type))
-    .filter((input) => isElementVisible(input)) as Inputs[]
-  return visibleInputs
+
+  return allInputs.filter((input) => isElementVisible(input)) as Inputs[]
 }

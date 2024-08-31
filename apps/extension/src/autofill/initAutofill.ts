@@ -1,10 +1,10 @@
 import { log } from '@/utils'
-import { gatherVisibleInputsInOrder, autofillElement } from '@/autofill'
+import { gatherVisibleInputsInOrder, fillElement } from '@/autofill'
 import { Inputs } from '@/types'
 
 async function autofillSequentially(inputs: Inputs[]) {
   for (const input of inputs) {
-    await autofillElement(input)
+    await fillElement(input)
   }
 }
 

@@ -1,4 +1,5 @@
 export * from './handleFileInput'
 export * from './gatherVisibleInputsInOrder'
-export * from './autoFillElement'
+export * from './fillElement'
 export * from './initAutofill'
+export * from './generateValue'

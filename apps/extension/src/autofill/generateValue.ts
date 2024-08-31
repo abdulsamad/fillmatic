@@ -1,13 +1,10 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { log, typeWithEffect, clientLog, getElementType, generateNames } from '@/utils'
-import { handleFileInput } from '@/autofill'
-import { DEFAULT_CONFIG } from '@/consts'
+import { clientLog } from '@/utils'
 import { Inputs } from '@/types'
 
-// Generate appropriate value based on input type
-const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
+export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
@@ -122,51 +119,5 @@ const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | 
       return ''
     default:
       return ''
-  }
-}
-
-// Autofill a single element based on its type
-export const autofillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => {
-  const type = getElementType(elem)
-
-  if (type === 'file') {
-    await handleFileInput(elem as HTMLInputElement)
-    return
-  }
-
-  // Types that already have a value
-  const typesToIgnore = ['radio', 'checkbox', 'color', 'range', 'select']
-
-  if (!config.forceAutofill && elem.value && !typesToIgnore.includes(type)) {
-    log(`Skipping autofill for ${type} as it already has a value`)
-    return
-  }
-
-  const value = generateValue(type, elem)
-
-  switch (type) {
-    case 'checkbox':
-    case 'radio':
-      if (elem instanceof HTMLInputElement) {
-        elem.checked = value as boolean
-        log(`${type} set to: ${value}`)
-      }
-      break
-
-    case 'color':
-      elem.value = value as string
-      log(`Color set to: ${value}`)
-      break
-
-    default:
-      if (type !== 'button' && type !== 'submit' && type !== 'reset') {
-        try {
-          const elemsWithoutTypeEffect = ['week', 'month', 'date', 'time', 'datetime-local']
-
-          await typeWithEffect(value as string, elem, !elemsWithoutTypeEffect.includes(type))
-        } catch (error) {
-          log(`Error during type effect: ${error}`)
-        }
-      }
   }
 }
