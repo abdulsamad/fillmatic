@@ -163,20 +163,7 @@ export const autofillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => 
         try {
           const elemsWithoutTypeEffect = ['week', 'month', 'date', 'time', 'datetime-local']
 
-          await typeWithEffect(
-            value as string,
-            (val) => {
-              if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) {
-                elem.value = val
-              } else if (elem instanceof HTMLSelectElement) {
-                const option = Array.from(elem.options).find((opt) => opt.value === val || opt.text === val)
-                if (option) {
-                  elem.value = option.value
-                }
-              }
-            },
-            !elemsWithoutTypeEffect.includes(type),
-          )
+          await typeWithEffect(value as string, elem, !elemsWithoutTypeEffect.includes(type))
         } catch (error) {
           log(`Error during type effect: ${error}`)
         }

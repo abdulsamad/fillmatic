@@ -8,6 +8,6 @@ export enum MESSAGES {
 
 export const DEFAULT_CONFIG = {
   enableTypeEffect: true,
-  typeEffectSpeed: 50,
+  typeEffectSpeed: 200,
   forceAutofill: false,
 }
