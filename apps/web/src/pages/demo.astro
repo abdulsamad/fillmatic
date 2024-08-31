@@ -3,11 +3,12 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title='Welcome to Formatic.'>
-	<form>
+	<form id='form'>
 		<label>
 			Text:
 			<input
 				type='text'
+				name='text'
 				placeholder='Enter text'
 				onclick="console.log('text clicked')"
 				onfocus="console.log('text focused')"
@@ -22,6 +23,7 @@ import Layout from '../layouts/Layout.astro';
 			Password:
 			<input
 				type='password'
+				name='password'
 				placeholder='Enter password'
 				onclick="console.log('password clicked')"
 				onfocus="console.log('password focused')"
@@ -36,6 +38,7 @@ import Layout from '../layouts/Layout.astro';
 			Email:
 			<input
 				type='email'
+				name='email'
 				placeholder='Enter email'
 				onclick="console.log('email clicked')"
 				onfocus="console.log('email focused')"
@@ -50,6 +53,7 @@ import Layout from '../layouts/Layout.astro';
 			Number:
 			<input
 				type='number'
+				name='number'
 				placeholder='Enter number'
 				onclick="console.log('number clicked')"
 				onfocus="console.log('number focused')"
@@ -64,6 +68,7 @@ import Layout from '../layouts/Layout.astro';
 			Phone Number:
 			<input
 				type='tel'
+				name='tel'
 				placeholder='Enter phone number'
 				onclick="console.log('tel clicked')"
 				onfocus="console.log('tel focused')"
@@ -78,6 +83,7 @@ import Layout from '../layouts/Layout.astro';
 			URL:
 			<input
 				type='url'
+				name='url'
 				placeholder='Enter URL'
 				onclick="console.log('url clicked')"
 				onfocus="console.log('url focused')"
@@ -92,6 +98,7 @@ import Layout from '../layouts/Layout.astro';
 			Search:
 			<input
 				type='search'
+				name='search'
 				placeholder='Search'
 				onclick="console.log('search clicked')"
 				onfocus="console.log('search focused')"
@@ -106,6 +113,7 @@ import Layout from '../layouts/Layout.astro';
 			Color:
 			<input
 				type='color'
+				name='color'
 				onclick="console.log('color clicked')"
 				onfocus="console.log('color focused')"
 				onblur="console.log('color blurred')"
@@ -119,6 +127,7 @@ import Layout from '../layouts/Layout.astro';
 			Date:
 			<input
 				type='date'
+				name='date'
 				onclick="console.log('date clicked')"
 				onfocus="console.log('date focused')"
 				onblur="console.log('date blurred')"
@@ -132,6 +141,7 @@ import Layout from '../layouts/Layout.astro';
 			Date and Time:
 			<input
 				type='datetime-local'
+				name='datetime'
 				onclick="console.log('datetime-local clicked')"
 				onfocus="console.log('datetime-local focused')"
 				onblur="console.log('datetime-local blurred')"
@@ -145,6 +155,7 @@ import Layout from '../layouts/Layout.astro';
 			Month:
 			<input
 				type='month'
+				name='month'
 				onclick="console.log('month clicked')"
 				onfocus="console.log('month focused')"
 				onblur="console.log('month blurred')"
@@ -158,6 +169,7 @@ import Layout from '../layouts/Layout.astro';
 			Week:
 			<input
 				type='week'
+				name='week'
 				onclick="console.log('week clicked')"
 				onfocus="console.log('week focused')"
 				onblur="console.log('week blurred')"
@@ -171,6 +183,7 @@ import Layout from '../layouts/Layout.astro';
 			Time:
 			<input
 				type='time'
+				name='time'
 				onclick="console.log('time clicked')"
 				onfocus="console.log('time focused')"
 				onblur="console.log('time blurred')"
@@ -184,6 +197,7 @@ import Layout from '../layouts/Layout.astro';
 			File:
 			<input
 				type='file'
+				name='file'
 				onclick="console.log('file clicked')"
 				onfocus="console.log('file focused')"
 				onblur="console.log('file blurred')"
@@ -240,6 +254,7 @@ import Layout from '../layouts/Layout.astro';
 			Checkbox:
 			<input
 				type='checkbox'
+				name='checkbox'
 				onclick="console.log('checkbox clicked')"
 				onfocus="console.log('checkbox focused')"
 				onblur="console.log('checkbox blurred')"
@@ -252,6 +267,7 @@ import Layout from '../layouts/Layout.astro';
 			Range:
 			<input
 				type='range'
+				name='range'
 				min='0'
 				max='500'
 				onclick="console.log('range clicked')"
@@ -275,17 +291,6 @@ import Layout from '../layouts/Layout.astro';
 			/>
 		</label>
 		<label>
-			Submit:
-			<input
-				type='submit'
-				onclick="console.log('submit clicked')"
-				onfocus="console.log('submit focused')"
-				onblur="console.log('submit blurred')"
-				onkeydown="console.log('submit keydown')"
-				onkeyup="console.log('submit keyup')"
-			/>
-		</label>
-		<label>
 			Button:
 			<input
 				type='button'
@@ -297,8 +302,43 @@ import Layout from '../layouts/Layout.astro';
 				value='Button Input'
 			/>
 		</label>
+		<label>
+			Submit:
+			<input
+				type='submit'
+				onclick="console.log('submit clicked')"
+				onfocus="console.log('submit focused')"
+				onblur="console.log('submit blurred')"
+				onkeydown="console.log('submit keydown')"
+				onkeyup="console.log('submit keyup')"
+			/>
+		</label>
 	</form>
 </Layout>
+
+<script>
+	document.getElementById('form')!.addEventListener('submit', function (e) {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget as HTMLFormElement);
+		const formDetails = document.createElement('div');
+		formDetails.id = 'formDetails';
+
+		for (const [key, value] of formData) {
+			const detail = document.createElement('p');
+			if (key === 'file' && value instanceof File) {
+				detail.textContent = `${key}: ${value.name} (${value.type}, ${value.size} bytes)`;
+			} else {
+				detail.textContent = `${key}: ${value}`;
+			}
+			formDetails.appendChild(detail);
+		}
+
+		const form = document.getElementById('form');
+		form!.style.display = 'none';
+		form!.parentNode!.insertBefore(formDetails, form!.nextSibling);
+	});
+</script>
+
 <style>
 	body {
 		padding: 3em 1rem;
