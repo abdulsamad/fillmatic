@@ -105,3 +105,21 @@ export const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | '
       return ''
   }
 }
+
+export const matchElement = (element: HTMLElement, word: string): boolean => {
+  const label =
+    element instanceof HTMLInputElement && element.labels
+      ? Array.from(element.labels)
+          .map((label) => label.textContent?.toLowerCase())
+          .join(' ')
+      : ''
+
+  const placeholder = element instanceof HTMLInputElement ? element.placeholder?.toLowerCase() : ''
+  const name = element instanceof HTMLInputElement ? element.name.toLowerCase() : ''
+  const id = element.id.toLowerCase()
+  const className = element.className.toLowerCase()
+
+  const regex = new RegExp(`\\b${word.toLowerCase()}\\b`)
+
+  return regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)
+}

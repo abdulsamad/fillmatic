@@ -1,39 +1,56 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { clientLog } from '@/utils'
+import { clientLog, matchElement } from '@/utils'
 import { Inputs } from '@/types'
 
 export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
-        const nameRegex = /name|full\s?name|first\s?name|last\s?name/i
-        if (nameRegex.test(element.name) || nameRegex.test(element.id) || nameRegex.test(element.placeholder)) {
-          if (
-            /full\s?name/i.test(element.name) ||
-            /full\s?name/i.test(element.id) ||
-            /full\s?name/i.test(element.placeholder)
-          ) {
-            const fullName = faker.person.fullName()
-            return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
-          } else if (
-            /first\s?name/i.test(element.name) ||
-            /first\s?name/i.test(element.id) ||
-            /first\s?name/i.test(element.placeholder)
-          ) {
-            const firstName = faker.person.firstName()
-            return element.maxLength > 0 ? firstName.slice(0, element.maxLength) : firstName
-          } else if (
-            /last\s?name/i.test(element.name) ||
-            /last\s?name/i.test(element.id) ||
-            /last\s?name/i.test(element.placeholder)
-          ) {
-            const lastName = faker.person.lastName()
-            return element.maxLength > 0 ? lastName.slice(0, element.maxLength) : lastName
-          }
+        switch (true) {
+          case matchElement(element, 'name') ||
+            matchElement(element, 'full name') ||
+            matchElement(element, 'first name') ||
+            matchElement(element, 'last name'):
+            if (matchElement(element, 'full name')) {
+              const fullName = faker.person.fullName()
+              return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
+            } else if (matchElement(element, 'first name')) {
+              const firstName = faker.person.firstName()
+              return element.maxLength > 0 ? firstName.slice(0, element.maxLength) : firstName
+            } else if (matchElement(element, 'last name')) {
+              const lastName = faker.person.lastName()
+              return element.maxLength > 0 ? lastName.slice(0, element.maxLength) : lastName
+            }
+            break
+          case matchElement(element, 'email') || matchElement(element, 'e-mail') || matchElement(element, 'mail'):
+            return faker.internet.email()
+          case matchElement(element, 'phone') ||
+            matchElement(element, 'tel') ||
+            matchElement(element, 'mobile') ||
+            matchElement(element, 'cell'):
+            return faker.phone.number()
+          case matchElement(element, 'address') ||
+            matchElement(element, 'street') ||
+            matchElement(element, 'city') ||
+            matchElement(element, 'state') ||
+            matchElement(element, 'zip') ||
+            matchElement(element, 'postal'):
+            if (matchElement(element, 'street')) {
+              return faker.location.streetAddress()
+            } else if (matchElement(element, 'city')) {
+              return faker.location.city()
+            } else if (matchElement(element, 'state')) {
+              return faker.location.state()
+            } else if (matchElement(element, 'zip') || matchElement(element, 'postal')) {
+              return faker.location.zipCode()
+            } else {
+              return faker.location.streetAddress()
+            }
+          default:
+            return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
         }
-        return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
       }
       return faker.lorem.word()
     case 'search':
@@ -114,18 +131,9 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
       }
       return ''
     case 'checkbox':
-      const isSpecificCheckbox = (element: HTMLInputElement, regex: RegExp): boolean => {
-        const label = element.labels
-          ? Array.from(element.labels)
-              .map((label) => label.textContent)
-              .join(' ')
-          : ''
-        return regex.test(label) || regex.test(element.name)
-      }
-
       if (element instanceof HTMLInputElement) {
         const termsRegex = /agree|terms|conditions/i
-        if (isSpecificCheckbox(element, termsRegex)) {
+        if (matchElement(element, termsRegex.source)) {
           return true
         }
         if (element.name) {
