@@ -17,6 +17,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('text changed')"
 				onkeydown="console.log('text keydown')"
 				onkeyup="console.log('text keyup')"
+				minlength='1'
+				maxlength='100'
 			/>
 		</label>
 		<label>
@@ -32,6 +34,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('password changed')"
 				onkeydown="console.log('password keydown')"
 				onkeyup="console.log('password keyup')"
+				minlength='8'
+				maxlength='64'
 			/>
 		</label>
 		<label>
@@ -47,6 +51,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('email changed')"
 				onkeydown="console.log('email keydown')"
 				onkeyup="console.log('email keyup')"
+				minlength='5'
+				maxlength='254'
 			/>
 		</label>
 		<label>
@@ -62,6 +68,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('number changed')"
 				onkeydown="console.log('number keydown')"
 				onkeyup="console.log('number keyup')"
+				min='0'
+				max='1000'
 			/>
 		</label>
 		<label>
@@ -77,6 +85,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('tel changed')"
 				onkeydown="console.log('tel keydown')"
 				onkeyup="console.log('tel keyup')"
+				minlength='7'
+				maxlength='15'
 			/>
 		</label>
 		<label>
@@ -92,6 +102,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('url changed')"
 				onkeydown="console.log('url keydown')"
 				onkeyup="console.log('url keyup')"
+				minlength='4'
+				maxlength='2048'
 			/>
 		</label>
 		<label>
@@ -107,6 +119,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('search changed')"
 				onkeydown="console.log('search keydown')"
 				onkeyup="console.log('search keyup')"
+				minlength='1'
+				maxlength='100'
 			/>
 		</label>
 		<label>
@@ -135,6 +149,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('date changed')"
 				onkeydown="console.log('date keydown')"
 				onkeyup="console.log('date keyup')"
+				min='2000-01-01'
+				max='2030-12-31'
 			/>
 		</label>
 		<label>
@@ -149,6 +165,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('datetime-local changed')"
 				onkeydown="console.log('datetime-local keydown')"
 				onkeyup="console.log('datetime-local keyup')"
+				min='2000-01-01T00:00'
+				max='2030-12-31T23:59'
 			/>
 		</label>
 		<label>
@@ -163,6 +181,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('month changed')"
 				onkeydown="console.log('month keydown')"
 				onkeyup="console.log('month keyup')"
+				min='2000-01'
+				max='2030-12'
 			/>
 		</label>
 		<label>
@@ -177,6 +197,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('week changed')"
 				onkeydown="console.log('week keydown')"
 				onkeyup="console.log('week keyup')"
+				min='2000-W01'
+				max='2030-W52'
 			/>
 		</label>
 		<label>
@@ -191,6 +213,8 @@ import Layout from '../layouts/Layout.astro';
 				onchange="console.log('time changed')"
 				onkeydown="console.log('time keydown')"
 				onkeyup="console.log('time keyup')"
+				min='00:00'
+				max='23:59'
 			/>
 		</label>
 		<label>
@@ -198,6 +222,7 @@ import Layout from '../layouts/Layout.astro';
 			<input
 				type='file'
 				name='file'
+				accept='image/png, image/jpeg, application/pdf, text/plain'
 				onclick="console.log('file clicked')"
 				onfocus="console.log('file focused')"
 				onblur="console.log('file blurred')"
