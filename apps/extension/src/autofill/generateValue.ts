@@ -56,14 +56,48 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
     case 'tel':
       return faker.phone.number('501-###-###')
     case 'date':
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? new Date(element.min) : new Date('1970-01-01')
+        const max = element.max ? new Date(element.max) : new Date()
+        return faker.date.between({ from: min, to: max }).toISOString().split('T')[0]
+      }
       return faker.date.recent().toISOString().split('T')[0]
     case 'time':
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? element.min : '00:00'
+        const max = element.max ? element.max : '23:59'
+        const [minHour, minMinute] = min.split(':').map(Number)
+        const [maxHour, maxMinute] = max.split(':').map(Number)
+        const hour = faker.number.int({ min: minHour, max: maxHour })
+        const minute =
+          hour === maxHour ? faker.number.int({ min: 0, max: maxMinute }) : faker.number.int({ min: 0, max: 59 })
+        return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      }
       return faker.date.recent().toTimeString().split(' ')[0].slice(0, 5)
     case 'datetime-local':
-      return faker.date.recent().toISOString().slice(0, -1)
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? new Date(element.min) : new Date('1970-01-01T00:00')
+        const max = element.max ? new Date(element.max) : new Date()
+        const date = faker.date.between({ from: min, to: max })
+        return date.toISOString().slice(0, 16).replace('T', ' ')
+      }
+      return faker.date.recent().toISOString().slice(0, 16).replace('T', ' ')
     case 'month':
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? new Date(element.min + '-01') : new Date('1970-01-01')
+        const max = element.max ? new Date(element.max + '-01') : new Date()
+        return faker.date.between({ from: min, to: max }).toISOString().slice(0, 7)
+      }
       return faker.date.recent().toISOString().slice(0, 7)
     case 'week':
+      if (element instanceof HTMLInputElement) {
+        const min = element.min ? new Date(element.min.replace('W', '-')) : new Date('1970-01-01')
+        const max = element.max ? new Date(element.max.replace('W', '-')) : new Date()
+        const d = faker.date.between({ from: min, to: max })
+        const onejan = new Date(d.getFullYear(), 0, 1)
+        const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
+        return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
+      }
       const d = faker.date.recent()
       const onejan = new Date(d.getFullYear(), 0, 1)
       const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
