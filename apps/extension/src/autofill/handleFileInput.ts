@@ -42,8 +42,6 @@ export async function handleFileInput(input: HTMLInputElement) {
     const event = new Event(eventType, { bubbles: true })
     input.dispatchEvent(event)
   })
-
-  log(`File "${file.name}" added to input`)
 }
 
 const createFileByAcceptType = async (acceptTypes: string[]): Promise<File> => {
