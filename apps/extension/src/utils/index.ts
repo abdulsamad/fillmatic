@@ -21,6 +21,15 @@ export const getCurrentTab = async () => {
   return tab || -1
 }
 
+export const isInternalPage = async () => {
+  let queryOptions = { active: true, lastFocusedWindow: true }
+  let [tab] = await chrome.tabs.query(queryOptions)
+
+  if (!tab.url) return false
+
+  return tab.url.startsWith('chrome://')
+}
+
 export const typeWithEffect = (text: string, element: Inputs, typeEffect = true): Promise<void> => {
   return new Promise((resolve) => {
     // Trigger initial focus event
