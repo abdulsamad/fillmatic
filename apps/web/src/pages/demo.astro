@@ -340,20 +340,60 @@ import Layout from '../layouts/Layout.astro';
 		</label>
 	</form>
 </Layout>
-
 <script>
 	document.getElementById('form')!.addEventListener('submit', function (e) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const formDetails = document.createElement('div');
 		formDetails.id = 'formDetails';
+		formDetails.className = 'form-details';
 
 		for (const [key, value] of formData) {
-			const detail = document.createElement('p');
+			const detail = document.createElement('div');
+			detail.className = 'form-detail';
 			if (key === 'file' && value instanceof File) {
-				detail.textContent = `${key}: ${value.name} (${value.type}, ${value.size} bytes)`;
+				const fileTypes = [
+					'image/jpeg',
+					'image/png',
+					'application/pdf',
+					'text/csv',
+					'text/plain',
+				];
+				if (fileTypes.includes(value.type)) {
+					const reader = new FileReader();
+					reader.onload = function (event) {
+						const content = event.target?.result;
+						if (value.type === 'image/jpeg' || value.type === 'image/png') {
+							const img = document.createElement('img');
+							img.src = content as string;
+							img.style.maxWidth = '100%';
+							detail.appendChild(img);
+						} else if (value.type === 'application/pdf') {
+							const embed = document.createElement('embed');
+							embed.src = content as string;
+							embed.type = 'application/pdf';
+							embed.style.width = '100%';
+							embed.style.height = '500px';
+							embed.style.border = '1px solid #34495e';
+							embed.style.borderRadius = '8px';
+							detail.appendChild(embed);
+						} else if (
+							value.type === 'text/csv' ||
+							value.type === 'text/plain'
+						) {
+							const pre = document.createElement('pre');
+							pre.textContent = content as string;
+							detail.appendChild(pre);
+						}
+					};
+					reader.readAsDataURL(value);
+				}
+				detail.insertAdjacentHTML(
+					'afterbegin',
+					`<p class="detail-label">${key}:</p><p class="detail-value">${value.name} (${value.type}, ${(value.size / (1024 * 1024)).toFixed(2)} MB)</p>`,
+				);
 			} else {
-				detail.textContent = `${key}: ${value}`;
+				detail.innerHTML = `<p class="detail-label">${key}:</p><p class="detail-value">${value}</p>`;
 			}
 			formDetails.appendChild(detail);
 		}
@@ -366,6 +406,7 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
 	body {
+		max-width: 100vw;
 		padding: 3em 1rem;
 		border-radius: 1rem;
 		background: linear-gradient(
@@ -393,6 +434,7 @@ import Layout from '../layouts/Layout.astro';
 		border: none; /* Removed border */
 		overflow: hidden; /* Fix input overflow on right side */
 	}
+
 	label {
 		width: 100%;
 		display: flex;
@@ -402,6 +444,7 @@ import Layout from '../layouts/Layout.astro';
 		color: #34495e; /* Modern SaaS text color */
 		font-weight: bold;
 	}
+
 	input {
 		width: 100%;
 		padding: 0.75rem;
@@ -458,9 +501,30 @@ import Layout from '../layouts/Layout.astro';
 		align-items: center;
 		gap: 1rem;
 	}
+
 	input:focus {
 		background: #dfe6e9; /* Softer focus background */
 		border: 1px solid #34495e; /* Modern SaaS focus border */
 		outline: none; /* Removed default outline */
+	}
+
+	.form-details {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-self: center;
+		gap: 1rem;
+		padding: 2rem;
+		margin: auto;
+	}
+
+	.detail-label {
+		font-weight: 600;
+		text-transform: capitalize;
+		font-size: 1.2rem;
+	}
+
+	.detail-value {
+		font-size: 1rem;
 	}
 </style>
