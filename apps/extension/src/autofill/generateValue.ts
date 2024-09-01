@@ -71,7 +71,7 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
     case 'url':
       return faker.internet.url()
     case 'tel':
-      return faker.phone.number('501-###-###')
+      return faker.helpers.fromRegExp('501-[0-9]{3}-[0-9]{3}')
     case 'date':
       if (element instanceof HTMLInputElement) {
         const min = element.min ? new Date(element.min) : new Date('1970-01-01')
