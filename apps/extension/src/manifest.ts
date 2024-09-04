@@ -1,10 +1,10 @@
 import { defineManifest } from '@crxjs/vite-plugin'
-import _ from 'lodash'
+import { startCase } from 'es-toolkit'
 
 import packageData from '../../../package.json'
 
 export default defineManifest({
-  name: _.startCase(packageData.name),
+  name: startCase(packageData.name),
   description: packageData.description,
   version: packageData.version,
   manifest_version: 3,
