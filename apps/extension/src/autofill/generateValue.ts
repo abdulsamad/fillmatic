@@ -1,10 +1,10 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { clientLog, matchElement } from '@/utils'
+import { clientLog, log, matchElement } from '@/utils'
 import { Inputs } from '@/types'
 
-export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): string | boolean => {
+export const generateValue = async (type: HTMLInputTypeAttribute, element: Inputs): Promise<string | boolean> => {
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
@@ -31,6 +31,46 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
             matchElement(element, 'mobile') ||
             matchElement(element, 'cell'):
             return faker.phone.number()
+          case matchElement(element, 'date'):
+            const isDateOfBirth = matchElement(element, 'birth') || matchElement(element, 'dob')
+            let date: Date
+
+            if (isDateOfBirth) {
+              // Generate a date for someone over 18 years old
+              date = faker.date.birthdate()
+            } else {
+              date = faker.date.recent()
+            }
+
+            // Function to format date based on placeholder or default to ISO
+            const formatDate = (date: Date, format?: string) => {
+              if (
+                format &&
+                format.includes('dd') &&
+                format.includes('mm') &&
+                (format.includes('yy') || format.includes('yyyy'))
+              ) {
+                const day = date.getDate().toString().padStart(2, '0')
+                const month = (date.getMonth() + 1).toString().padStart(2, '0')
+                const year = date.getFullYear().toString()
+                const shortYear = year.slice(-2)
+
+                let formattedDate = format.replace('dd', day).replace('mm', month)
+
+                if (format.includes('yyyy')) {
+                  formattedDate = formattedDate.replace('yyyy', year)
+                } else {
+                  formattedDate = formattedDate.replace('yy', shortYear)
+                }
+
+                return formattedDate
+              } else {
+                return date.toISOString().split('T')[0]
+              }
+            }
+
+            return formatDate(date, element.placeholder?.toLowerCase())
+
           case matchElement(element, 'address') ||
             matchElement(element, 'street') ||
             matchElement(element, 'city') ||
@@ -48,6 +88,35 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
             } else {
               return faker.location.streetAddress()
             }
+          case matchElement(element, 'company') || matchElement(element, 'organization'):
+            return faker.company.name()
+          case matchElement(element, 'job title') || matchElement(element, 'job'):
+            return faker.person.jobTitle()
+          case matchElement(element, 'department'):
+            return faker.commerce.department()
+          case matchElement(element, 'cardnumber'):
+            return faker.finance.creditCardNumber({
+              issuer: 'visa',
+            })
+          case matchElement(element, 'cardExpiry'):
+            const futureDate = faker.date.future()
+            const month = (futureDate.getMonth() + 1).toString().padStart(2, '0')
+            const year = futureDate.getFullYear().toString().slice(-2)
+            return `${month}/${year}`
+          case matchElement(element, 'cvv') || matchElement(element, 'cvc'):
+            return faker.finance.creditCardCVV()
+          case matchElement(element, 'cardtype'):
+            return faker.finance.creditCardIssuer()
+          case matchElement(element, 'confirm password') ||
+            matchElement(element, 'reenter password') ||
+            matchElement(element, 'reenter') ||
+            matchElement(element, 'confirm reenter') ||
+            matchElement(element, 'reenter PIN') ||
+            matchElement(element, 're-enter') ||
+            matchElement(element, 'confirm re-enter') ||
+            matchElement(element, 're-enter PIN') ||
+            matchElement(element, 'confirm'):
+            return handlePasswordGeneration(element, true)
           default:
             return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
         }
@@ -56,9 +125,13 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
     case 'search':
       return faker.lorem.word()
     case 'password':
-      const password = faker.internet.password()
-      clientLog('Generated password: ', password)
-      return password
+      if (element instanceof HTMLInputElement) {
+        if (matchElement(element, 'confirm') || matchElement(element, 'reenter') || matchElement(element, 're-enter')) {
+          return handlePasswordGeneration(element, true)
+        }
+        return handlePasswordGeneration(element)
+      }
+      return faker.internet.password()
     case 'email':
       return faker.internet.email()
     case 'number':
@@ -162,4 +235,41 @@ export const generateValue = (type: HTMLInputTypeAttribute, element: Inputs): st
     default:
       return ''
   }
+}
+
+const handlePasswordGeneration = async (element: HTMLInputElement, reenter = false) => {
+  let generatedPassword: string = ''
+
+  if (reenter) {
+    const result = await chrome.storage.local.get('lastGeneratedPassword')
+    const lastGeneratedPassword = result.lastGeneratedPassword
+
+    if (lastGeneratedPassword) {
+      generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
+    }
+  } else if (matchElement(element, 'pin')) {
+    const maxLength = element.maxLength || 4
+    const pin = faker.number
+      .int({
+        min: Math.pow(10, maxLength - 1),
+        max: Math.pow(10, maxLength) - 1,
+      })
+      .toString()
+      .padStart(maxLength, '0')
+    clientLog('Generated PIN: ', pin)
+    generatedPassword = pin
+    chrome.storage.local.set({ lastGeneratedPassword: generatedPassword })
+  } else {
+    const maxLength = element.maxLength > 0 ? element.maxLength : undefined
+
+    generatedPassword = faker.internet.password({
+      length: maxLength,
+      pattern: element?.pattern ? new RegExp(element.pattern) : undefined,
+    })
+
+    clientLog('Generated password: ', generatedPassword)
+    chrome.storage.local.set({ lastGeneratedPassword: generatedPassword })
+  }
+
+  return generatedPassword
 }

@@ -116,8 +116,8 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
 
   const placeholder = element instanceof HTMLInputElement ? element.placeholder?.toLowerCase() : ''
   const name = element instanceof HTMLInputElement ? element.name.toLowerCase() : ''
-  const id = element.id.toLowerCase()
-  const className = element.className.toLowerCase()
+  const id = element.id?.toLowerCase()
+  const className = element.className?.toLowerCase()
 
   const regex = new RegExp(`\\b${word.toLowerCase()}\\b`)
 

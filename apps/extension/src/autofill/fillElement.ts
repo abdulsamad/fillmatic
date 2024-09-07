@@ -22,7 +22,7 @@ export const fillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => {
     return
   }
 
-  const value = generateValue(type, elem)
+  const value = await generateValue(type, elem)
 
   switch (type) {
     case 'checkbox':
