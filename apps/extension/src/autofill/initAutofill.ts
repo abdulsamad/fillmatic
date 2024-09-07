@@ -9,9 +9,16 @@ async function autofillSequentially(inputs: Inputs[]) {
 }
 
 export async function initiateAutofill() {
-  const inputs = gatherVisibleInputsInOrder()
+  let inputs = gatherVisibleInputsInOrder()
 
-  log(`Found ${inputs.length} visible input elements`)
+  log(`Initially found ${inputs.length} visible input elements`)
 
   await autofillSequentially(inputs)
+
+  // Check for any inputs that have mounted after focus (for eg: Stripe checkout form)
+  const finalInputs = gatherVisibleInputsInOrder()
+  const newInputs = finalInputs.filter((input) => !inputs.includes(input))
+  if (newInputs.length > 0) {
+    await autofillSequentially(newInputs)
+  }
 }
