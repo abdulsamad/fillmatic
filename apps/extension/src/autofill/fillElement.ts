@@ -9,7 +9,8 @@ export const fillElement = async (elem: Inputs, config = DEFAULT_CONFIG) => {
   const type = getElementType(elem)
 
   // Ignore elements that are not fillable
-  if (['button', 'submit', 'reset', 'hidden', 'image'].includes(type)) return
+  // TODO: Add file input handling
+  if (['button', 'submit', 'reset', 'hidden', 'image', 'file'].includes(type)) return
 
   // Ignore elements that already have a value
   if (!config.forceAutofill && elem.value && !['radio', 'checkbox', 'color', 'range', 'select'].includes(type)) {
