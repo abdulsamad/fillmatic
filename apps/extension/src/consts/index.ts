@@ -11,3 +11,5 @@ export const DEFAULT_CONFIG = {
   typeEffectSpeed: 200,
   forceAutofill: false,
 }
+
+export const EXTENSION_ID = chrome.i18n.getMessage('@@extension_id')
