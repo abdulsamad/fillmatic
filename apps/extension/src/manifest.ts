@@ -40,4 +40,15 @@ export default defineManifest({
     },
   ],
   permissions: ['storage', 'activeTab'],
+  commands: {
+    aufofill: {
+      description: 'Fill all inputs on page',
+    },
+    autofill_current_form: {
+      description: 'Fill inputs in the currently focused form',
+    },
+    autofill_current_input: {
+      description: 'Fill currently input',
+    },
+  },
 })
