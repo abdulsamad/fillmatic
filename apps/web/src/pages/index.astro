@@ -11,7 +11,6 @@ import Card from '../components/Card.astro';
 			height='623'
 			viewBox='0 0 495 623'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'
 			aria-hidden='true'>
 			<path
 				fill-rule='evenodd'
@@ -31,7 +30,10 @@ import Card from '../components/Card.astro';
 				</linearGradient>
 			</defs>
 		</svg>
-		<h1>Fill<span class='text-gradient'>Matic</span></h1>
+		<h1>
+			<span class='-skew-x-2'>Fill</span>
+			<span class='text-gradient matic'>Matic</span>
+		</h1>
 		<p class='instructions'>
 			FillMatic is a powerful Chrome extension designed to boost developer
 			productivity. It automatically populates forms with demo data, saving you
@@ -112,5 +114,8 @@ import Card from '../components/Card.astro';
 		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
 		gap: 2rem;
 		padding: 0;
+	}
+	.matic {
+		font-style: italic;
 	}
 </style>
