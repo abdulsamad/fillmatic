@@ -13,7 +13,7 @@
   "devDependencies": {
     "bestzip": "^2.2.1",
     "prettier": "^3.2.5",
-    "turbo": "^2.0.14",
+    "turbo": "^2.1.2",
     "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@8.15.6",
