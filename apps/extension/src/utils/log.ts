@@ -11,5 +11,5 @@ export const log = (msg: string, onlyInDev = true, ...args: string[]) => {
 export const clientLog = (...logs: string[]) => {
   if (isDev) return
 
-  console.log(`%cFormatic`, styles, ...logs)
+  console.log(`%FillMatic`, styles, ...logs)
 }

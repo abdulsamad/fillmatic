@@ -9,10 +9,10 @@ export const generateValue = async (type: HTMLInputTypeAttribute, element: Input
     case 'text':
       if (element instanceof HTMLInputElement) {
         switch (true) {
-          case matchElement(element, 'name') ||
-            matchElement(element, 'full name') ||
+          case matchElement(element, 'full name') ||
             matchElement(element, 'first name') ||
-            matchElement(element, 'last name'):
+            matchElement(element, 'last name') ||
+            matchElement(element, 'name'):
             if (matchElement(element, 'full name')) {
               const fullName = faker.person.fullName()
               return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
