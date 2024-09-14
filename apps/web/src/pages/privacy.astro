@@ -1,0 +1,173 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title='Privacy Policy for FillMatic'>
+	<main>
+		<h1>Privacy Policy for FillMatic</h1>
+
+		<h2>Introduction</h2>
+		<p>
+			At FillMatic, we value and respect your privacy. We are committed to
+			safeguarding your data and ensuring that our development decisions
+			prioritize security and privacy protection. This privacy policy explains
+			what information FillMatic collects, how it is used, and your options
+			concerning the collection and use of this information.
+		</p>
+
+		<h2>Information Collected and Received</h2>
+
+		<h3>Google Analytics</h3>
+		<p>
+			To continuously improve FillMatic and its website, we use Google Analytics
+			as described in <a
+				href='https://policies.google.com/technologies/partner-sites'
+				>How Google uses data when you use our partners’ sites or apps</a
+			>. Google Analytics helps us understand how the extension is used and
+			where potential usability issues arise.
+		</p>
+		<p>
+			The information collected through Google Analytics is anonymized and used
+			solely for assessing usage trends. We do not collect personally
+			identifiable information, nor do we share the anonymized data with third
+			parties.
+		</p>
+		<p>
+			You can prevent your data from being used by Google Analytics by
+			installing the <a href='https://tools.google.com/dlpage/gaoptout'
+				>Google Analytics opt-out browser add-on</a
+			>.
+		</p>
+
+		<h3>Support Requests</h3>
+		<p>
+			When you contact us with a support request, we may ask for information
+			relevant to troubleshooting. This may include logs or other data you
+			choose to provide. We can only access this data if you explicitly share it
+			with us.
+		</p>
+		<p>
+			While support correspondence may be archived, any data attached to it is
+			deleted once the issue is resolved. At no point is this data shared with
+			third parties or used beyond the scope of resolving your issue.
+		</p>
+
+		<h2>Extension Permissions</h2>
+
+		<h3>What FillMatic Is Allowed To Do</h3>
+		<p>
+			FillMatic requests the following permissions to perform its core
+			functions:
+		</p>
+		<ul>
+			<li>
+				<strong>Host permission (all URL access)</strong>: This permission is
+				required to allow FillMatic to interact with the Document Object Model
+				(DOM) of the web pages you visit, enabling it to read and fill form
+				fields.
+			</li>
+			<li>
+				<strong>activeTab</strong>: This permission allows FillMatic to access
+				and modify the currently active tab to perform autofill operations when
+				you interact with the extension.
+			</li>
+			<li>
+				<strong>Storage</strong>: FillMatic uses the storage permission to save
+				configurations, settings, and preferences locally on your device,
+				ensuring that your custom settings persist between sessions.
+			</li>
+		</ul>
+
+		<h3>What FillMatic Is NOT Allowed To Do</h3>
+		<ul>
+			<li>
+				FillMatic does not read the content of any web pages beyond the form
+				fields necessary for its autofill functionality.
+			</li>
+			<li>
+				FillMatic cannot send data to external servers or cloud services, and it
+				does not store or transmit any data beyond the anonymized information
+				used for Analytics
+			</li>
+		</ul>
+
+		<h2>Changes to This Policy</h2>
+		<p>
+			If FillMatic introduces new features that affect data collection, storage,
+			or sharing, this privacy policy will be updated accordingly, and changes
+			will be communicated to you through the extension or email, where
+			applicable.
+		</p>
+
+		<h2>Contact Us</h2>
+		<p>
+			If you have any questions or concerns about this privacy policy, please
+			contact us at hello[at]abdulsamad.dev.
+		</p>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 800px;
+		max-width: calc(100% - 2rem);
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+	.astro-a {
+		position: absolute;
+		top: -32px;
+		left: 50%;
+		transform: translatex(-50%);
+		width: 220px;
+		height: auto;
+		z-index: -1;
+	}
+	h1 {
+		font-size: 4rem;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+		margin-bottom: 1em;
+	}
+	.text-gradient {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 0%;
+	}
+	.instructions {
+		margin-bottom: 2rem;
+		border: 1px solid rgba(var(--accent-light), 25%);
+		background: linear-gradient(
+			rgba(var(--accent-dark), 66%),
+			rgba(var(--accent-dark), 33%)
+		);
+		padding: 1.5rem;
+		border-radius: 8px;
+	}
+	.instructions code {
+		font-size: 0.8em;
+		font-weight: bold;
+		background: rgba(var(--accent-light), 12%);
+		color: rgb(var(--accent-light));
+		border-radius: 4px;
+		padding: 0.3em 0.4em;
+	}
+	.instructions strong {
+		color: rgb(var(--accent-light));
+	}
+	.link-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+		gap: 2rem;
+		padding: 0;
+	}
+	.matic {
+		font-style: italic;
+	}
+</style>
