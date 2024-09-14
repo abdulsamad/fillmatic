@@ -177,6 +177,9 @@ importers:
       '@types/chrome':
         specifier: ^0.0.246
         version: 0.0.246
+      '@types/dom-chromium-ai':
+        specifier: ^0.0.0
+        version: 0.0.0
       '@types/node':
         specifier: ^22.5.1
         version: 22.5.1
@@ -2019,6 +2022,9 @@ packages:
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+
+  '@types/dom-chromium-ai@0.0.0':
+    resolution: {integrity: sha512-hDYiRUtSWuDqXgjpltqX3n60FRsj6PNivRL2w5QAYOiNstdcjkKq9YYC6VP7nbtVO2F+55wf/TCBXAK8L3HBjA==}
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
@@ -6147,6 +6153,8 @@ snapshots:
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 0.7.34
+
+  '@types/dom-chromium-ai@0.0.0': {}
 
   '@types/estree@1.0.5': {}
 
