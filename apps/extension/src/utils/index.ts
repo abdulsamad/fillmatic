@@ -123,3 +123,5 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
 
   return regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)
 }
+
+export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key]).state

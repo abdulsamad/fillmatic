@@ -1,8 +1,9 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { clientLog, log, matchElement } from '@/utils'
+import { clientLog, matchElement } from '@/utils'
 import { Inputs } from '@/types'
+import { useConfigStore as configStore } from '@/store/config'
 
 export const generateValue = async (type: HTMLInputTypeAttribute, element: Inputs): Promise<string | boolean> => {
   switch (type) {
@@ -241,8 +242,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
   let generatedPassword: string = ''
 
   if (reenter) {
-    const result = await chrome.storage.local.get('lastGeneratedPassword')
-    const lastGeneratedPassword = result.lastGeneratedPassword
+    const { lastGeneratedPassword } = configStore.getState()
 
     if (lastGeneratedPassword) {
       generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
@@ -258,7 +258,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
       .padStart(maxLength, '0')
     clientLog('Generated PIN: ', pin)
     generatedPassword = pin
-    chrome.storage.local.set({ lastGeneratedPassword: generatedPassword })
+    configStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
     const maxLength = element.maxLength > 0 ? element.maxLength : undefined
 
@@ -268,7 +268,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     })
 
     clientLog('Generated password: ', generatedPassword)
-    chrome.storage.local.set({ lastGeneratedPassword: generatedPassword })
+    configStore.setState({ lastGeneratedPassword: generatedPassword })
   }
 
   return generatedPassword
