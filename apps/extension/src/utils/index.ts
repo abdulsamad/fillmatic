@@ -27,7 +27,7 @@ export const isInternalPage = async () => {
 
   if (!tab.url) return false
 
-  return tab.url.startsWith('chrome://')
+  return tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')
 }
 
 export const typeWithEffect = (text: string, element: Inputs, typeEffect = true): Promise<void> => {
