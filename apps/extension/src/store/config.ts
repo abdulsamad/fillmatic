@@ -12,8 +12,11 @@ export const useConfigStore = create(
   devtools(
     persist<ConfigStore>(
       (set, get) => ({
+        // State
         lastGeneratedPassword: '',
         uniquePassword: false,
+
+        // Actions
         setLastGeneratedPassword: (bool: boolean) => set(() => ({ uniquePassword: bool }), false),
         setUniquePassword: (bool: boolean) => set(() => ({ uniquePassword: bool }), false),
       }),

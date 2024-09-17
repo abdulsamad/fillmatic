@@ -1,3 +1,3 @@
 export type Inputs = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 
-export type ExtensionCommands = 'aufofill' | 'autofill_current_form' | 'autofill_current_input'
+export type ExtensionCommands = 'AUTOFILL_ALL' | 'AUTOFILL_CURRENT_FORM' | 'AUTOFILL_CURRENT_INPUT'

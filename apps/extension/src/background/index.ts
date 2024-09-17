@@ -10,13 +10,13 @@ chrome.action.onClicked.addListener(async () => {
 
 chrome.commands.onCommand.addListener((command: string, tab) => {
   switch (command as ExtensionCommands) {
-    case 'aufofill':
+    case 'AUTOFILL_ALL':
       console.log(`Command "${command}" triggered`)
       break
-    case 'autofill_current_form':
+    case 'AUTOFILL_CURRENT_FORM':
       console.log(`Command "${command}" triggered`)
       break
-    case 'autofill_current_input':
+    case 'AUTOFILL_CURRENT_INPUT':
       console.log(`Command "${command}" triggered`)
       break
     default:
