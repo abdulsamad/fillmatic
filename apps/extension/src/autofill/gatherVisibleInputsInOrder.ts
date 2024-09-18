@@ -15,11 +15,11 @@ export const isElementVisible = (element: Element): boolean => {
   )
 }
 
-export const gatherVisibleInputsInOrder = (): Inputs[] => {
+export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): Inputs[] => {
   const allInputs = Array.from(
-    document.querySelectorAll('input:not(:disabled), select:not(:disabled), textarea:not(:disabled)') as NodeListOf<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    (rootElement || document).querySelectorAll(
+      'input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
+    ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   )
 
   return allInputs.filter((input) => isElementVisible(input)) as Inputs[]

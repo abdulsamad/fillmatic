@@ -8,8 +8,8 @@ async function autofillSequentially(inputs: Inputs[]) {
   }
 }
 
-export async function initiateAutofill() {
-  let inputs = gatherVisibleInputsInOrder()
+export async function initiateAutofill(rootElement: Element | null = null) {
+  let inputs = gatherVisibleInputsInOrder(rootElement)
 
   log(`Initially found ${inputs.length} visible input elements`)
 

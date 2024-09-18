@@ -55,6 +55,23 @@ export const Popup = () => {
     }
   }
 
+  const fillSingleForm = async (form: Form) => {
+    try {
+      if (!currTab?.id) return null
+
+      setIsAutofilling(true)
+
+      const { INIT_AUTOFILL_SINGLE } = MESSAGES
+
+      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_SINGLE, form })
+
+      setIsAutofilling(false)
+    } catch (err) {
+      console.error(err)
+      setIsAutofilling(false)
+    }
+  }
+
   const scrollElementIntoView = async (form: Form) => {
     if (!currTab?.id) return
 
@@ -85,7 +102,7 @@ export const Popup = () => {
               onClick={fillAllForms}
             >
               <NotebookPenIcon size={20} />
-              <span>{isAutofilling ? 'Autofilling...' : 'Fill All Forms'}</span>
+              <span className="capitalize">{isAutofilling ? 'Autofilling...' : 'Fill all fields'}</span>
             </Button>
             {forms.map((form) => (
               <Button
@@ -94,9 +111,12 @@ export const Popup = () => {
                 disabled={isDisabled || isAutofilling}
                 variant="secondary"
                 onMouseEnter={() => scrollElementIntoView(form)}
+                onClick={() => fillSingleForm(form)}
               >
                 <PencilLineIcon size={20} />
-                <span>{form.name ? `Fill ${form.name} form` : `Fill form ${form.index + 1}`}</span>
+                <span className="capitalize">
+                  {form.name ? `Fill ${form.name} form` : `Fill form ${form.index + 1}`}
+                </span>
               </Button>
             ))}
           </div>
