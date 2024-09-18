@@ -1,12 +1,20 @@
-import { useState, useLayoutEffect } from 'react'
+import { useState, useLayoutEffect, useEffect } from 'react'
+import { Settings, Zap, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLineIcon } from 'lucide-react'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { Toaster } from '@/components/ui/sonner'
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { getCurrentTab, isInternalPage } from '@/utils'
 import { MESSAGES } from '@/consts'
+import { Form } from '@/types'
 
 export const Popup = () => {
   const [isAutofilling, setIsAutofilling] = useState(false)
   const [isDisabled, setIsDisabled] = useState(false)
+  const [currTab, setCurrTab] = useState<chrome.tabs.Tab | null>(null)
+  const [forms, setForms] = useState<Form[]>([])
 
   useLayoutEffect(() => {
     isInternalPage()
@@ -14,17 +22,31 @@ export const Popup = () => {
       .catch(() => setIsDisabled(false))
   }, [])
 
+  useLayoutEffect(() => {
+    getCurrentTab().then((tab) => {
+      if (!tab.id) return null
+
+      setCurrTab(tab)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!currTab?.id) return
+
+    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['POPUP_OPENED'] }).then((res) => {
+      setForms(res.forms)
+    })
+  }, [currTab])
+
   const fillAllForms = async () => {
     try {
-      const tab = await getCurrentTab()
-
-      if (!tab.id) return null
+      if (!currTab?.id) return null
 
       setIsAutofilling(true)
 
       const { INIT_AUTOFILL_ALL } = MESSAGES
 
-      await chrome.tabs.sendMessage(tab.id, INIT_AUTOFILL_ALL)
+      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_ALL })
 
       setIsAutofilling(false)
     } catch (err) {
@@ -33,29 +55,100 @@ export const Popup = () => {
     }
   }
 
+  const scrollElementIntoView = async (form: Form) => {
+    if (!currTab?.id) return
+
+    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
+  }
+
   return (
-    <div className="relative w-[250px] h-[400px] bg-gray-100 p-4 box-border ">
-      <div className="h-full w-full">
-        <h1 className="text-xl font-semibold mb-4">FillMatic</h1>
-        <div className="flex gap-2 items-center justify-center flex-col mt-4">
-          <div className="flex flex-col justify-between h-full">
-            <div className="flex flex-col gap-2">
-              <Button onClick={fillAllForms} disabled={isDisabled || isAutofilling}>
-                {isAutofilling ? 'Autofilling...' : 'Fill All Forms'}
+    <div className="relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col">
+      <TooltipProvider>
+        <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
+          <div className="flex items-center space-x-2">
+            <Zap size={20} />
+            <h1 className="text-lg font-semibold">FillMatic</h1>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Avatar className="w-8 h-8 flex items-center">
+              {/* <AvatarImage src="https://github.com/shadcn.png" alt="User" /> */}
+              {/* <AvatarFallback>CN</AvatarFallback> */}
+              <CircleUserRoundIcon fontSize={20} />
+            </Avatar>
+          </div>
+        </header>
+        <main className="p-4 space-y-6 h-full relative">
+          <div className="space-y-4">
+            <Button
+              className="w-full flex items-center justify-start space-x-2"
+              disabled={isDisabled || isAutofilling}
+              onClick={fillAllForms}
+            >
+              <NotebookPenIcon size={20} />
+              <span>{isAutofilling ? 'Autofilling...' : 'Fill All Forms'}</span>
+            </Button>
+            {forms.map((form) => (
+              <Button
+                key={form.id}
+                className="w-full flex items-center justify-start space-x-2"
+                disabled={isDisabled || isAutofilling}
+                variant="secondary"
+                onMouseEnter={() => scrollElementIntoView(form)}
+              >
+                <PencilLineIcon size={20} />
+                <span>{form.name ? `Fill ${form.name} form` : `Fill form ${form.index + 1}`}</span>
               </Button>
+            ))}
+          </div>
+
+          {isDisabled && (
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 relative rounded-lg" role="alert">
+                <span className="block sm:inline">FillMatic cannot be used on internal pages.</span>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      {isDisabled && (
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 relative rounded-lg" role="alert">
-            <span className="block sm:inline">
-              You are on an internal page. Please visit a website to use FillMatic.
-            </span>
-          </div>
-        </div>
-      )}
+          )}
+          <Toaster theme="light" />
+        </main>
+        <Separator />
+        <footer className="px-2.5 py-1 flex justify-between items-center">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                aria-label="Provide feedback"
+                asChild
+              >
+                <a href="mailto:hello@abdulsamad.dev" target="_blank">
+                  <MessageSquare size={16} />
+                </a>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Provide feedback</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                aria-label="Settings"
+                onClick={() => chrome.runtime.openOptionsPage()}
+              >
+                <Settings size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Settings</p>
+            </TooltipContent>
+          </Tooltip>
+        </footer>
+      </TooltipProvider>
     </div>
   )
 }
