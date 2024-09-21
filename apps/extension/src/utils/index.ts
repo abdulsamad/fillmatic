@@ -131,8 +131,6 @@ export const getAllCommands = async (): Promise<Record<ExtensionCommands, string
 
   const commands = await chrome.commands.getAll()
 
-  console.log('DEBUG index:', commands)
-
   commands.forEach((command) => {
     if (!command.name || !command.shortcut) return
 
