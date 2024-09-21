@@ -12,12 +12,12 @@ export default defineManifest({
   icons: {
     16: 'icons/icon16.png',
     32: 'icons/icon32.png',
-    48: 'icons/icon48.png',
-    128: 'icons/icon128.png',
+    192: 'icons/icon192.png',
+    512: 'icons/icon512.png',
   },
   action: {
     default_popup: 'popup.html',
-    default_icon: 'icons/icon48.png',
+    default_icon: 'icons/icon192.png',
   },
   options_page: 'options.html',
   background: {
@@ -33,7 +33,7 @@ export default defineManifest({
   ],
   web_accessible_resources: [
     {
-      resources: ['icons/icon16.png', 'icons/icon32.png', 'icons/icon48.png', 'icons/icon128.png', 'samples/*'],
+      resources: ['icons/icon16.png', 'icons/icon32.png', 'icons/icon192.png', 'icons/icon512.png', 'samples/*'],
       matches: [],
     },
   ],
