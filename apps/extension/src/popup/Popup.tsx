@@ -91,8 +91,9 @@ export const Popup = () => {
       <TooltipProvider>
         <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
           <div className="flex items-center space-x-2">
-            <Zap size={20} />
-            <h1 className="text-lg font-semibold">FillMatic</h1>
+            <h1 className="text-lg font-semibold">
+              <div>FillMatic</div>
+            </h1>
           </div>
           <div className="flex items-center space-x-2">
             <Avatar className="w-8 h-8 flex items-center">
