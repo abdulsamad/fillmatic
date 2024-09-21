@@ -1,22 +1,34 @@
 import { log } from '@/utils'
+import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
 
 log('BACKGROUND SCRIPT is running...')
 
-chrome.action.onClicked.addListener(async () => {
-  //
-})
+// chrome.action.onClicked.addListener(async () => {
+//
+// })
 
-chrome.commands.onCommand.addListener((command: string, tab) => {
+chrome.commands.onCommand.addListener(async (command: string, tab) => {
+  if (!tab.id) return
+
+  const { INIT_AUTOFILL_ALL, INIT_AUTOFILL_FORM, INIT_AUTOFILL_INPUT, GET_FORMS } = MESSAGES
+
   switch (command as ExtensionCommands) {
     case 'AUTOFILL_ALL':
-      console.log(`Command "${command}" triggered`)
+      await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_ALL })
       break
     case 'AUTOFILL_CURRENT_FORM':
-      console.log(`Command "${command}" triggered`)
+      // Get form
+      const forms = (await chrome.tabs.sendMessage(tab.id, { type: GET_FORMS })).forms as any[]
+      const focusedForm = forms.find((elem) => elem.focused)
+
+      if (focusedForm) {
+        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_FORM, form: focusedForm })
+      }
+
       break
     case 'AUTOFILL_CURRENT_INPUT':
-      console.log(`Command "${command}" triggered`)
+      await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_INPUT })
       break
     default:
       return

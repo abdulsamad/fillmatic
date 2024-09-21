@@ -1,7 +1,7 @@
 import { log } from '@/utils'
-import { gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
+import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
 import { MESSAGES } from '@/consts'
-import { Form } from '@/types'
+import { Form, Inputs } from '@/types'
 
 // Init Log
 log('CONTENT SCRIPT is running...')
@@ -16,11 +16,18 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
     try {
       sender.tab ? log(`Tab Message`) : log(`Extension Message`)
 
-      const { INIT_AUTOFILL_ALL, INIT_AUTOFILL_SINGLE, AUTOFILL_COMPLETE, POPUP_OPENED, SCROLL_FORM_INTO_VIEW } =
-        MESSAGES
+      const {
+        INIT_AUTOFILL_ALL,
+        INIT_AUTOFILL_FORM,
+        INIT_AUTOFILL_INPUT,
+        AUTOFILL_COMPLETE,
+        GET_FORMS,
+        SCROLL_FORM_INTO_VIEW,
+      } = MESSAGES
+      const activeElement = document.activeElement
 
       switch (request.type) {
-        case POPUP_OPENED:
+        case GET_FORMS:
           // Get all forms from page
           const forms = Array.from(document.querySelectorAll('form'))
 
@@ -30,16 +37,19 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
 
               if (inputs.length === 0) return null
 
+              const isFocused = form === activeElement || form.contains(activeElement)
+
               return {
                 name: form.getAttribute('name'),
                 class: form.className,
                 id: form.id,
                 index,
+                focused: isFocused,
               }
             })
             .filter(Boolean)
 
-          sendResponse({ type: POPUP_OPENED, forms: formsCollection })
+          sendResponse({ type: GET_FORMS, forms: formsCollection })
           break
 
         case INIT_AUTOFILL_ALL:
@@ -48,7 +58,7 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
           sendResponse({ type: AUTOFILL_COMPLETE })
           break
 
-        case INIT_AUTOFILL_SINGLE:
+        case INIT_AUTOFILL_FORM:
           if (request?.form) {
             const elem = document.querySelectorAll('form')[request.form.index]
 
@@ -57,6 +67,16 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
             elem.requestSubmit()
 
             sendResponse({ type: AUTOFILL_COMPLETE })
+          }
+          break
+
+        case INIT_AUTOFILL_INPUT:
+          if (
+            activeElement instanceof HTMLInputElement ||
+            activeElement instanceof HTMLTextAreaElement ||
+            activeElement instanceof HTMLSelectElement
+          ) {
+            fillElement(activeElement as Inputs)
           }
           break
 

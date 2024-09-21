@@ -35,7 +35,7 @@ export const Popup = () => {
     if (!currTab?.id) return
 
     // Tell popup open to content script
-    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['POPUP_OPENED'] }).then((res) => {
+    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['GET_FORMS'] }).then((res) => {
       if (!res.forms) return null
 
       setForms(res.forms)
@@ -69,9 +69,9 @@ export const Popup = () => {
 
       setIsAutofilling(true)
 
-      const { INIT_AUTOFILL_SINGLE } = MESSAGES
+      const { INIT_AUTOFILL_FORM } = MESSAGES
 
-      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_SINGLE, form })
+      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_FORM, form })
 
       setIsAutofilling(false)
     } catch (err) {
