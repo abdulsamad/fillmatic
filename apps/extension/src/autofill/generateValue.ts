@@ -242,6 +242,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
   let generatedPassword: string = ''
   const maxLength = element.maxLength > 0 ? element.maxLength : 8
   const minLength = element.minLength > 0 ? element.minLength : undefined
+  const samePasswordEverytime = true
 
   if (reenter) {
     const { lastGeneratedPassword } = configStore.getState()
@@ -250,23 +251,31 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
       generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
     }
   } else if (matchElement(element, 'pin')) {
-    const length = minLength ? minLength : maxLength
+    const hardcodedPin = '1234'
+    const pinLength = minLength || maxLength
 
-    const pin = faker.number
-      .int({
-        min: Math.pow(10, length - 1),
-        max: Math.pow(10, length) - 1,
-      })
-      .toString()
-      .padStart(length, '0')
-    clientLog('Generated PIN: ', pin)
-    generatedPassword = pin
+    if (samePasswordEverytime && hardcodedPin.length <= maxLength) {
+      generatedPassword = hardcodedPin.slice(0, pinLength)
+    } else {
+      generatedPassword = faker.number
+        .int({ min: Math.pow(10, pinLength - 1), max: Math.pow(10, pinLength) - 1 })
+        .toString()
+    }
+
+    clientLog('Generated PIN: ', generatedPassword)
     configStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
-    generatedPassword = faker.internet.password({
-      length: minLength || maxLength || 8,
-      pattern: element?.pattern ? new RegExp(element.pattern) : undefined,
-    })
+    const hardcodedPassword = 'Pass@123'
+    const passwordLength = minLength || maxLength
+
+    if (samePasswordEverytime && hardcodedPassword.length <= maxLength) {
+      generatedPassword = hardcodedPassword.slice(0, passwordLength)
+    } else {
+      generatedPassword = faker.internet.password({
+        length: passwordLength,
+        pattern: element?.pattern ? new RegExp(element.pattern) : undefined,
+      })
+    }
 
     clientLog('Generated password: ', generatedPassword)
     configStore.setState({ lastGeneratedPassword: generatedPassword })
