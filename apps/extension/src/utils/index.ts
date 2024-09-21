@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 import { DEFAULT_CONFIG } from '@/consts'
-import { Inputs } from '@/types'
+import { ExtensionCommands, Inputs } from '@/types'
 
 export * from './log'
 export * from './generateNames'
@@ -125,3 +125,19 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
 }
 
 export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key]).state
+
+export const getAllCommands = async (): Promise<Record<ExtensionCommands, string>> => {
+  const commandsRef: Record<string, string | undefined> = {}
+
+  const commands = await chrome.commands.getAll()
+
+  console.log('DEBUG index:', commands)
+
+  commands.forEach((command) => {
+    if (!command.name || !command.shortcut) return
+
+    commandsRef[command.name] = command.shortcut
+  })
+
+  return commandsRef as Record<ExtensionCommands, string>
+}

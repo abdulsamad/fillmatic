@@ -39,14 +39,32 @@ export default defineManifest({
   ],
   permissions: ['storage', 'activeTab'],
   commands: {
-    aufofill: {
+    AUTOFILL_ALL: {
       description: 'Fill all inputs on page',
+      suggested_key: {
+        default: 'Ctrl+Shift+Comma',
+        mac: 'Command+Shift+Comma',
+        linux: 'Ctrl+Shift+Comma',
+        windows: 'Ctrl+Shift+Comma',
+      },
     },
-    autofill_current_form: {
+    AUTOFILL_CURRENT_FORM: {
       description: 'Fill inputs in the currently focused form',
+      suggested_key: {
+        default: 'Ctrl+Shift+F',
+        mac: 'Command+Shift+F',
+        linux: 'Ctrl+Shift+F',
+        windows: 'Ctrl+Shift+F',
+      },
     },
-    autofill_current_input: {
+    AUTOFILL_CURRENT_INPUT: {
       description: 'Fill currently input',
+      suggested_key: {
+        default: 'Ctrl+Shift+Period',
+        mac: 'Command+Shift+Period',
+        linux: 'Ctrl+Shift+Period',
+        windows: 'Ctrl+Shift+Period',
+      },
     },
   },
 })

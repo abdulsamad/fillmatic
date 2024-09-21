@@ -1,5 +1,4 @@
 import { log } from '@/utils'
-import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
 
 log('BACKGROUND SCRIPT is running...')

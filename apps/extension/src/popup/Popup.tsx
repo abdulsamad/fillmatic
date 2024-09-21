@@ -6,15 +6,16 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { getCurrentTab, isInternalPage } from '@/utils'
+import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
 import { MESSAGES } from '@/consts'
-import { Form } from '@/types'
+import { ExtensionCommands, Form } from '@/types'
 
 export const Popup = () => {
   const [isAutofilling, setIsAutofilling] = useState(false)
   const [isDisabled, setIsDisabled] = useState(false)
   const [currTab, setCurrTab] = useState<chrome.tabs.Tab | null>(null)
   const [forms, setForms] = useState<Form[]>([])
+  const [commands, setCommands] = useState<Record<ExtensionCommands, string>>()
 
   useLayoutEffect(() => {
     isInternalPage()
@@ -33,10 +34,17 @@ export const Popup = () => {
   useEffect(() => {
     if (!currTab?.id) return
 
+    // Tell popup open to content script
     chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['POPUP_OPENED'] }).then((res) => {
+      if (!res.forms) return null
+
       setForms(res.forms)
     })
   }, [currTab])
+
+  useEffect(() => {
+    getAllCommands().then((commands) => setCommands(commands))
+  }, [])
 
   const fillAllForms = async () => {
     try {
@@ -96,21 +104,31 @@ export const Popup = () => {
         </header>
         <main className="p-4 space-y-6 h-full relative">
           <div className="space-y-4">
-            <Button
-              className="w-full flex items-center justify-start space-x-2"
-              disabled={isDisabled || isAutofilling}
-              onClick={fillAllForms}
-            >
-              <NotebookPenIcon size={20} />
-              <span className="capitalize">{isAutofilling ? 'Autofilling...' : 'Fill all fields'}</span>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="w-full flex items-center justify-start space-x-2"
+                  disabled={isDisabled || isAutofilling}
+                  onClick={fillAllForms}
+                >
+                  <NotebookPenIcon size={20} />
+                  <span className="capitalize">{isAutofilling ? 'Autofilling...' : 'Fill all fields'}</span>
+                </Button>
+              </TooltipTrigger>
+              {commands?.AUTOFILL_ALL && (
+                <TooltipContent>
+                  <p className="tracking-widest">{commands?.AUTOFILL_ALL}</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
             {forms.map((form) => (
               <Button
                 key={form.id}
                 className="w-full flex items-center justify-start space-x-2"
                 disabled={isDisabled || isAutofilling}
                 variant="secondary"
-                onMouseEnter={() => scrollElementIntoView(form)}
+                // TODO: Add debounce
+                // onMouseEnter={() => scrollElementIntoView(form)}
                 onClick={() => fillSingleForm(form)}
               >
                 <PencilLineIcon size={20} />
