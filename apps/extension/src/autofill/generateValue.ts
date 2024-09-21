@@ -132,7 +132,7 @@ export const generateValue = async (type: HTMLInputTypeAttribute, element: Input
         }
         return handlePasswordGeneration(element)
       }
-      return faker.internet.password()
+      return faker.internet.password({ length: 8 })
     case 'email':
       return faker.internet.email()
     case 'number':
@@ -240,6 +240,8 @@ export const generateValue = async (type: HTMLInputTypeAttribute, element: Input
 
 const handlePasswordGeneration = async (element: HTMLInputElement, reenter = false) => {
   let generatedPassword: string = ''
+  const maxLength = element.maxLength > 0 ? element.maxLength : 8
+  const minLength = element.minLength > 0 ? element.minLength : undefined
 
   if (reenter) {
     const { lastGeneratedPassword } = configStore.getState()
@@ -248,22 +250,21 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
       generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
     }
   } else if (matchElement(element, 'pin')) {
-    const maxLength = element.maxLength || 4
+    const length = minLength ? minLength : maxLength
+
     const pin = faker.number
       .int({
-        min: Math.pow(10, maxLength - 1),
-        max: Math.pow(10, maxLength) - 1,
+        min: Math.pow(10, length - 1),
+        max: Math.pow(10, length) - 1,
       })
       .toString()
-      .padStart(maxLength, '0')
+      .padStart(length, '0')
     clientLog('Generated PIN: ', pin)
     generatedPassword = pin
     configStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
-    const maxLength = element.maxLength > 0 ? element.maxLength : undefined
-
     generatedPassword = faker.internet.password({
-      length: maxLength,
+      length: minLength || maxLength || 8,
       pattern: element?.pattern ? new RegExp(element.pattern) : undefined,
     })
 
