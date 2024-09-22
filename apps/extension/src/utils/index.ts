@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 import { DEFAULT_CONFIG } from '@/consts'
-import { ExtensionCommands, Inputs } from '@/types'
+import { ExtensionCommands, SupportedInputsType } from '@/types'
 
 export * from './log'
 export * from './generateNames'
@@ -13,6 +13,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const isDev = import.meta.env.DEV
+
+export const isSupportedInput = (elem: Element) =>
+  elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement
+
+export const isContentEditable = (elem: Element) =>
+  elem instanceof HTMLElement && elem.contentEditable?.toLowerCase() === 'true' && !isSupportedInput(elem)
+
+export const isSupportedElement = (elem: Element) => isSupportedInput(elem) || isContentEditable(elem)
 
 export const getCurrentTab = async () => {
   let queryOptions = { active: true, lastFocusedWindow: true }
@@ -30,7 +38,7 @@ export const isInternalPage = async () => {
   return tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')
 }
 
-export const typeWithEffect = (text: string, element: Inputs, typeEffect = true): Promise<void> => {
+export const typeWithEffect = (text: string, element: SupportedInputsType, typeEffect = true): Promise<void> => {
   return new Promise((resolve) => {
     // Trigger initial focus event
     element.dispatchEvent(new FocusEvent('focus', { bubbles: true }))
@@ -43,32 +51,60 @@ export const typeWithEffect = (text: string, element: Inputs, typeEffect = true)
       textArr.forEach((str: string, index) => {
         const slice = textArr.slice(0, index + 1).join('')
         setTimeout(() => {
-          element.value = slice
+          if (isContentEditable(element)) {
+            // Simulate typing for contenteditable elements
+            const keydownEvent = new KeyboardEvent('keydown', { key: str, bubbles: true })
+            element.dispatchEvent(keydownEvent)
 
-          // Trigger keyboard events for each keystroke
-          const keydownEvent = new KeyboardEvent('keydown', { key: str })
-          element.dispatchEvent(keydownEvent)
+            const beforeinputEvent = new InputEvent('beforeinput', {
+              inputType: 'insertText',
+              data: str,
+              bubbles: true,
+            })
+            element.dispatchEvent(beforeinputEvent)
 
-          // Only trigger keyup event for text, password, search, url, tel, and email input types
-          if (
-            element instanceof HTMLInputElement &&
-            ['text', 'password', 'search', 'url', 'tel', 'email'].includes(element.type)
-          ) {
-            const keyupEvent = new KeyboardEvent('keyup', { key: str })
+            // Update content
+            element.textContent = slice
+
+            const inputEvent = new InputEvent('input', { inputType: 'insertText', data: str, bubbles: true })
+            element.dispatchEvent(inputEvent)
+
+            const keyupEvent = new KeyboardEvent('keyup', { key: str, bubbles: true })
             element.dispatchEvent(keyupEvent)
+          } else {
+            // Existing behavior for input elements
+            element.value = slice
+
+            // Trigger keyboard events for each keystroke
+            const keydownEvent = new KeyboardEvent('keydown', { key: str })
+            element.dispatchEvent(keydownEvent)
+
+            // Only trigger keyup event for text, password, search, url, tel, and email input types
+            if (
+              element instanceof HTMLInputElement &&
+              ['text', 'password', 'search', 'url', 'tel', 'email'].includes(element.type)
+            ) {
+              const keyupEvent = new KeyboardEvent('keyup', { key: str })
+              element.dispatchEvent(keyupEvent)
+            }
+
+            // Trigger input event
+            const inputEvent = new Event('input', { bubbles: true })
+            element.dispatchEvent(inputEvent)
           }
 
-          // Trigger input event
-          const inputEvent = new Event('input', { bubbles: true })
-          element.dispatchEvent(inputEvent)
-
           if (textArr.length === index + 1) {
-            // Trigger change event
-            const changeEvent = new Event('change', { bubbles: true })
-            element.dispatchEvent(changeEvent)
+            if (isContentEditable(element)) {
+              // Trigger blur event for contenteditable
+              element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+            } else {
+              // Trigger change event for input elements
+              const changeEvent = new Event('change', { bubbles: true })
+              element.dispatchEvent(changeEvent)
 
-            // Trigger blur event
-            element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+              // Trigger blur event for input elements
+              element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+            }
             resolve()
           }
         }, msPerChar * index)
@@ -77,18 +113,31 @@ export const typeWithEffect = (text: string, element: Inputs, typeEffect = true)
       return
     }
 
-    element.value = text
+    if (isContentEditable(element)) {
+      // Set content for contenteditable without type effect
+      element.textContent = text
 
-    // Trigger input event
-    const inputEvent = new Event('input', { bubbles: true })
-    element.dispatchEvent(inputEvent)
+      // Trigger input event
+      const inputEvent = new InputEvent('input', { inputType: 'insertText', data: text, bubbles: true })
+      element.dispatchEvent(inputEvent)
 
-    // Trigger change event
-    const changeEvent = new Event('change', { bubbles: true })
-    element.dispatchEvent(changeEvent)
+      // Trigger blur event
+      element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+    } else {
+      // Set value for input elements without type effect
+      element.value = text
 
-    // Trigger blur event
-    element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+      // Trigger input event
+      const inputEvent = new Event('input', { bubbles: true })
+      element.dispatchEvent(inputEvent)
+
+      // Trigger change event
+      const changeEvent = new Event('change', { bubbles: true })
+      element.dispatchEvent(changeEvent)
+
+      // Trigger blur event
+      element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+    }
     resolve()
   })
 }

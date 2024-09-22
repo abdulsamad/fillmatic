@@ -1,11 +1,16 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { clientLog, matchElement } from '@/utils'
-import { Inputs } from '@/types'
+import { clientLog, isSupportedElement, matchElement } from '@/utils'
+import { SupportedInputsType } from '@/types'
 import { useConfigStore as configStore } from '@/store/config'
 
-export const generateValue = async (type: HTMLInputTypeAttribute, element: Inputs): Promise<string | boolean> => {
+export const generateValue = async (
+  type: HTMLInputTypeAttribute | 'contenteditable',
+  element: SupportedInputsType | Element,
+) => {
+  if (!isSupportedElement(element)) return ''
+
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
@@ -233,6 +238,8 @@ export const generateValue = async (type: HTMLInputTypeAttribute, element: Input
         return faker.number.int({ min, max }).toString()
       }
       return ''
+    case 'contenteditable':
+      return faker.lorem.sentence()
     default:
       return ''
   }

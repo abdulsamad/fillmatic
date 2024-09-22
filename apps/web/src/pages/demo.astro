@@ -339,7 +339,19 @@ import Layout from '../layouts/Layout.astro';
 			/>
 		</label>
 	</form>
+	<div class=''>
+		<div
+			class='w-1/2 overflow-hidden border border-amber-400 h-4 py-5'
+			oninput="console.log('contenteditable input')"
+			onbeforeinput="console.log('contenteditable beforeinput')"
+			onkeyup="console.log('contenteditable keyup')"
+			onkeydown="console.log('contenteditable keydown')"
+			onfocus="console.log('contenteditable focus')"
+			contenteditable='true'>
+		</div>
+	</div>
 </Layout>
+
 <script>
 	document.getElementById('form')!.addEventListener('submit', function (e) {
 		e.preventDefault();

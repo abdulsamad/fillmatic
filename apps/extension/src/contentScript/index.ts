@@ -1,7 +1,7 @@
 import { log } from '@/utils'
 import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
 import { MESSAGES } from '@/consts'
-import { Form, Inputs } from '@/types'
+import { Form, SupportedInputsType } from '@/types'
 
 // Init Log
 log('CONTENT SCRIPT is running...')
@@ -76,7 +76,7 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
             activeElement instanceof HTMLTextAreaElement ||
             activeElement instanceof HTMLSelectElement
           ) {
-            fillElement(activeElement as Inputs)
+            fillElement(activeElement as SupportedInputsType)
           }
           break
 

@@ -1,4 +1,4 @@
-import { Inputs } from '@/types'
+import { SupportedInputsType } from '@/types'
 
 export const isElementVisible = (element: Element): boolean => {
   if (!(element instanceof HTMLElement)) return false
@@ -15,12 +15,12 @@ export const isElementVisible = (element: Element): boolean => {
   )
 }
 
-export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): Inputs[] => {
+export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): SupportedInputsType[] => {
   const allInputs = Array.from(
     (rootElement || document).querySelectorAll(
       'input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
     ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   )
 
-  return allInputs.filter((input) => isElementVisible(input)) as Inputs[]
+  return allInputs.filter((input) => isElementVisible(input)) as SupportedInputsType[]
 }
