@@ -2109,10 +2109,6 @@ packages:
   '@webcomponents/custom-elements@1.6.0':
     resolution: {integrity: sha512-CqTpxOlUCPWRNUPZDxT5v2NnHXA4oox612iUGnmTUGQFhZ1Gkj8kirtl/2wcF6MqX7+PqqicZzOCBKKfIn0dww==}
 
-  acorn-walk@8.2.0:
-    resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
-    engines: {node: '>=0.4.0'}
-
   acorn-walk@8.3.3:
     resolution: {integrity: sha512-MxXdReSRhGO7VlFe1bRG/oI7/mdLV9B9JJT0N8vZOhF7gFRR5l3M8W9G8JxmKV+JC5mGqJ0QvqfSOLsCPa4nUw==}
     engines: {node: '>=0.4.0'}
@@ -3465,9 +3461,6 @@ packages:
   pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
 
-  picocolors@1.0.0:
-    resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
-
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
 
@@ -4795,17 +4788,17 @@ snapshots:
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@webcomponents/custom-elements': 1.6.0
-      acorn-walk: 8.2.0
+      acorn-walk: 8.3.3
       cheerio: 1.0.0
       connect-injector: 0.4.4
       convert-source-map: 1.9.0
-      debug: 4.3.4
+      debug: 4.3.6
       es-module-lexer: 0.10.5
-      fast-glob: 3.3.1
+      fast-glob: 3.3.2
       fs-extra: 10.1.0
       jsesc: 3.0.2
       magic-string: 0.26.7
-      picocolors: 1.0.0
+      picocolors: 1.0.1
       react-refresh: 0.13.0
       rollup: 2.78.1
       rxjs: 7.5.7
@@ -6286,8 +6279,6 @@ snapshots:
   '@vscode/l10n@0.0.18': {}
 
   '@webcomponents/custom-elements@1.6.0': {}
-
-  acorn-walk@8.2.0: {}
 
   acorn-walk@8.3.3:
     dependencies:
@@ -7965,8 +7956,6 @@ snapshots:
   path-to-regexp@6.2.2: {}
 
   pathe@1.1.2: {}
-
-  picocolors@1.0.0: {}
 
   picocolors@1.0.1: {}
 
