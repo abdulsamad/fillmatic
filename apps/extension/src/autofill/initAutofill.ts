@@ -20,6 +20,22 @@ export const initiateAutofill = async (rootElement: Element | null = null) => {
   const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)
 
   await autoFillContenteditableSequentially(contenteditableElements)
+
+  /* iframe */
+  // const iframes = document.querySelectorAll('iframe')
+  // const iframesWithForms = Array.from(iframes).filter((iframe) => {
+  //   try {
+  //     const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+  //     return iframeDoc && (iframeDoc.querySelector('input') !== null || iframeDoc.querySelector('form') !== null)
+  //   } catch (e) {
+  //     // If we can't access the iframe's content due to same-origin policy, ignore it
+  //     return false
+  //   }
+  // })
+
+  // console.log(iframesWithForms)
+
+  // log(`Found ${iframesWithForms.length} iframes with input or form elements`)
 }
 
 const autoFillInputsSequentially = async (inputs: SupportedInputsType[]) => {
