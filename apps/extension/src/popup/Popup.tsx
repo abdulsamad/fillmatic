@@ -1,5 +1,5 @@
-import { useState, useLayoutEffect, useEffect } from 'react'
-import { Settings, Zap, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLineIcon } from 'lucide-react'
+import { useState, useLayoutEffect, useEffect, useCallback } from 'react'
+import { Settings, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLineIcon } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
@@ -9,6 +9,7 @@ import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/comp
 import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
 import { MESSAGES } from '@/consts'
 import { ExtensionCommands, Form } from '@/types'
+import { useTimeout } from '@/hooks/useTimeout'
 
 export const Popup = () => {
   const [isAutofilling, setIsAutofilling] = useState(false)
@@ -16,6 +17,7 @@ export const Popup = () => {
   const [currTab, setCurrTab] = useState<chrome.tabs.Tab | null>(null)
   const [forms, setForms] = useState<Form[]>([])
   const [commands, setCommands] = useState<Record<ExtensionCommands, string>>()
+  const { startDelay, cancelDelay } = useTimeout()
 
   useLayoutEffect(() => {
     isInternalPage()
@@ -80,11 +82,16 @@ export const Popup = () => {
     }
   }
 
-  const scrollElementIntoView = async (form: Form) => {
-    if (!currTab?.id) return
+  const scrollElementIntoView = useCallback(
+    (form: Form) => () => {
+      startDelay(() => {
+        if (!currTab?.id) return
 
-    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
-  }
+        chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
+      })
+    },
+    [currTab],
+  )
 
   return (
     <div className="relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col">
@@ -128,8 +135,8 @@ export const Popup = () => {
                 className="w-full flex items-center justify-start space-x-2"
                 disabled={isDisabled || isAutofilling}
                 variant="secondary"
-                // TODO: Add debounce
-                // onMouseEnter={() => scrollElementIntoView(form)}
+                onMouseEnter={scrollElementIntoView(form)}
+                onMouseLeave={cancelDelay}
                 onClick={() => fillSingleForm(form)}
               >
                 <PencilLineIcon size={20} />
