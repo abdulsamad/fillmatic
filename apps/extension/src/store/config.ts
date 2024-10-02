@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage, devtools } from 'zustand/middleware'
 
-interface ConfigStore {
+import { DEFAULT_CONFIG } from '@/consts'
+import { type formSchemaType } from '@/components/OptionsForm/formSchema'
+
+interface ConfigStore extends formSchemaType {
   lastGeneratedPassword: string
-  setLastGeneratedPassword: (bool: boolean) => void
-  uniquePassword: boolean
-  setUniquePassword: (bool: boolean) => void
+  setLastGeneratedPassword: (password: string) => void
+  saveConfig: (config: formSchemaType) => void
 }
 
 export const useConfigStore = create(
@@ -13,12 +15,14 @@ export const useConfigStore = create(
     persist<ConfigStore>(
       (set, get) => ({
         // State
+        ...DEFAULT_CONFIG,
         lastGeneratedPassword: '',
-        uniquePassword: false,
 
         // Actions
-        setLastGeneratedPassword: (bool: boolean) => set(() => ({ uniquePassword: bool }), false),
-        setUniquePassword: (bool: boolean) => set(() => ({ uniquePassword: bool }), false),
+        saveConfig: (config) => {
+          set(() => ({ ...config }), false)
+        },
+        setLastGeneratedPassword: (password) => set(() => ({ lastGeneratedPassword: password }), false),
       }),
       {
         name: 'config',

@@ -2,7 +2,7 @@ import { HTMLInputTypeAttribute } from 'react'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-import { DEFAULT_CONFIG } from '@/consts'
+import { useConfigStore as configStore } from '@/store/config'
 import { ExtensionCommands, SupportedInputsType } from '@/types'
 
 export * from './log'
@@ -38,14 +38,14 @@ export const isInternalPage = async () => {
   return tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')
 }
 
-export const typeWithEffect = (text: string, element: SupportedInputsType, typeEffect = true): Promise<void> => {
+export const typeWithEffect = (text: string, element: SupportedInputsType, typeEffect: boolean): Promise<void> => {
   return new Promise((resolve) => {
     // Trigger initial focus event
     element.dispatchEvent(new FocusEvent('focus', { bubbles: true }))
 
-    if (typeEffect) {
+    if (configStore.getState().typingEffect && typeEffect) {
       const textArr = text.split('')
-      const charPerMinute = DEFAULT_CONFIG.typeEffectSpeed * 5 // Assuming average word length of 5 characters
+      const charPerMinute = configStore.getState().typingSpeed * 5 // Assuming average word length of 5 characters
       const msPerChar = 60000 / charPerMinute // Convert to milliseconds per character
 
       textArr.forEach((str: string, index) => {
@@ -124,6 +124,10 @@ export const typeWithEffect = (text: string, element: SupportedInputsType, typeE
       // Trigger blur event
       element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
     } else {
+      // Trigger input event
+      const focusEvent = new Event('focus', { bubbles: true })
+      element.dispatchEvent(focusEvent)
+
       // Set value for input elements without type effect
       element.value = text
 

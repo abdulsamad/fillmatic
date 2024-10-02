@@ -1,19 +1,27 @@
-import { log, typeWithEffect, getElementType, isSupportedInput, isContentEditable } from '@/utils'
+import { useConfigStore as configStore } from '@/store/config'
+import { log, typeWithEffect, getElementType, isSupportedInput, isContentEditable, matchElement } from '@/utils'
 import { handleFileInput } from '@/autofill'
-import { DEFAULT_CONFIG } from '@/consts'
 
 import { generateValue } from './generateValue'
 
-export const fillElement = async (elem: Element, config = DEFAULT_CONFIG) => {
+export const fillElement = async (elem: Element) => {
+  const config = configStore.getState()
+
   if (isSupportedInput(elem)) {
     /* Inputs */
     const type = getElementType(elem)
 
     // Ignore elements that are not fillable
-    // TODO: Add file input handling
+    // TODO: Enable file input handling by removing file from array
     if (['button', 'submit', 'reset', 'hidden', 'image', 'file'].includes(type)) return
 
-    // Ignore elements that already have a value
+    // Skip ignored fields
+    if (config?.ignoredFields.split(',').some((field) => matchElement(elem, field.trim()))) {
+      log(`Skipping autofill for ${type} as it is ignored in settings`)
+      return
+    }
+
+    // Skip autofill if element has value and forceAutofill is off (except for certain types)
     if (!config.forceAutofill && elem.value && !['radio', 'checkbox', 'color', 'range', 'select'].includes(type)) {
       log(`Skipping autofill for ${type} as it already has a value`)
       return

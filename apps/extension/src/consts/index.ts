@@ -1,3 +1,5 @@
+import { type formSchemaType } from '@/components/OptionsForm/formSchema'
+
 export enum MESSAGES {
   POPUP_OPENED = 'POPUP_OPENED',
   GET_FORMS = 'GET_FORMS',
@@ -10,10 +12,15 @@ export enum MESSAGES {
   AUTOFILL_ERROR = 'AUTOFILL_ERROR',
 }
 
-export const DEFAULT_CONFIG = {
-  enableTypeEffect: true,
-  typeEffectSpeed: 200,
+export const DEFAULT_CONFIG: formSchemaType = {
+  typingEffect: true,
+  typingSpeed: 410,
+  samePasswordEverytime: false,
   forceAutofill: false,
+  commonPassword: 'pass@123',
+  ignoredFields: 'captcha',
+  tempEmailProvider: 'mailinator.com',
+  alwaysCheckFields: 'terms, conditions, privacy, policy',
 }
 
 export const EXTENSION_ID = chrome.i18n.getMessage('@@extension_id')

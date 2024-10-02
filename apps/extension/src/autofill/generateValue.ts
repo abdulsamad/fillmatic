@@ -9,6 +9,8 @@ export const generateValue = async (
   type: HTMLInputTypeAttribute | 'contenteditable',
   element: SupportedInputsType | Element,
 ) => {
+  const config = configStore.getState()
+
   if (!isSupportedElement(element)) return ''
 
   switch (type) {
@@ -139,7 +141,9 @@ export const generateValue = async (
       }
       return faker.internet.password({ length: 8 })
     case 'email':
-      return faker.internet.email()
+      return faker.internet.email({
+        provider: config.tempEmailProvider,
+      })
     case 'number':
       if (element instanceof HTMLInputElement) {
         const min = element.min ? parseInt(element.min, 10) : 1
@@ -211,15 +215,22 @@ export const generateValue = async (
       return ''
     case 'checkbox':
       if (element instanceof HTMLInputElement) {
-        const termsRegex = /agree|terms|conditions/i
-        if (matchElement(element, termsRegex.source)) {
+        // Check if the field matches any in alwaysCheckFields
+        if (config?.alwaysCheckFields.split(',').some((field) => matchElement(element, field.trim()))) {
           return true
         }
+
         if (element.name) {
           const checkboxes = document.querySelectorAll(`input[name="${element.name}"][type="checkbox"]`)
-          const randomCheckbox = faker.helpers.arrayElement(Array.from(checkboxes)) as HTMLInputElement
-          return randomCheckbox === element
+          if (checkboxes.length > 1) {
+            // If multiple checkboxes with the same name, randomly check one
+            const randomCheckbox = faker.helpers.arrayElement(Array.from(checkboxes)) as HTMLInputElement
+            return randomCheckbox === element
+          }
         }
+
+        // For single checkboxes or those without a name, randomly set to true or false
+        return faker.datatype.boolean()
       }
       return faker.datatype.boolean()
     case 'radio':
@@ -247,18 +258,20 @@ export const generateValue = async (
 
 const handlePasswordGeneration = async (element: HTMLInputElement, reenter = false) => {
   let generatedPassword: string = ''
+  const config = configStore.getState()
   const maxLength = element.maxLength > 0 ? element.maxLength : 8
   const minLength = element.minLength > 0 ? element.minLength : undefined
-  const samePasswordEverytime = true
+  const samePasswordEverytime = config.samePasswordEverytime
 
+  // TODO: Handle is common PIN or Password is less or more then max/min length
   if (reenter) {
-    const { lastGeneratedPassword } = configStore.getState()
+    const { lastGeneratedPassword } = config
 
     if (lastGeneratedPassword) {
       generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
     }
   } else if (matchElement(element, 'pin')) {
-    const hardcodedPin = '1234'
+    const hardcodedPin = '111111'
     const pinLength = minLength || maxLength
 
     if (samePasswordEverytime && hardcodedPin.length <= maxLength) {
@@ -272,7 +285,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     clientLog('Generated PIN: ', generatedPassword)
     configStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
-    const hardcodedPassword = 'Pass@123'
+    const hardcodedPassword = config.commonPassword
     const passwordLength = minLength || maxLength
 
     if (samePasswordEverytime && hardcodedPassword.length <= maxLength) {
