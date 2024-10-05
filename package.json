@@ -1,7 +1,7 @@
 {
   "name": "fill-matic",
   "description": "FillMatic autofills forms with dummy data in one click, saving developers time and making testing faster and easier.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "build": "turbo build",
