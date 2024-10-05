@@ -4,6 +4,12 @@ import { ExtensionCommands } from '@/types'
 
 log('BACKGROUND SCRIPT is running...')
 
+chrome.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === 'install') {
+    chrome.tabs.create({ url: `https://fillmatic.pages.dev/demo/` })
+  }
+})
+
 // chrome.action.onClicked.addListener(async () => {
 //
 // })
