@@ -70,6 +70,7 @@ const Index = () => {
       <Tabs defaultValue="general" className="mb-6">
         {/* <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="custom-fields">Custom Fields</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
           <TabsTrigger value="advanced">Experimental</TabsTrigger>
         </TabsList> */}
@@ -90,8 +91,8 @@ const Index = () => {
                             <InfoIcon className="size-5" />
                           </TooltipTrigger>
                           <TooltipContent className="w-1/2 text-pretty">
-                            When enabled, AutoFill will simulate typing and related events (e.g., focus, input) for a
-                            more natural experience. When disabled, values will be updated instantly, but will still
+                            When enabled, AutoFill will simulate typing and related events (e.g., focus, input, change)
+                            for a more natural experience. When disabled, values will be updated instantly, but still
                             attempt to trigger a few events.
                           </TooltipContent>
                         </Tooltip>
@@ -256,14 +257,13 @@ const Index = () => {
                       <FormLabel>Always Check These Fields</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter comma-separated values, e.g. Terms & Conditions, Newsletter, Privacy Policy"
+                          placeholder="Enter comma-separated values, e.g. terms, newsletter, privacy policy"
                           className="w-full"
                           {...field}
                         />
                       </FormControl>
                       <FormDescription className="italic">
-                        Tip: You can add custom fields by typing them in, separated by commas. These fields will be
-                        automatically checked when filling out forms.
+                        These fields will be always be checked when filling out forms.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -274,7 +274,7 @@ const Index = () => {
                   <Button type="button" variant="outline" size="sm" onClick={handleReset}>
                     Reset to Defaults
                   </Button>
-                  <Button type="submit" size="sm">
+                  <Button type="submit" size="sm" disabled={form.formState.isDirty}>
                     Save Changes
                   </Button>
                 </div>
@@ -282,7 +282,9 @@ const Index = () => {
             </Form>
           </TabsContent>
 
-          {/* <TabsContent value="appearance" className="space-y-4">
+          {/* <TabsContent value="custom-fields"></TabsContent>
+
+          <TabsContent value="appearance" className="space-y-4">
             <div className="space-y-2">
               <Label>Theme</Label>
               <RadioGroup defaultValue="light">
