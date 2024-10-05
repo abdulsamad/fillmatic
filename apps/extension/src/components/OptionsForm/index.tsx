@@ -274,7 +274,7 @@ const Index = () => {
                   <Button type="button" variant="outline" size="sm" onClick={handleReset}>
                     Reset to Defaults
                   </Button>
-                  <Button type="submit" size="sm" disabled={form.formState.isDirty}>
+                  <Button type="submit" size="sm" disabled={!form.formState.isDirty}>
                     Save Changes
                   </Button>
                 </div>
