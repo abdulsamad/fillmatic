@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 
-export const useTimeout = (delay = 800) => {
+export const useTimeout = (delay = 600) => {
   const [isTimeoutActive, setIsTimeoutActive] = useState(false)
 
   const delayRef = useRef<NodeJS.Timeout | null>(null)

@@ -86,7 +86,7 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
 
             elem?.scrollIntoView({
               behavior: 'smooth',
-              block: 'center',
+              block: 'start',
             })
           }
 
