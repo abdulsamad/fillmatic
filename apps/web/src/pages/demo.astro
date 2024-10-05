@@ -4,6 +4,19 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title='Welcome to FillMatic.'>
 	<form id='form'>
+		<p class='text-lg text-center my-4'>
+			This page is created to test FillMatic extension's autofill functionality.
+			Just click on extension icon and click "Fill All Fields" to test. If you
+			have not downloaded it, please visit <a
+				href='https://chromewebstore.google.com/detail/mpkjmebmnkhpfomlopbehcpmgmfndfje'
+				target='_blank'
+				rel='noopener'
+				>Chrome Web Store
+			</a>. <br /> Have a good one and please provide feedback <a
+				href='mailto:hello@abdulsamad.dev'
+				rel='noopener noreferrer'>here</a
+			>.
+		</p>
 		<label>
 			Text:
 			<input
@@ -315,18 +328,7 @@ import Layout from '../layouts/Layout.astro';
 				onkeyup="console.log('reset keyup')"
 			/>
 		</label>
-		<label>
-			Button:
-			<input
-				type='button'
-				onclick="console.log('button clicked')"
-				onfocus="console.log('button focused')"
-				onblur="console.log('button blurred')"
-				onkeydown="console.log('button keydown')"
-				onkeyup="console.log('button keyup')"
-				value='Button Input'
-			/>
-		</label>
+
 		<label>
 			Submit:
 			<input
@@ -339,7 +341,7 @@ import Layout from '../layouts/Layout.astro';
 			/>
 		</label>
 	</form>
-	<div class=''>
+	<!-- <div class=''>
 		<div
 			class='w-1/2 overflow-hidden border border-amber-400 h-4 py-5'
 			oninput="console.log('contenteditable input')"
@@ -350,6 +352,77 @@ import Layout from '../layouts/Layout.astro';
 			contenteditable='true'>
 		</div>
 	</div>
+
+	<iframe
+		id='demoFrame'
+		srcdoc='
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Iframe Form</title>
+		</head>
+		<body>
+			<form id="iframeForm">
+				<label>
+					Iframe Text:
+					<input
+						type="text"
+						name="iframeText"
+						placeholder="Enter text"
+						onclick="console.log(&apos;iframe: text clicked&apos;)"
+						onfocus="console.log(&apos;iframe: text focused&apos;)"
+						onblur="console.log(&apos;iframe: text blurred&apos;)"
+						oninput="console.log(&apos;iframe: text input&apos;)"
+						onchange="console.log(&apos;iframe: text changed&apos;)"
+						onkeydown="console.log(&apos;iframe: text keydown&apos;)"
+						onkeyup="console.log(&apos;iframe: text keyup&apos;)"
+					/>
+				</label>
+				<br><br>
+				<label>
+					Iframe Email:
+					<input
+						type="email"
+						name="iframeEmail"
+						placeholder="Enter email"
+						onclick="console.log(&apos;iframe: email clicked&apos;)"
+						onfocus="console.log(&apos;iframe: email focused&apos;)"
+						onblur="console.log(&apos;iframe: email blurred&apos;)"
+						oninput="console.log(&apos;iframe: email input&apos;)"
+						onchange="console.log(&apos;iframe: email changed&apos;)"
+						onkeydown="console.log(&apos;iframe: email keydown&apos;)"
+						onkeyup="console.log(&apos;iframe: email keyup&apos;)"
+					/>
+				</label>
+				<br><br>
+				<label>
+					Iframe Checkbox:
+					<input
+						type="checkbox"
+						name="iframeCheckbox"
+						onclick="console.log(&apos;iframe: checkbox clicked&apos;)"
+						onfocus="console.log(&apos;iframe: checkbox focused&apos;)"
+						onblur="console.log(&apos;iframe: checkbox blurred&apos;)"
+						onchange="console.log(&apos;iframe: checkbox changed&apos;)"
+					/>
+				</label>
+				<br><br>
+				<input
+					type="submit"
+					value="Submit Iframe Form"
+					onclick="console.log(&apos;iframe: submit clicked&apos;)"
+					onfocus="console.log(&apos;iframe: submit focused&apos;)"
+					onblur="console.log(&apos;iframe: submit blurred&apos;)"
+				/>
+			</form>
+		</body>
+		</html>
+	'
+		width='100%'
+		height='300'
+		style='border: 1px solid #ccc;'></iframe> -->
 </Layout>
 
 <script>
