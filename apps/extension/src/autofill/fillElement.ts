@@ -22,7 +22,8 @@ export const fillElement = async (elem: Element) => {
     }
 
     // Skip autofill if element has value and forceAutofill is off (except for certain types)
-    if (!config.forceAutofill && elem.value && !['radio', 'checkbox', 'color', 'range', 'select'].includes(type)) {
+    // const defaultValuedElements = ['radio', 'checkbox', 'color', 'range', 'select']
+    if (!config.forceAutofill && elem.value) {
       log(`Skipping autofill for ${type} as it already has a value`)
       return
     }

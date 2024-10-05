@@ -5,16 +5,14 @@ import { getSiteRule } from '@/utils/site-rules'
 // import { getUserRule } from '@/utils/user-rules'
 // import { getProfile } from '@/utils/user-profiles'
 
+import { useConfigStore as configStore } from '@/store/config'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
 import { SupportedInputsType } from '@/types'
-import { useConfigStore as configStore } from '@/store/config'
 
 export const generateValue = async (
   type: HTMLInputTypeAttribute | 'contenteditable',
   element: SupportedInputsType | Element,
 ) => {
-  const config = configStore.getState()
-
   if (!isSupportedElement(element)) return ''
 
   const currentUrl = window.location.href
@@ -24,7 +22,7 @@ export const generateValue = async (
 
   if (!isSupportedElement(element)) return ''
 
-  // Check profile rules first
+  /* Check profile rules first */
   // if (profile && element instanceof HTMLElement) {
   //   const elementName = element.name || element.id
   //   if (elementName && profile.rules[elementName]) {
@@ -33,7 +31,7 @@ export const generateValue = async (
   //   }
   // }
 
-  // Check for user-defined rules first
+  /* Check for user-defined rules first */
   // if (userRule && element instanceof HTMLElement) {
   //   const elementName = element.name || element.id
   //   if (elementName && userRule.rules[elementName]) {
@@ -42,7 +40,7 @@ export const generateValue = async (
   //   }
   // }
 
-  // Check for site-specific rules first
+  /* Check for site-specific rules first */
   if (siteRule && isSupportedInput(element)) {
     const elementName = element.name || element.id
 
@@ -51,7 +49,182 @@ export const generateValue = async (
     }
   }
 
-  // Fallback to default generation logic
+  /* Generate based on AutoComplete */
+  const autoCompleteTokensToSkip = [
+    'new-password',
+    'current-password',
+    'username',
+    'bday',
+    'bday-day',
+    'bday-month',
+    'bday-year',
+  ]
+  if (
+    element instanceof HTMLInputElement &&
+    element.autocomplete &&
+    !['off', 'on', ...autoCompleteTokensToSkip].includes(element.autocomplete)
+  ) {
+    return handleAutocompleteToken(element)
+  }
+
+  /* Fallback to default generation logic */
+  return handleDefaultInputs(type, element)
+}
+
+const handleAutocompleteToken = (element: HTMLInputElement) => {
+  const config = configStore.getState()
+  const tokens = element.autocomplete.toLowerCase().split(' ')
+  const mainToken = tokens[tokens.length - 1] // Get the last token
+
+  switch (mainToken) {
+    // Digital Contact Tokens
+    case 'tel':
+    case 'tel-country-code':
+    case 'tel-national':
+    case 'tel-area-code':
+    case 'tel-local':
+    case 'tel-local-prefix':
+    case 'tel-local-suffix':
+    case 'tel-extension':
+      return faker.phone.number()
+    case 'email':
+      return faker.internet.email({
+        provider: config.tempEmailProvider,
+      })
+    case 'impp':
+      return faker.internet.url()
+
+    // Personal Information Tokens
+    case 'name':
+      return faker.person.fullName()
+    case 'honorific-prefix':
+      return faker.person.prefix()
+    case 'given-name':
+      return faker.person.firstName()
+    case 'additional-name':
+      return faker.person.middleName()
+    case 'family-name':
+      return faker.person.lastName()
+    case 'honorific-suffix':
+      return faker.person.suffix()
+    case 'nickname':
+    // case 'username':
+    //   return faker.internet.userName()
+    // case 'new-password':
+    // case 'current-password':
+    //   return handlePasswordGeneration(element)
+    case 'one-time-code':
+      return faker.number.int({ min: 100000, max: 999999 }).toString()
+    case 'organization-title':
+      return faker.person.jobTitle()
+    case 'organization':
+      return faker.company.name()
+
+    // Address Tokens
+    case 'street-address':
+    case 'address-line1':
+    case 'address-line2':
+    case 'address-line3':
+      return faker.location.streetAddress()
+    case 'address-level4':
+    case 'address-level3':
+    case 'address-level2':
+    case 'address-level1':
+      return faker.location.city()
+    case 'country':
+    case 'country-name':
+      return faker.location.country()
+    case 'postal-code':
+      return faker.location.zipCode()
+
+    // Payment Tokens
+    case 'cc-name':
+    case 'cc-given-name':
+    case 'cc-additional-name':
+    case 'cc-family-name':
+      return faker.person.fullName()
+    case 'cc-number':
+      return faker.finance.creditCardNumber()
+    case 'cc-exp':
+      const currentDate = new Date()
+      const placeholder = element?.placeholder || element?.pattern || 'MM/YY'
+      const separator = placeholder.includes('/') ? '/' : '-'
+      const parts = placeholder.split(separator)
+
+      let month = (currentDate.getMonth() + 1).toString()
+      let year = currentDate.getFullYear().toString().slice(-2)
+
+      if (parts.includes('MM')) {
+        month = month.toString().padStart(2, '0')
+      }
+
+      if (parts.includes('YY')) {
+        year = year.toString()
+      } else if (parts.includes('YYYY')) {
+        year = currentDate.getFullYear().toString()
+      }
+
+      return `${month}${separator}${year}`
+    case 'cc-exp-month':
+      return faker.date.future().getMonth().toString().padStart(2, '0')
+    case 'cc-exp-year':
+      return faker.date.future().getFullYear().toString()
+    case 'cc-csc':
+      return faker.finance.creditCardCVV()
+    case 'cc-type':
+      return faker.finance.creditCardIssuer()
+    case 'transaction-currency':
+      return faker.finance.currencyCode()
+    case 'transaction-amount':
+      return faker.finance.amount()
+
+    // Other Tokens
+    case 'language':
+      return faker.location.country()
+    // case 'bday':
+    // case 'bday-day':
+    // case 'bday-month':
+    // case 'bday-year':
+    //   return faker.date.birthdate().toISOString().split('T')[0]
+    case 'sex':
+      return faker.person.sex()
+    case 'url':
+      return faker.internet.url()
+    case 'photo':
+      return faker.image.url()
+
+    // Recipient Tokens
+    case 'recipient-name':
+      return faker.person.fullName()
+    case 'recipient-email':
+      return faker.internet.email({
+        provider: config.tempEmailProvider,
+      })
+    case 'recipient-phone':
+      return faker.phone.number()
+
+    // Group Tokens
+    case 'group-name':
+      return faker.company.name()
+    case 'group-description':
+      return faker.lorem.sentence()
+    case 'group-member':
+      return faker.person.fullName()
+
+    // Named Tokens
+    case 'named-entity':
+      return faker.company.name()
+    case 'named-entity-type':
+      return faker.company.buzzNoun()
+  }
+}
+
+const handleDefaultInputs = (
+  type: HTMLInputTypeAttribute | 'contenteditable',
+  element: SupportedInputsType | Element,
+) => {
+  const config = configStore.getState()
+
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
@@ -72,7 +245,9 @@ export const generateValue = async (
             }
             break
           case matchElement(element, 'email') || matchElement(element, 'e-mail') || matchElement(element, 'mail'):
-            return faker.internet.email()
+            return faker.internet.email({
+              provider: config.tempEmailProvider,
+            })
           case matchElement(element, 'phone') ||
             matchElement(element, 'tel') ||
             matchElement(element, 'mobile') ||
