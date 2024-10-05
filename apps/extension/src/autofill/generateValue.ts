@@ -1,7 +1,11 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { clientLog, isSupportedElement, matchElement } from '@/utils'
+import { getSiteRule } from '@/utils/site-rules'
+// import { getUserRule } from '@/utils/user-rules'
+// import { getProfile } from '@/utils/user-profiles'
+
+import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
 import { SupportedInputsType } from '@/types'
 import { useConfigStore as configStore } from '@/store/config'
 
@@ -13,6 +17,41 @@ export const generateValue = async (
 
   if (!isSupportedElement(element)) return ''
 
+  const currentUrl = window.location.href
+  const siteRule = getSiteRule(currentUrl)
+  // const userRule = getUserRule(currentUrl)
+  // const profile = config.selectedProfile ? getProfile(config.selectedProfile) : undefined
+
+  if (!isSupportedElement(element)) return ''
+
+  // Check profile rules first
+  // if (profile && element instanceof HTMLElement) {
+  //   const elementName = element.name || element.id
+  //   if (elementName && profile.rules[elementName]) {
+  //     const rule = profile.rules[elementName]
+  //     return typeof rule === 'function' ? rule(element as SupportedInputsType) : rule
+  //   }
+  // }
+
+  // Check for user-defined rules first
+  // if (userRule && element instanceof HTMLElement) {
+  //   const elementName = element.name || element.id
+  //   if (elementName && userRule.rules[elementName]) {
+  //     const rule = userRule.rules[elementName]
+  //     return typeof rule === 'function' ? rule(element as SupportedInputsType) : rule
+  //   }
+  // }
+
+  // Check for site-specific rules first
+  if (siteRule && isSupportedInput(element)) {
+    const elementName = element.name || element.id
+
+    if (elementName && siteRule.rules[elementName]) {
+      return siteRule.rules[elementName](element as SupportedInputsType)
+    }
+  }
+
+  // Fallback to default generation logic
   switch (type) {
     case 'text':
       if (element instanceof HTMLInputElement) {
@@ -84,15 +123,26 @@ export const generateValue = async (
             matchElement(element, 'city') ||
             matchElement(element, 'state') ||
             matchElement(element, 'zip') ||
-            matchElement(element, 'postal'):
+            matchElement(element, 'postal') ||
+            matchElement(element, 'suburb') ||
+            matchElement(element, 'district'):
             if (matchElement(element, 'street')) {
               return faker.location.streetAddress()
             } else if (matchElement(element, 'city')) {
               return faker.location.city()
+            } else if (matchElement(element, 'suburb')) {
+              // Using a combination of city and state for a more suburb-like result
+              return `${faker.location.city()} ${faker.location.state({ abbreviated: true })}`
             } else if (matchElement(element, 'state')) {
               return faker.location.state()
-            } else if (matchElement(element, 'zip') || matchElement(element, 'postal')) {
+            } else if (
+              matchElement(element, 'zip') ||
+              matchElement(element, 'postal') ||
+              matchElement(element, 'postalCode')
+            ) {
               return faker.location.zipCode()
+            } else if (matchElement(element, 'district')) {
+              return faker.location.county()
             } else {
               return faker.location.streetAddress()
             }
