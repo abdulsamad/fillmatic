@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'
-import OptionsForm from '@/components/OptionsForm'
+import OptionsForm from '@/components/Options/Form'
 
 export const Options = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)

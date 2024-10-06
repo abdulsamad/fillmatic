@@ -1,4 +1,4 @@
-import { type formSchemaType } from '@/components/OptionsForm/formSchema'
+import { type formSchemaType } from '@/components/Options/formSchema'
 
 export enum MESSAGES {
   POPUP_OPENED = 'POPUP_OPENED',

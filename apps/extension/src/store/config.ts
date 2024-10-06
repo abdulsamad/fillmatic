@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage, devtools } from 'zustand/middleware'
 
 import { DEFAULT_CONFIG } from '@/consts'
-import { type formSchemaType } from '@/components/OptionsForm/formSchema'
+import { type formSchemaType } from '@/components/Options/formSchema'
 
 interface ConfigStore extends formSchemaType {
   lastGeneratedPassword: string

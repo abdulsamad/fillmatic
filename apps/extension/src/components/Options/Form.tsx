@@ -17,7 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 import { formSchema, formSchemaType } from './formSchema'
 
-const Index = () => {
+const OptionsForm = () => {
   const saveConfig = useConfigStore((state) => state.saveConfig)
   const config = useConfigStore(
     useShallow(
@@ -338,4 +338,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default OptionsForm
