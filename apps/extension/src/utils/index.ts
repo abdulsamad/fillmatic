@@ -172,9 +172,17 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
   const id = element.id?.toLowerCase()
   const className = element.className?.toLowerCase()
 
-  const regex = new RegExp(`\\b${word.toLowerCase()}\\b`)
+  const words = word.toLowerCase().split(' ')
+  const joinedWord = words.join('')
 
-  return regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)
+  for (const w of [word.toLowerCase(), joinedWord]) {
+    const regex = new RegExp(`\\b${w}\\b`)
+    if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key]).state

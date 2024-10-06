@@ -1,10 +1,16 @@
 import { useConfigStore as configStore } from '@/store/config'
+import { AutoFillMessage } from '@/types'
 import { log, typeWithEffect, getElementType, isSupportedInput, isContentEditable, matchElement } from '@/utils'
 import { handleFileInput } from '@/autofill'
 
 import { generateValue } from './generateValue'
 
-export const fillElement = async (elem: Element) => {
+interface IFillElement {
+  elem: Element
+  message?: AutoFillMessage
+}
+
+export const fillElement = async ({ elem, message }: IFillElement) => {
   const config = configStore.getState()
 
   if (isSupportedInput(elem)) {
@@ -33,7 +39,7 @@ export const fillElement = async (elem: Element) => {
       return
     }
 
-    const value = await generateValue(type, elem)
+    const value = await generateValue(type, elem, message)
 
     switch (type) {
       case 'checkbox':
@@ -47,7 +53,7 @@ export const fillElement = async (elem: Element) => {
         elem.value = value as string
         break
 
-      default:
+      default: {
         try {
           const elemsWithoutTypeEffect = ['week', 'month', 'date', 'time', 'datetime-local']
 
@@ -55,6 +61,7 @@ export const fillElement = async (elem: Element) => {
         } catch (error) {
           log(`Error during type effect: ${error}`)
         }
+      }
     }
   } else if (isContentEditable(elem)) {
     /* Contenteditable */

@@ -5,8 +5,6 @@ import { DEFAULT_CONFIG } from '@/consts'
 import { type formSchemaType } from '@/components/Options/formSchema'
 
 interface ConfigStore extends formSchemaType {
-  lastGeneratedPassword: string
-  setLastGeneratedPassword: (password: string) => void
   saveConfig: (config: formSchemaType) => void
 }
 
@@ -16,13 +14,11 @@ export const useConfigStore = create(
       (set, get) => ({
         // State
         ...DEFAULT_CONFIG,
-        lastGeneratedPassword: '',
 
         // Actions
         saveConfig: (config) => {
           set(() => ({ ...config }), false)
         },
-        setLastGeneratedPassword: (password) => set(() => ({ lastGeneratedPassword: password }), false),
       }),
       {
         name: 'config',

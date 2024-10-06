@@ -4,21 +4,23 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title='Welcome to FillMatic.'>
 	<form id='form'>
-		<p class='text-lg text-center my-2'>
-			👋 Hey there! <br />
-			<br /> This page is created to test FillMatic extension's autofill functionality.
-			Just click on extension icon and click "Fill All Fields" to test. If you have
-			not downloaded it, please visit <a
-				href='https://chromewebstore.google.com/detail/mpkjmebmnkhpfomlopbehcpmgmfndfje'
-				target='_blank'
-				rel='noopener'
-				>Chrome Web Store
-			</a>. <br />
-			<br /> Have a good one and please provide feedback <a
-				href='mailto:hello@abdulsamad.dev'
-				rel='noopener noreferrer'>here</a
-			>.
-		</p>
+		<div>
+			<p class='text-lg text-center'>
+				👋 Hey there! <br />
+				<br /> This page is created to test <strong>FillMatic</strong> extension's
+				autofill functionality. Just click on extension icon and click "Fill All
+				Fields" to test. If you have not downloaded it, please visit <a
+					href='https://chromewebstore.google.com/detail/mpkjmebmnkhpfomlopbehcpmgmfndfje'
+					target='_blank'
+					rel='noopener'
+					>Chrome Web Store
+				</a>. <br />
+				<br /> Have a good one and please provide feedback <a
+					href='mailto:hello@abdulsamad.dev?subject=FillMatic&body=Hey%20Abdul%2C'
+					rel='noopener noreferrer'>here</a
+				>.
+			</p>
+		</div>
 		<div>
 			<p>
 				When you click on <strong>"Fill Form 1"</strong> from the extension popup,
@@ -27,7 +29,7 @@ import Layout from '../layouts/Layout.astro';
 				will populate all the input fields without performing any additional actions.
 				<em
 					>For a detailed view of the triggered events, feel free to check the
-					console logs on this page
+					console logs on this page after autofilling the inputs :-)
 				</em>
 			</p>
 		</div>
@@ -511,10 +513,10 @@ import Layout from '../layouts/Layout.astro';
 		border-radius: 1rem;
 		background: linear-gradient(
 			135deg,
-			#f5f7fa,
-			#c3cfe2
+			#31363f,
+			#3a3d43
 		); /* Modern SaaS gradient background */
-		color: #2c3e50; /* Darker text color for better readability */
+		color: #eee;
 		font-family: 'Roboto', sans-serif; /* Material UI font */
 	}
 
@@ -523,16 +525,22 @@ import Layout from '../layouts/Layout.astro';
 		flex-direction: column;
 		align-items: center;
 		box-sizing: border-box;
-		background: #ffffff; /* Flat white background */
+		background: #222831;
+		color: #eeeeee;
 		padding: 2rem;
 		gap: 1.5rem;
 		margin: auto;
 		width: 50%;
 		max-width: 600px;
-		border-radius: 16px; /* Increased border radius */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
-		border: none; /* Removed border */
-		overflow: hidden; /* Fix input overflow on right side */
+		border-radius: 16px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		border: none;
+		overflow: hidden;
+	}
+
+	form a,
+	form label {
+		color: #eee;
 	}
 
 	label {
@@ -541,7 +549,7 @@ import Layout from '../layouts/Layout.astro';
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.5rem;
-		color: #34495e; /* Modern SaaS text color */
+		color: #34495e;
 		font-weight: bold;
 	}
 
@@ -549,14 +557,14 @@ import Layout from '../layouts/Layout.astro';
 		width: 100%;
 		padding: 0.75rem;
 		box-sizing: border-box;
-		border: 1px solid #dfe6e9; /* Softer border */
-		border-radius: 8px; /* Increased border radius */
-		background: #ecf0f1; /* Softer input background */
-		color: #2c3e50; /* Darker text color */
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Softer shadow */
+		border: 1px solid #dfe6e9;
+		border-radius: 8px;
+		background: #ecf0f1;
+		color: #2c3e50;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		transition:
 			background 0.3s ease,
-			border 0.3s ease; /* Smooth transition for background and border */
+			border 0.3s ease;
 	}
 
 	input[type='radio'],
@@ -564,7 +572,7 @@ import Layout from '../layouts/Layout.astro';
 	input[type='range'] {
 		display: inline-block;
 		margin-right: 1rem;
-		box-shadow: none; /* Remove shadow from checkbox and radio */
+		box-shadow: none;
 	}
 
 	input[type='color'] {
@@ -573,18 +581,14 @@ import Layout from '../layouts/Layout.astro';
 		width: 50px;
 		height: 50px;
 		padding: 2px;
-		border: 2px solid #34495e; /* Modern SaaS border */
-		border-radius: 50%; /* Circular shape */
-		background: linear-gradient(
-			135deg,
-			#ecf0f1,
-			#34495e
-		); /* Gradient background */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Softer shadow */
+		border: 2px solid #34495e;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #ecf0f1, #34495e);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 		transition:
 			transform 0.3s ease,
-			box-shadow 0.3s ease; /* Smooth transition for transform and shadow */
-		cursor: pointer; /* Pointer cursor on hover */
+			box-shadow 0.3s ease;
+		cursor: pointer;
 		text-align: center;
 		margin: auto;
 	}
@@ -603,9 +607,9 @@ import Layout from '../layouts/Layout.astro';
 	}
 
 	input:focus {
-		background: #dfe6e9; /* Softer focus background */
-		border: 1px solid #34495e; /* Modern SaaS focus border */
-		outline: none; /* Removed default outline */
+		background: #dfe6e9;
+		border: 1px solid #34495e;
+		outline: none;
 	}
 
 	.form-details {
@@ -616,6 +620,7 @@ import Layout from '../layouts/Layout.astro';
 		gap: 1rem;
 		padding: 2rem;
 		margin: auto;
+		color: #eee !important;
 	}
 
 	.detail-label {

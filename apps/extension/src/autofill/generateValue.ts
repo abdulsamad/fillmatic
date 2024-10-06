@@ -6,12 +6,14 @@ import { getSiteRule } from '@/utils/site-rules'
 // import { getProfile } from '@/utils/user-profiles'
 
 import { useConfigStore as configStore } from '@/store/config'
+import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
+import { AutoFillMessage, SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
-import { SupportedInputsType } from '@/types'
 
 export const generateValue = async (
   type: HTMLInputTypeAttribute | 'contenteditable',
   element: SupportedInputsType | Element,
+  message?: AutoFillMessage,
 ) => {
   if (!isSupportedElement(element)) return ''
 
@@ -41,11 +43,12 @@ export const generateValue = async (
   // }
 
   /* Check for site-specific rules first */
-  if (siteRule && isSupportedInput(element)) {
+  if (siteRule && message && isSupportedInput(element)) {
     const elementName = element.name || element.id
+    const matchingRule = siteRule.rules.find((rule) => rule.match === elementName && rule.messageId === message.id)
 
-    if (elementName && siteRule.rules[elementName]) {
-      return siteRule.rules[elementName](element as SupportedInputsType)
+    if (matchingRule) {
+      return matchingRule.value
     }
   }
 
@@ -62,7 +65,9 @@ export const generateValue = async (
   if (
     element instanceof HTMLInputElement &&
     element.autocomplete &&
-    !['off', 'on', ...autoCompleteTokensToSkip].includes(element.autocomplete)
+    !['off', 'on'].includes(element.autocomplete) &&
+    // Resovle to default propery if any one the token is from the skipped token
+    !element.autocomplete.split(' ').some((token) => autoCompleteTokensToSkip.includes(token))
   ) {
     return handleAutocompleteToken(element)
   }
@@ -73,7 +78,8 @@ export const generateValue = async (
 
 const handleAutocompleteToken = (element: HTMLInputElement) => {
   const config = configStore.getState()
-  const tokens = element.autocomplete.toLowerCase().split(' ')
+  const contentScriptState = contentScriptStore.getState()
+  const tokens = element.autocomplete.toLowerCase()?.split(' ')
   const mainToken = tokens[tokens.length - 1] // Get the last token
 
   switch (mainToken) {
@@ -89,6 +95,8 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
       return faker.phone.number()
     case 'email':
       return faker.internet.email({
+        firstName: contentScriptState.firstName,
+        lastName: contentScriptState.lastName,
         provider: config.tempEmailProvider,
       })
     case 'impp':
@@ -149,7 +157,7 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
       const currentDate = new Date()
       const placeholder = element?.placeholder || element?.pattern || 'MM/YY'
       const separator = placeholder.includes('/') ? '/' : '-'
-      const parts = placeholder.split(separator)
+      const parts = placeholder?.split(separator)
 
       let month = (currentDate.getMonth() + 1).toString()
       let year = currentDate.getFullYear().toString().slice(-2)
@@ -185,7 +193,7 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
     // case 'bday-day':
     // case 'bday-month':
     // case 'bday-year':
-    //   return faker.date.birthdate().toISOString().split('T')[0]
+    //   return faker.date.birthdate().toISOString()?.split('T')[0]
     case 'sex':
       return faker.person.sex()
     case 'url':
@@ -198,6 +206,8 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
       return faker.person.fullName()
     case 'recipient-email':
       return faker.internet.email({
+        firstName: contentScriptState.firstName,
+        lastName: contentScriptState.lastName,
         provider: config.tempEmailProvider,
       })
     case 'recipient-phone':
@@ -224,6 +234,7 @@ const handleDefaultInputs = (
   element: SupportedInputsType | Element,
 ) => {
   const config = configStore.getState()
+  const contentScriptState = contentScriptStore.getState()
 
   switch (type) {
     case 'text':
@@ -231,21 +242,33 @@ const handleDefaultInputs = (
         switch (true) {
           case matchElement(element, 'full name') ||
             matchElement(element, 'first name') ||
+            matchElement(element, 'given name') ||
             matchElement(element, 'last name') ||
+            matchElement(element, 'surname') ||
+            matchElement(element, 'family name') ||
             matchElement(element, 'name'):
             if (matchElement(element, 'full name')) {
               const fullName = faker.person.fullName()
+              contentScriptStore.setState({ firstName: fullName })
               return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
-            } else if (matchElement(element, 'first name')) {
+            } else if (matchElement(element, 'first name') || matchElement(element, 'given name')) {
               const firstName = faker.person.firstName()
+              contentScriptStore.setState({ firstName })
               return element.maxLength > 0 ? firstName.slice(0, element.maxLength) : firstName
-            } else if (matchElement(element, 'last name')) {
+            } else if (
+              matchElement(element, 'last name') ||
+              matchElement(element, 'surname') ||
+              matchElement(element, 'family name')
+            ) {
               const lastName = faker.person.lastName()
+              contentScriptStore.setState({ lastName })
               return element.maxLength > 0 ? lastName.slice(0, element.maxLength) : lastName
             }
             break
           case matchElement(element, 'email') || matchElement(element, 'e-mail') || matchElement(element, 'mail'):
             return faker.internet.email({
+              firstName: contentScriptState.firstName,
+              lastName: contentScriptState.lastName,
               provider: config.tempEmailProvider,
             })
           case matchElement(element, 'phone') ||
@@ -287,7 +310,7 @@ const handleDefaultInputs = (
 
                 return formattedDate
               } else {
-                return date.toISOString().split('T')[0]
+                return date.toISOString()?.split('T')[0]
               }
             }
 
@@ -321,6 +344,16 @@ const handleDefaultInputs = (
             } else {
               return faker.location.streetAddress()
             }
+          case matchElement(element, 'confirm password') ||
+            matchElement(element, 'reenter password') ||
+            matchElement(element, 'reenter') ||
+            matchElement(element, 'confirm reenter') ||
+            matchElement(element, 'reenter PIN') ||
+            matchElement(element, 're-enter') ||
+            matchElement(element, 'confirm re-enter') ||
+            matchElement(element, 're-enter PIN') ||
+            matchElement(element, 'confirm'):
+            return handlePasswordGeneration(element, true)
           case matchElement(element, 'company') || matchElement(element, 'organization'):
             return faker.company.name()
           case matchElement(element, 'job title') || matchElement(element, 'job'):
@@ -340,16 +373,12 @@ const handleDefaultInputs = (
             return faker.finance.creditCardCVV()
           case matchElement(element, 'cardtype'):
             return faker.finance.creditCardIssuer()
-          case matchElement(element, 'confirm password') ||
-            matchElement(element, 'reenter password') ||
-            matchElement(element, 'reenter') ||
-            matchElement(element, 'confirm reenter') ||
-            matchElement(element, 'reenter PIN') ||
-            matchElement(element, 're-enter') ||
-            matchElement(element, 'confirm re-enter') ||
-            matchElement(element, 're-enter PIN') ||
-            matchElement(element, 'confirm'):
-            return handlePasswordGeneration(element, true)
+          case matchElement(element, 'Day'):
+            if (element instanceof HTMLInputElement && element.maxLength === 2) {
+              return faker.date.birthdate().getDate().toString().padStart(2, '0')
+            } else {
+              return faker.date.birthdate().getDate().toString()
+            }
           default:
             return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
         }
@@ -367,6 +396,8 @@ const handleDefaultInputs = (
       return faker.internet.password({ length: 8 })
     case 'email':
       return faker.internet.email({
+        firstName: contentScriptState.firstName,
+        lastName: contentScriptState.lastName,
         provider: config.tempEmailProvider,
       })
     case 'number':
@@ -384,21 +415,21 @@ const handleDefaultInputs = (
       if (element instanceof HTMLInputElement) {
         const min = element.min ? new Date(element.min) : new Date('1970-01-01')
         const max = element.max ? new Date(element.max) : new Date()
-        return faker.date.between({ from: min, to: max }).toISOString().split('T')[0]
+        return faker.date.between({ from: min, to: max }).toISOString()?.split('T')[0]
       }
-      return faker.date.recent().toISOString().split('T')[0]
+      return faker.date.recent().toISOString()?.split('T')[0]
     case 'time':
       if (element instanceof HTMLInputElement) {
         const min = element.min ? element.min : '00:00'
         const max = element.max ? element.max : '23:59'
-        const [minHour, minMinute] = min.split(':').map(Number)
-        const [maxHour, maxMinute] = max.split(':').map(Number)
+        const [minHour, minMinute] = min?.split(':').map(Number)
+        const [maxHour, maxMinute] = max?.split(':').map(Number)
         const hour = faker.number.int({ min: minHour, max: maxHour })
         const minute =
           hour === maxHour ? faker.number.int({ min: 0, max: maxMinute }) : faker.number.int({ min: 0, max: 59 })
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       }
-      return faker.date.recent().toTimeString().split(' ')[0].slice(0, 5)
+      return faker.date.recent().toTimeString()?.split(' ')[0].slice(0, 5)
     case 'datetime-local':
       if (element instanceof HTMLInputElement) {
         const min = element.min ? new Date(element.min) : new Date('1970-01-01T00:00')
@@ -441,7 +472,7 @@ const handleDefaultInputs = (
     case 'checkbox':
       if (element instanceof HTMLInputElement) {
         // Check if the field matches any in alwaysCheckFields
-        if (config?.alwaysCheckFields.split(',').some((field) => matchElement(element, field.trim()))) {
+        if (config?.alwaysCheckFields?.split(',').some((field) => matchElement(element, field.trim()))) {
           return true
         }
 
@@ -484,13 +515,14 @@ const handleDefaultInputs = (
 const handlePasswordGeneration = async (element: HTMLInputElement, reenter = false) => {
   let generatedPassword: string = ''
   const config = configStore.getState()
+  const contentScriptState = contentScriptStore.getState()
   const maxLength = element.maxLength > 0 ? element.maxLength : 8
   const minLength = element.minLength > 0 ? element.minLength : undefined
   const samePasswordEverytime = config.samePasswordEverytime
 
   // TODO: Handle is common PIN or Password is less or more then max/min length
   if (reenter) {
-    const { lastGeneratedPassword } = config
+    const { lastGeneratedPassword } = contentScriptState
 
     if (lastGeneratedPassword) {
       generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
@@ -508,7 +540,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     }
 
     clientLog('Generated PIN: ', generatedPassword)
-    configStore.setState({ lastGeneratedPassword: generatedPassword })
+    contentScriptStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
     const hardcodedPassword = config.commonPassword
     const passwordLength = minLength || maxLength
@@ -523,7 +555,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     }
 
     clientLog('Generated password: ', generatedPassword)
-    configStore.setState({ lastGeneratedPassword: generatedPassword })
+    contentScriptStore.setState({ lastGeneratedPassword: generatedPassword })
   }
 
   return generatedPassword

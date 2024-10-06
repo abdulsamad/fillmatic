@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
       const activeElement = document.activeElement
 
       switch (request.type) {
-        case GET_FORMS:
+        case GET_FORMS: {
           // Get all forms from page
           const forms = Array.from(document.querySelectorAll('form'))
 
@@ -51,36 +51,40 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
 
           sendResponse({ type: GET_FORMS, forms: formsCollection })
           break
+        }
 
-        case INIT_AUTOFILL_ALL:
-          await initiateAutofill()
+        case INIT_AUTOFILL_ALL: {
+          await initiateAutofill({ rootElement: null })
 
           sendResponse({ type: AUTOFILL_COMPLETE })
           break
+        }
 
-        case INIT_AUTOFILL_FORM:
+        case INIT_AUTOFILL_FORM: {
           if (request?.form) {
             const elem = document.querySelectorAll('form')[request.form.index]
 
-            await initiateAutofill(elem)
+            await initiateAutofill({ rootElement: elem })
 
             elem.requestSubmit()
 
             sendResponse({ type: AUTOFILL_COMPLETE })
           }
           break
+        }
 
-        case INIT_AUTOFILL_INPUT:
+        case INIT_AUTOFILL_INPUT: {
           if (
             activeElement instanceof HTMLInputElement ||
             activeElement instanceof HTMLTextAreaElement ||
             activeElement instanceof HTMLSelectElement
           ) {
-            fillElement(activeElement as SupportedInputsType)
+            fillElement({ elem: activeElement as SupportedInputsType })
           }
           break
+        }
 
-        case SCROLL_FORM_INTO_VIEW:
+        case SCROLL_FORM_INTO_VIEW: {
           if (request?.form) {
             const elem = document.querySelectorAll('form')[request.form.index]
 
@@ -91,8 +95,18 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
           }
 
           break
-        default:
+        }
+
+        default: {
+          /* Handle Site Specifc Message */
+          if (request.type.startsWith('SITE_AUTOFILL_')) {
+            await initiateAutofill({ rootElement: null, message: { id: request.type?.slice(14) } })
+
+            sendResponse({ type: AUTOFILL_COMPLETE })
+          }
+
           return null
+        }
       }
     } catch (err) {
       log(`Error during autofill: ${err}`)

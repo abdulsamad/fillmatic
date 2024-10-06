@@ -1,25 +1,30 @@
+import { SupportedInputsType, AutoFillMessage } from '@/types'
 import { log } from '@/utils'
-import { gatherVisibleInputsInOrder, fillElement } from '@/autofill'
-import { SupportedInputsType } from '@/types'
+import { gatherVisibleInputsInOrder, fillElement } from '.'
 
-export const initiateAutofill = async (rootElement: Element | null = null) => {
+interface IinitiateAutofill {
+  rootElement: Element | null
+  message?: AutoFillMessage
+}
+
+export const initiateAutofill = async ({ rootElement, message }: IinitiateAutofill) => {
   /* Inputs */
   let inputs = gatherVisibleInputsInOrder(rootElement)
 
   log(`Initially found ${inputs.length} visible input elements`)
 
-  await autoFillInputsSequentially(inputs)
+  await autoFillInputsSequentially({ inputs, message })
 
   // Check for any inputs that have mounted after focus (for eg: Stripe checkout form)
-  const finalInputs = gatherVisibleInputsInOrder()
+  const finalInputs = gatherVisibleInputsInOrder(rootElement)
   const newInputs = finalInputs.filter((input) => !inputs.includes(input))
 
-  if (newInputs.length > 0) await autoFillInputsSequentially(newInputs)
+  if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs, message })
 
   /* Contenteditable */
   const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)
 
-  await autoFillContenteditableSequentially(contenteditableElements)
+  await autoFillContenteditableSequentially({ elems: contenteditableElements, message })
 
   /* iframe */
   // const iframes = document.querySelectorAll('iframe')
@@ -38,14 +43,24 @@ export const initiateAutofill = async (rootElement: Element | null = null) => {
   // log(`Found ${iframesWithForms.length} iframes with input or form elements`)
 }
 
-const autoFillInputsSequentially = async (inputs: SupportedInputsType[]) => {
+interface IautoFillInputsSequentially {
+  inputs: SupportedInputsType[]
+  message?: AutoFillMessage
+}
+
+const autoFillInputsSequentially = async ({ inputs, message }: IautoFillInputsSequentially) => {
   for (const input of inputs) {
-    await fillElement(input)
+    await fillElement({ elem: input, message })
   }
 }
 
-const autoFillContenteditableSequentially = async (elems: NodeListOf<Element>) => {
+interface IautoFillContenteditableSequentially {
+  elems: NodeListOf<Element>
+  message?: AutoFillMessage
+}
+
+const autoFillContenteditableSequentially = async ({ elems, message }: IautoFillContenteditableSequentially) => {
   for (const elem of elems) {
-    await fillElement(elem)
+    await fillElement({ elem, message })
   }
 }

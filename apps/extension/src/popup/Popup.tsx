@@ -1,6 +1,10 @@
-import { useState, useLayoutEffect, useEffect, useCallback } from 'react'
+import { useLayoutEffect, useEffect, useCallback } from 'react'
 import { Settings, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLineIcon } from 'lucide-react'
+import { useShallow } from 'zustand/react/shallow'
 
+import { usePopupStore } from '@/store/popup'
+import { Form } from '@/types'
+import { useTimeout } from '@/hooks/useTimeout'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -8,15 +12,48 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
 import { MESSAGES } from '@/consts'
-import { ExtensionCommands, Form } from '@/types'
-import { useTimeout } from '@/hooks/useTimeout'
+import SpecialButtons from '@/components/Popup/SpecialButtons'
 
 export const Popup = () => {
-  const [isAutofilling, setIsAutofilling] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(false)
-  const [currTab, setCurrTab] = useState<chrome.tabs.Tab | null>(null)
-  const [forms, setForms] = useState<Form[]>([])
-  const [commands, setCommands] = useState<Record<ExtensionCommands, string>>()
+  const {
+    isAutofilling,
+    setIsAutofilling,
+    isDisabled,
+    setIsDisabled,
+    currentTab,
+    setCurrentTab,
+    forms,
+    setForms,
+    commands,
+    setCommands,
+  } = usePopupStore(
+    useShallow(
+      ({
+        isAutofilling,
+        setIsAutofilling,
+        isDisabled,
+        setIsDisabled,
+        currentTab,
+        setCurrentTab,
+        forms,
+        setForms,
+        commands,
+        setCommands,
+      }) => ({
+        isAutofilling,
+        setIsAutofilling,
+        isDisabled,
+        setIsDisabled,
+        currentTab,
+        setCurrentTab,
+        forms,
+        setForms,
+        commands,
+        setCommands,
+      }),
+    ),
+  )
+
   const { startDelay, cancelDelay } = useTimeout()
 
   useLayoutEffect(() => {
@@ -29,20 +66,20 @@ export const Popup = () => {
     getCurrentTab().then((tab) => {
       if (!tab.id) return null
 
-      setCurrTab(tab)
+      setCurrentTab(tab)
     })
   }, [])
 
   useEffect(() => {
-    if (!currTab?.id) return
+    if (!currentTab?.id) return
 
     // Tell popup open to content script
-    chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['GET_FORMS'] }).then((res) => {
+    chrome.tabs.sendMessage(currentTab.id, { type: MESSAGES['GET_FORMS'] }).then((res) => {
       if (!res.forms) return null
 
       setForms(res.forms)
     })
-  }, [currTab])
+  }, [currentTab])
 
   useEffect(() => {
     getAllCommands().then((commands) => setCommands(commands))
@@ -50,13 +87,13 @@ export const Popup = () => {
 
   const fillAllForms = async () => {
     try {
-      if (!currTab?.id) return null
+      if (!currentTab?.id) return null
 
       setIsAutofilling(true)
 
       const { INIT_AUTOFILL_ALL } = MESSAGES
 
-      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_ALL })
+      await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_ALL })
 
       setIsAutofilling(false)
     } catch (err) {
@@ -67,13 +104,13 @@ export const Popup = () => {
 
   const fillSingleForm = async (form: Form) => {
     try {
-      if (!currTab?.id) return null
+      if (!currentTab?.id) return null
 
       setIsAutofilling(true)
 
       const { INIT_AUTOFILL_FORM } = MESSAGES
 
-      await chrome.tabs.sendMessage(currTab.id, { type: INIT_AUTOFILL_FORM, form })
+      await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_FORM, form })
 
       setIsAutofilling(false)
     } catch (err) {
@@ -85,12 +122,12 @@ export const Popup = () => {
   const scrollElementIntoView = useCallback(
     (form: Form) => () => {
       startDelay(() => {
-        if (!currTab?.id) return
+        if (!currentTab?.id) return
 
-        chrome.tabs.sendMessage(currTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
+        chrome.tabs.sendMessage(currentTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
       })
     },
-    [currTab],
+    [currentTab],
   )
 
   return (
@@ -120,7 +157,7 @@ export const Popup = () => {
                   onClick={fillAllForms}
                 >
                   <NotebookPenIcon size={20} />
-                  <span className="capitalize">{isAutofilling ? 'Autofilling...' : 'Fill all fields'}</span>
+                  <span className="capitalize">Fill all fields</span>
                 </Button>
               </TooltipTrigger>
               {commands?.AUTOFILL_ALL && (
@@ -145,6 +182,7 @@ export const Popup = () => {
                 </span>
               </Button>
             ))}
+            <SpecialButtons />
           </div>
 
           {isDisabled && (
