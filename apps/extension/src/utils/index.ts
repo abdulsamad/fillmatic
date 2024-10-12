@@ -159,6 +159,11 @@ export const getElementType = (element: HTMLElement): HTMLInputTypeAttribute | '
   }
 }
 
+export const triggerEvent = (element: HTMLElement, eventType: string) => {
+  const event = new Event(eventType, { bubbles: true, cancelable: true })
+  element.dispatchEvent(event)
+}
+
 export const matchElement = (element: HTMLElement, word: string): boolean => {
   const label =
     element instanceof HTMLInputElement && element.labels
@@ -167,10 +172,16 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
           .join(' ')
       : ''
 
-  const placeholder = element instanceof HTMLInputElement ? element.placeholder?.toLowerCase() : ''
-  const name = element instanceof HTMLInputElement ? element.name.toLowerCase() : ''
-  const id = element.id?.toLowerCase()
-  const className = element.className?.toLowerCase()
+  const placeholder =
+    element instanceof HTMLInputElement
+      ? element.placeholder?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
+      : ''
+  const name =
+    element instanceof HTMLInputElement
+      ? element.name?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
+      : ''
+  const id = element.id?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
+  const className = element.className?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
 
   const words = word.toLowerCase().split(' ')
   const joinedWord = words.join('')

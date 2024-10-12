@@ -1,5 +1,13 @@
 import { useConfigStore as configStore } from '@/store/config'
-import { log, typeWithEffect, getElementType, isSupportedInput, isContentEditable, matchElement } from '@/utils'
+import {
+  log,
+  typeWithEffect,
+  getElementType,
+  isSupportedInput,
+  isContentEditable,
+  matchElement,
+  triggerEvent,
+} from '@/utils'
 import { handleFileInput } from '@/autofill'
 
 import { generateValue } from './generateValue'
@@ -27,8 +35,8 @@ export const fillElement = async ({ elem }: IFillElement) => {
       }
 
       // Skip autofill if element has value and forceAutofill is off (except for certain types)
-      // const defaultValuedElements = ['radio', 'checkbox', 'color', 'range', 'select']
-      if (!config.forceAutofill && elem.value) {
+      const defaultValuedElements = ['radio', 'checkbox', 'color', 'range', 'select']
+      if (!config.forceAutofill && elem.value && !defaultValuedElements.includes(type)) {
         log(`Skipping autofill for ${type} as it already has a value`)
         return
       }
@@ -44,12 +52,31 @@ export const fillElement = async ({ elem }: IFillElement) => {
         case 'checkbox':
         case 'radio':
           if (elem instanceof HTMLInputElement) {
-            elem.checked = value as boolean
+            const name = elem.name
+            const selectedInputs = document.querySelectorAll(`input[name="${name}"]:checked`)
+
+            if (selectedInputs.length === 0) {
+              if (typeof value === 'boolean') {
+                elem.checked = value
+              } else if (typeof value === 'string') {
+                elem.checked = value.toLowerCase() === 'true'
+              }
+            }
+
+            triggerEvent(elem, 'input')
+            triggerEvent(elem, 'change')
+            triggerEvent(elem, 'blur')
           }
           break
 
         case 'color':
           elem.value = value as string
+
+          // Trigger necessary events to simulate user interaction
+          triggerEvent(elem, 'input')
+          triggerEvent(elem, 'change')
+          triggerEvent(elem, 'blur')
+
           break
 
         default: {

@@ -109,14 +109,19 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
     case 'honorific-prefix':
       return faker.person.prefix()
     case 'given-name':
-      return faker.person.firstName()
+      const firstName = faker.person.firstName()
+      contentScriptStore.setState({ firstName })
+      return firstName
     case 'additional-name':
       return faker.person.middleName()
     case 'family-name':
-      return faker.person.lastName()
+      const lastName = faker.person.lastName()
+      contentScriptStore.setState({ lastName })
+      return lastName
     case 'honorific-suffix':
       return faker.person.suffix()
     case 'nickname':
+      return faker.internet.userName()
     // case 'username':
     //   return faker.internet.userName()
     // case 'new-password':
@@ -151,7 +156,9 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
     case 'cc-given-name':
     case 'cc-additional-name':
     case 'cc-family-name':
-      return faker.person.fullName()
+      const fullName = faker.person.fullName()
+      contentScriptStore.setState({ firstName: fullName })
+      return fullName
     case 'cc-number':
       return faker.finance.creditCardNumber()
     case 'cc-exp':

@@ -15,12 +15,10 @@ interface ContentScriptStore {
 export const useContentScriptStore = create(
   devtools<ContentScriptStore>((set, get) => ({
     // State
-    firstName: '',
-    lastName: '',
+    firstName: undefined, // Initialize as undefined to allow dynamic generation when needed
+    lastName: undefined, // Initialize as undefined to allow dynamic generation when needed
     lastGeneratedPassword: '',
     siteRule: undefined,
     message: undefined,
-
-    // Actions
   })),
 )
