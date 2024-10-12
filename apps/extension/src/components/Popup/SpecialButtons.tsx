@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button'
 const SpecialButtons = () => {
   const [siteRule, setSiteRule] = useState<SiteRule>()
 
-  const { isAutofilling, setIsAutofilling, currentTab } = usePopupStore(
-    useShallow(({ isAutofilling, setIsAutofilling, currentTab }) => ({ isAutofilling, setIsAutofilling, currentTab })),
+  const { isAutofilling, currentTab, fillData } = usePopupStore(
+    useShallow(({ isAutofilling, fillData, currentTab }) => ({ isAutofilling, fillData, currentTab })),
   )
 
   useEffect(() => {
@@ -18,25 +18,6 @@ const SpecialButtons = () => {
   }, [currentTab])
 
   if (!siteRule) return null
-
-  const autoFillSpecific = async ({ messageId, action }: Pick<SiteRule['rules'][number], 'messageId' | 'action'>) => {
-    try {
-      if (!currentTab?.id) return null
-
-      setIsAutofilling(true)
-
-      if (action) {
-        chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${messageId}`, action })
-      } else {
-        await chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${messageId}` })
-      }
-
-      setIsAutofilling(false)
-    } catch (err) {
-      console.error(err)
-      setIsAutofilling(false)
-    }
-  }
 
   return (
     <div className="space-y-4 bg-background text-foreground">
@@ -49,7 +30,7 @@ const SpecialButtons = () => {
               variant="secondary"
               disabled={isAutofilling}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={() => autoFillSpecific({ messageId, action })}
+              onClick={() => fillData({ fillType: 'site', messageId })}
             >
               {name}
             </Button>

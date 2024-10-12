@@ -17,7 +17,7 @@ import SpecialButtons from '@/components/Popup/SpecialButtons'
 export const Popup = () => {
   const {
     isAutofilling,
-    setIsAutofilling,
+    fillData,
     isDisabled,
     setIsDisabled,
     currentTab,
@@ -30,7 +30,7 @@ export const Popup = () => {
     useShallow(
       ({
         isAutofilling,
-        setIsAutofilling,
+        fillData,
         isDisabled,
         setIsDisabled,
         currentTab,
@@ -41,7 +41,7 @@ export const Popup = () => {
         setCommands,
       }) => ({
         isAutofilling,
-        setIsAutofilling,
+        fillData,
         isDisabled,
         setIsDisabled,
         currentTab,
@@ -73,7 +73,7 @@ export const Popup = () => {
   useEffect(() => {
     if (!currentTab?.id) return
 
-    // Tell popup open to content script
+    // Inform popup is opened to content script so it can pull forms from page
     chrome.tabs.sendMessage(currentTab.id, { type: MESSAGES['GET_FORMS'] }).then((res) => {
       if (!res.forms) return null
 
@@ -85,41 +85,7 @@ export const Popup = () => {
     getAllCommands().then((commands) => setCommands(commands))
   }, [])
 
-  const fillAllForms = async () => {
-    try {
-      if (!currentTab?.id) return null
-
-      setIsAutofilling(true)
-
-      const { INIT_AUTOFILL_ALL } = MESSAGES
-
-      await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_ALL })
-
-      setIsAutofilling(false)
-    } catch (err) {
-      console.error(err)
-      setIsAutofilling(false)
-    }
-  }
-
-  const fillSingleForm = async (form: Form) => {
-    try {
-      if (!currentTab?.id) return null
-
-      setIsAutofilling(true)
-
-      const { INIT_AUTOFILL_FORM } = MESSAGES
-
-      await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_FORM, form })
-
-      setIsAutofilling(false)
-    } catch (err) {
-      console.error(err)
-      setIsAutofilling(false)
-    }
-  }
-
-  const scrollElementIntoView = useCallback(
+  const sendScrollElementIntoViewMessage = useCallback(
     (form: Form) => () => {
       startDelay(() => {
         if (!currentTab?.id) return
@@ -154,7 +120,7 @@ export const Popup = () => {
                 <Button
                   className="w-full flex items-center justify-start space-x-2"
                   disabled={isDisabled || isAutofilling}
-                  onClick={fillAllForms}
+                  onClick={() => fillData({ fillType: 'all' })}
                 >
                   <NotebookPenIcon size={20} />
                   <span className="capitalize">Fill all fields</span>
@@ -172,9 +138,9 @@ export const Popup = () => {
                 className="w-full flex items-center justify-start space-x-2"
                 disabled={isDisabled || isAutofilling}
                 variant="secondary"
-                onMouseEnter={scrollElementIntoView(form)}
+                onMouseEnter={sendScrollElementIntoViewMessage(form)}
                 onMouseLeave={cancelDelay}
-                onClick={() => fillSingleForm(form)}
+                onClick={() => fillData({ fillType: 'single', form })}
               >
                 <PencilLineIcon size={20} />
                 <span className="capitalize">

@@ -2,6 +2,26 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 import { Form, ExtensionCommands } from '@/types'
+import { MESSAGES } from '@/consts'
+
+interface CommonProps {
+  // Add any common properties here
+}
+
+interface FillAllParams extends CommonProps {
+  fillType: 'all'
+}
+
+interface FillSingleParams extends CommonProps {
+  fillType: 'single'
+  form: Form
+}
+
+interface FillSiteParams extends CommonProps {
+  fillType: 'site'
+  messageId: string
+  action?: () => void
+}
 
 interface PopupStore {
   isAutofilling: boolean
@@ -14,6 +34,7 @@ interface PopupStore {
   setCurrentTab: (tab: chrome.tabs.Tab | null) => void
   setForms: (forms: Form[]) => void
   setCommands: (commands: Record<ExtensionCommands, string>) => void
+  fillData: (fillParms: FillAllParams | FillSingleParams | FillSiteParams) => Promise<void>
 }
 
 export const usePopupStore = create(
@@ -40,6 +61,52 @@ export const usePopupStore = create(
     },
     setCommands: (commands) => {
       set(() => ({ commands }))
+    },
+    fillData: async ({ fillType = 'all', ...restProps }) => {
+      try {
+        set(() => ({ isAutofilling: true }))
+
+        const { currentTab } = get()
+
+        if (!currentTab?.id) return
+
+        switch (fillType) {
+          case 'single': {
+            if (!('form' in restProps)) throw new Error('Form is required to fill particular form')
+
+            const { form } = restProps
+
+            const { INIT_AUTOFILL_FORM } = MESSAGES
+
+            await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_FORM, form })
+            break
+          }
+          case 'site': {
+            if (!('messageId' in restProps)) throw new Error(`messageId is required to fill site's paricular data`)
+
+            if ('action' in restProps) {
+              chrome.tabs.sendMessage(currentTab.id, {
+                type: `SITE_AUTOFILL_${restProps.messageId}`,
+                action: restProps.action,
+              })
+            } else {
+              await chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${restProps.messageId}` })
+            }
+            break
+          }
+          default: {
+            const { INIT_AUTOFILL_ALL } = MESSAGES
+
+            await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_ALL })
+            break
+          }
+        }
+
+        set(() => ({ isAutofilling: false }))
+      } catch (err) {
+        console.error(err)
+        set(() => ({ isAutofilling: false }))
+      }
     },
   })),
 )
