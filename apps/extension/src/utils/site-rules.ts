@@ -71,8 +71,8 @@ const siteRules: SiteRule[] = [
   {
     name: 'Lemon Squeezy Actions',
     matcher: {
-      type: 'startsWith',
-      value: 'https://abdulsamad.lemonsqueezy.com',
+      type: 'regex',
+      value: 'https://[^.]+\\.lemonsqueezy\\.com/checkout',
     },
     rules: [
       {
