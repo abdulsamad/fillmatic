@@ -14,7 +14,8 @@ const SpecialButtons = () => {
 
   useEffect(() => {
     if (!currentTab?.url) return
-    setSiteRule(getSiteRule(currentTab.url))
+
+    getSiteRule(currentTab.url).then((rule) => setSiteRule(rule))
   }, [currentTab])
 
   if (!siteRule) return null
@@ -26,7 +27,7 @@ const SpecialButtons = () => {
         <div className="grid gap-2">
           {siteRule.rules.map(({ match, name, messageId, action }) => (
             <Button
-              key={match}
+              key={messageId}
               variant="secondary"
               disabled={isAutofilling}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"

@@ -38,7 +38,7 @@ export const fillElement = async ({ elem }: IFillElement) => {
         return
       }
 
-      const value = await generateValue(type, elem)
+      const value = await generateValue({ type, elem })
 
       switch (type) {
         case 'checkbox':
@@ -60,7 +60,7 @@ export const fillElement = async ({ elem }: IFillElement) => {
       }
     } else if (isContentEditable(elem)) {
       /* Contenteditable */
-      elem.innerHTML = (await generateValue('contenteditable', elem)) as string
+      elem.innerHTML = (await generateValue({ type: 'contenteditable', elem })) as string
     }
   } catch (err) {
     log(`Error in fillElement: ${err}`)

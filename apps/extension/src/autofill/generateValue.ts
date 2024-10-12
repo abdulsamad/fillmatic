@@ -9,11 +9,13 @@ import { useContentScriptStore as contentScriptStore } from '@/store/content-scr
 import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
 
-export const generateValue = async (
-  type: HTMLInputTypeAttribute | 'contenteditable',
-  element: SupportedInputsType | Element,
-) => {
-  if (!isSupportedElement(element)) return ''
+interface GenerateValueParams {
+  type: HTMLInputTypeAttribute | 'contenteditable'
+  elem: SupportedInputsType | Element
+}
+
+export const generateValue = async ({ type, elem }: GenerateValueParams): Promise<string | boolean | undefined> => {
+  if (!isSupportedElement(elem)) return ''
 
   const siteRule = contentScriptStore.getState().siteRule
   const message = contentScriptStore.getState().message
@@ -21,7 +23,7 @@ export const generateValue = async (
   // const userRule = getUserRule(currentUrl)
   // const profile = config.selectedProfile ? getProfile(config.selectedProfile) : undefined
 
-  if (!isSupportedElement(element)) return ''
+  if (!isSupportedElement(elem)) return ''
 
   /* Check profile rules first */
   // if (profile && element instanceof HTMLElement) {
@@ -42,8 +44,8 @@ export const generateValue = async (
   // }
 
   /* Check for site-specific rules first */
-  if (siteRule && message && isSupportedInput(element)) {
-    const elementName = element.id || element.name
+  if (siteRule && message && isSupportedInput(elem)) {
+    const elementName = elem.id || elem.name
     const matchingRule = siteRule.rules.find((rule) => rule.match === elementName && rule.messageId === message.id)
 
     if (matchingRule) {
@@ -62,23 +64,23 @@ export const generateValue = async (
     'bday-year',
   ]
   if (
-    element instanceof HTMLInputElement &&
-    element.autocomplete &&
-    !['off', 'on'].includes(element.autocomplete) &&
+    elem instanceof HTMLInputElement &&
+    elem.autocomplete &&
+    !['off', 'on'].includes(elem.autocomplete) &&
     // Resovle to default propery if any one the token is from the skipped token
-    !element.autocomplete.split(' ').some((token) => autoCompleteTokensToSkip.includes(token))
+    !elem.autocomplete.split(' ').some((token) => autoCompleteTokensToSkip.includes(token))
   ) {
-    return handleAutocompleteToken(element)
+    return handleAutocompleteToken(elem)
   }
 
   /* Fallback to default generation logic */
-  return handleDefaultInputs(type, element)
+  return handleDefaultInputs(type, elem)
 }
 
-const handleAutocompleteToken = (element: HTMLInputElement) => {
+const handleAutocompleteToken = (elem: HTMLInputElement) => {
   const config = configStore.getState()
   const contentScriptState = contentScriptStore.getState()
-  const tokens = element.autocomplete.toLowerCase()?.split(' ')
+  const tokens = elem.autocomplete.toLowerCase()?.split(' ')
   const mainToken = tokens[tokens.length - 1] // Get the last token
 
   switch (mainToken) {
@@ -154,7 +156,7 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
       return faker.finance.creditCardNumber()
     case 'cc-exp':
       const currentDate = new Date()
-      const placeholder = element?.placeholder || element?.pattern || 'MM/YY'
+      const placeholder = elem?.placeholder || elem?.pattern || 'MM/YY'
       const separator = placeholder.includes('/') ? '/' : '-'
       const parts = placeholder?.split(separator)
 
@@ -228,55 +230,52 @@ const handleAutocompleteToken = (element: HTMLInputElement) => {
   }
 }
 
-const handleDefaultInputs = (
-  type: HTMLInputTypeAttribute | 'contenteditable',
-  element: SupportedInputsType | Element,
-) => {
+const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', elem: SupportedInputsType | Element) => {
   const config = configStore.getState()
   const contentScriptState = contentScriptStore.getState()
 
   switch (type) {
     case 'text':
-      if (element instanceof HTMLInputElement) {
+      if (elem instanceof HTMLInputElement) {
         switch (true) {
-          case matchElement(element, 'full name') ||
-            matchElement(element, 'first name') ||
-            matchElement(element, 'given name') ||
-            matchElement(element, 'last name') ||
-            matchElement(element, 'surname') ||
-            matchElement(element, 'family name') ||
-            matchElement(element, 'name'):
-            if (matchElement(element, 'full name')) {
+          case matchElement(elem, 'full name') ||
+            matchElement(elem, 'first name') ||
+            matchElement(elem, 'given name') ||
+            matchElement(elem, 'last name') ||
+            matchElement(elem, 'surname') ||
+            matchElement(elem, 'family name') ||
+            matchElement(elem, 'name'):
+            if (matchElement(elem, 'full name')) {
               const fullName = faker.person.fullName()
               contentScriptStore.setState({ firstName: fullName })
-              return element.maxLength > 0 ? fullName.slice(0, element.maxLength) : fullName
-            } else if (matchElement(element, 'first name') || matchElement(element, 'given name')) {
+              return elem.maxLength > 0 ? fullName.slice(0, elem.maxLength) : fullName
+            } else if (matchElement(elem, 'first name') || matchElement(elem, 'given name')) {
               const firstName = faker.person.firstName()
               contentScriptStore.setState({ firstName })
-              return element.maxLength > 0 ? firstName.slice(0, element.maxLength) : firstName
+              return elem.maxLength > 0 ? firstName.slice(0, elem.maxLength) : firstName
             } else if (
-              matchElement(element, 'last name') ||
-              matchElement(element, 'surname') ||
-              matchElement(element, 'family name')
+              matchElement(elem, 'last name') ||
+              matchElement(elem, 'surname') ||
+              matchElement(elem, 'family name')
             ) {
               const lastName = faker.person.lastName()
               contentScriptStore.setState({ lastName })
-              return element.maxLength > 0 ? lastName.slice(0, element.maxLength) : lastName
+              return elem.maxLength > 0 ? lastName.slice(0, elem.maxLength) : lastName
             }
             break
-          case matchElement(element, 'email') || matchElement(element, 'e-mail') || matchElement(element, 'mail'):
+          case matchElement(elem, 'email') || matchElement(elem, 'e-mail') || matchElement(elem, 'mail'):
             return faker.internet.email({
               firstName: contentScriptState.firstName,
               lastName: contentScriptState.lastName,
               provider: config.tempEmailProvider,
             })
-          case matchElement(element, 'phone') ||
-            matchElement(element, 'tel') ||
-            matchElement(element, 'mobile') ||
-            matchElement(element, 'cell'):
+          case matchElement(elem, 'phone') ||
+            matchElement(elem, 'tel') ||
+            matchElement(elem, 'mobile') ||
+            matchElement(elem, 'cell'):
             return faker.phone.number()
-          case matchElement(element, 'date'):
-            const isDateOfBirth = matchElement(element, 'birth') || matchElement(element, 'dob')
+          case matchElement(elem, 'date'):
+            const isDateOfBirth = matchElement(elem, 'birth') || matchElement(elem, 'dob')
             let date: Date
 
             if (isDateOfBirth) {
@@ -313,84 +312,80 @@ const handleDefaultInputs = (
               }
             }
 
-            return formatDate(date, element.placeholder?.toLowerCase())
+            return formatDate(date, elem.placeholder?.toLowerCase())
 
-          case matchElement(element, 'address') ||
-            matchElement(element, 'street') ||
-            matchElement(element, 'city') ||
-            matchElement(element, 'state') ||
-            matchElement(element, 'zip') ||
-            matchElement(element, 'postal') ||
-            matchElement(element, 'suburb') ||
-            matchElement(element, 'district'):
-            if (matchElement(element, 'street')) {
+          case matchElement(elem, 'address') ||
+            matchElement(elem, 'street') ||
+            matchElement(elem, 'city') ||
+            matchElement(elem, 'state') ||
+            matchElement(elem, 'zip') ||
+            matchElement(elem, 'postal') ||
+            matchElement(elem, 'suburb') ||
+            matchElement(elem, 'district'):
+            if (matchElement(elem, 'street')) {
               return faker.location.streetAddress()
-            } else if (matchElement(element, 'city')) {
+            } else if (matchElement(elem, 'city')) {
               return faker.location.city()
-            } else if (matchElement(element, 'suburb')) {
+            } else if (matchElement(elem, 'suburb')) {
               // Using a combination of city and state for a more suburb-like result
               return `${faker.location.city()} ${faker.location.state({ abbreviated: true })}`
-            } else if (matchElement(element, 'state')) {
+            } else if (matchElement(elem, 'state')) {
               return faker.location.state()
-            } else if (
-              matchElement(element, 'zip') ||
-              matchElement(element, 'postal') ||
-              matchElement(element, 'postalCode')
-            ) {
+            } else if (matchElement(elem, 'zip') || matchElement(elem, 'postal') || matchElement(elem, 'postalCode')) {
               return faker.location.zipCode()
-            } else if (matchElement(element, 'district')) {
+            } else if (matchElement(elem, 'district')) {
               return faker.location.county()
             } else {
               return faker.location.streetAddress()
             }
-          case matchElement(element, 'confirm password') ||
-            matchElement(element, 'reenter password') ||
-            matchElement(element, 'reenter') ||
-            matchElement(element, 'confirm reenter') ||
-            matchElement(element, 'reenter PIN') ||
-            matchElement(element, 're-enter') ||
-            matchElement(element, 'confirm re-enter') ||
-            matchElement(element, 're-enter PIN') ||
-            matchElement(element, 'confirm'):
-            return handlePasswordGeneration(element, true)
-          case matchElement(element, 'company') || matchElement(element, 'organization'):
+          case matchElement(elem, 'confirm password') ||
+            matchElement(elem, 'reenter password') ||
+            matchElement(elem, 'reenter') ||
+            matchElement(elem, 'confirm reenter') ||
+            matchElement(elem, 'reenter PIN') ||
+            matchElement(elem, 're-enter') ||
+            matchElement(elem, 'confirm re-enter') ||
+            matchElement(elem, 're-enter PIN') ||
+            matchElement(elem, 'confirm'):
+            return handlePasswordGeneration(elem, true)
+          case matchElement(elem, 'company') || matchElement(elem, 'organization'):
             return faker.company.name()
-          case matchElement(element, 'job title') || matchElement(element, 'job'):
+          case matchElement(elem, 'job title') || matchElement(elem, 'job'):
             return faker.person.jobTitle()
-          case matchElement(element, 'department'):
+          case matchElement(elem, 'department'):
             return faker.commerce.department()
-          case matchElement(element, 'cardnumber'):
+          case matchElement(elem, 'cardnumber'):
             return faker.finance.creditCardNumber({
               issuer: 'visa',
             })
-          case matchElement(element, 'cardExpiry'):
+          case matchElement(elem, 'cardExpiry'):
             const futureDate = faker.date.future()
             const month = (futureDate.getMonth() + 1).toString().padStart(2, '0')
             const year = futureDate.getFullYear().toString().slice(-2)
             return `${month}/${year}`
-          case matchElement(element, 'cvv') || matchElement(element, 'cvc'):
+          case matchElement(elem, 'cvv') || matchElement(elem, 'cvc'):
             return faker.finance.creditCardCVV()
-          case matchElement(element, 'cardtype'):
+          case matchElement(elem, 'cardtype'):
             return faker.finance.creditCardIssuer()
-          case matchElement(element, 'Day'):
-            if (element instanceof HTMLInputElement && element.maxLength === 2) {
+          case matchElement(elem, 'Day'):
+            if (elem instanceof HTMLInputElement && elem.maxLength === 2) {
               return faker.date.birthdate().getDate().toString().padStart(2, '0')
             } else {
               return faker.date.birthdate().getDate().toString()
             }
           default:
-            return element.maxLength > 0 ? faker.lorem.word().slice(0, element.maxLength) : faker.lorem.word()
+            return elem.maxLength > 0 ? faker.lorem.word().slice(0, elem.maxLength) : faker.lorem.word()
         }
       }
       return faker.lorem.word()
     case 'search':
       return faker.lorem.word()
     case 'password':
-      if (element instanceof HTMLInputElement) {
-        if (matchElement(element, 'confirm') || matchElement(element, 'reenter') || matchElement(element, 're-enter')) {
-          return handlePasswordGeneration(element, true)
+      if (elem instanceof HTMLInputElement) {
+        if (matchElement(elem, 'confirm') || matchElement(elem, 'reenter') || matchElement(elem, 're-enter')) {
+          return handlePasswordGeneration(elem, true)
         }
-        return handlePasswordGeneration(element)
+        return handlePasswordGeneration(elem)
       }
       return faker.internet.password({ length: 8 })
     case 'email':
@@ -400,9 +395,9 @@ const handleDefaultInputs = (
         provider: config.tempEmailProvider,
       })
     case 'number':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? parseInt(element.min, 10) : 1
-        const max = element.max ? parseInt(element.max, 10) : 100
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? parseInt(elem.min, 10) : 1
+        const max = elem.max ? parseInt(elem.max, 10) : 100
         return faker.number.int({ min, max }).toString()
       }
       return faker.number.int({ min: 1, max: 100 }).toString()
@@ -411,16 +406,16 @@ const handleDefaultInputs = (
     case 'tel':
       return faker.helpers.fromRegExp('501-[0-9]{3}-[0-9]{3}')
     case 'date':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? new Date(element.min) : new Date('1970-01-01')
-        const max = element.max ? new Date(element.max) : new Date()
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? new Date(elem.min) : new Date('1970-01-01')
+        const max = elem.max ? new Date(elem.max) : new Date()
         return faker.date.between({ from: min, to: max }).toISOString()?.split('T')[0]
       }
       return faker.date.recent().toISOString()?.split('T')[0]
     case 'time':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? element.min : '00:00'
-        const max = element.max ? element.max : '23:59'
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? elem.min : '00:00'
+        const max = elem.max ? elem.max : '23:59'
         const [minHour, minMinute] = min?.split(':').map(Number)
         const [maxHour, maxMinute] = max?.split(':').map(Number)
         const hour = faker.number.int({ min: minHour, max: maxHour })
@@ -430,24 +425,24 @@ const handleDefaultInputs = (
       }
       return faker.date.recent().toTimeString()?.split(' ')[0].slice(0, 5)
     case 'datetime-local':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? new Date(element.min) : new Date('1970-01-01T00:00')
-        const max = element.max ? new Date(element.max) : new Date()
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? new Date(elem.min) : new Date('1970-01-01T00:00')
+        const max = elem.max ? new Date(elem.max) : new Date()
         const date = faker.date.between({ from: min, to: max })
         return date.toISOString().slice(0, 16).replace('T', ' ')
       }
       return faker.date.recent().toISOString().slice(0, 16).replace('T', ' ')
     case 'month':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? new Date(element.min + '-01') : new Date('1970-01-01')
-        const max = element.max ? new Date(element.max + '-01') : new Date()
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? new Date(elem.min + '-01') : new Date('1970-01-01')
+        const max = elem.max ? new Date(elem.max + '-01') : new Date()
         return faker.date.between({ from: min, to: max }).toISOString().slice(0, 7)
       }
       return faker.date.recent().toISOString().slice(0, 7)
     case 'week':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? new Date(element.min.replace('W', '-')) : new Date('1970-01-01')
-        const max = element.max ? new Date(element.max.replace('W', '-')) : new Date()
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? new Date(elem.min.replace('W', '-')) : new Date('1970-01-01')
+        const max = elem.max ? new Date(elem.max.replace('W', '-')) : new Date()
         const d = faker.date.between({ from: min, to: max })
         const onejan = new Date(d.getFullYear(), 0, 1)
         const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
@@ -458,29 +453,29 @@ const handleDefaultInputs = (
       const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
       return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
     case 'textarea':
-      if (element instanceof HTMLTextAreaElement && element.maxLength > 0) {
-        return faker.lorem.paragraph().slice(0, element.maxLength)
+      if (elem instanceof HTMLTextAreaElement && elem.maxLength > 0) {
+        return faker.lorem.paragraph().slice(0, elem.maxLength)
       }
       return faker.lorem.paragraph()
     case 'select':
-      if (element instanceof HTMLSelectElement) {
-        const options = Array.from(element.options)
+      if (elem instanceof HTMLSelectElement) {
+        const options = Array.from(elem.options)
         return faker.helpers.arrayElement(options).value
       }
       return ''
     case 'checkbox':
-      if (element instanceof HTMLInputElement) {
+      if (elem instanceof HTMLInputElement) {
         // Check if the field matches any in alwaysCheckFields
-        if (config?.alwaysCheckFields?.split(',').some((field) => matchElement(element, field.trim()))) {
+        if (config?.alwaysCheckFields?.split(',').some((field) => matchElement(elem, field.trim()))) {
           return true
         }
 
-        if (element.name) {
-          const checkboxes = document.querySelectorAll(`input[name="${element.name}"][type="checkbox"]`)
+        if (elem.name) {
+          const checkboxes = document.querySelectorAll(`input[name="${elem.name}"][type="checkbox"]`)
           if (checkboxes.length > 1) {
             // If multiple checkboxes with the same name, randomly check one
             const randomCheckbox = faker.helpers.arrayElement(Array.from(checkboxes)) as HTMLInputElement
-            return randomCheckbox === element
+            return randomCheckbox === elem
           }
         }
 
@@ -489,18 +484,18 @@ const handleDefaultInputs = (
       }
       return faker.datatype.boolean()
     case 'radio':
-      if (element instanceof HTMLInputElement && element.name) {
-        const radios = document.querySelectorAll(`input[name="${element.name}"][type="radio"]`)
+      if (elem instanceof HTMLInputElement && elem.name) {
+        const radios = document.querySelectorAll(`input[name="${elem.name}"][type="radio"]`)
         const randomRadio = faker.helpers.arrayElement(Array.from(radios)) as HTMLInputElement
-        return randomRadio === element
+        return randomRadio === elem
       }
       return faker.datatype.boolean()
     case 'color':
       return faker.color.rgb({ format: 'hex', prefix: '#' })
     case 'range':
-      if (element instanceof HTMLInputElement) {
-        const min = element.min ? parseInt(element.min, 10) : 1
-        const max = element.max ? parseInt(element.max, 10) : 100
+      if (elem instanceof HTMLInputElement) {
+        const min = elem.min ? parseInt(elem.min, 10) : 1
+        const max = elem.max ? parseInt(elem.max, 10) : 100
         return faker.number.int({ min, max }).toString()
       }
       return ''
@@ -511,12 +506,12 @@ const handleDefaultInputs = (
   }
 }
 
-const handlePasswordGeneration = async (element: HTMLInputElement, reenter = false) => {
+const handlePasswordGeneration = async (elem: HTMLInputElement, reenter = false) => {
   let generatedPassword: string = ''
   const config = configStore.getState()
   const contentScriptState = contentScriptStore.getState()
-  const maxLength = element.maxLength > 0 ? element.maxLength : 8
-  const minLength = element.minLength > 0 ? element.minLength : undefined
+  const maxLength = elem.maxLength > 0 ? elem.maxLength : 8
+  const minLength = elem.minLength > 0 ? elem.minLength : undefined
   const samePasswordEverytime = config.samePasswordEverytime
 
   // TODO: Handle is common PIN or Password is less or more then max/min length
@@ -524,9 +519,9 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     const { lastGeneratedPassword } = contentScriptState
 
     if (lastGeneratedPassword) {
-      generatedPassword = lastGeneratedPassword.slice(0, element.maxLength || lastGeneratedPassword.length)
+      generatedPassword = lastGeneratedPassword.slice(0, elem.maxLength || lastGeneratedPassword.length)
     }
-  } else if (matchElement(element, 'pin')) {
+  } else if (matchElement(elem, 'pin')) {
     const hardcodedPin = '111111'
     const pinLength = minLength || maxLength
 
@@ -549,7 +544,7 @@ const handlePasswordGeneration = async (element: HTMLInputElement, reenter = fal
     } else {
       generatedPassword = faker.internet.password({
         length: passwordLength,
-        pattern: element?.pattern ? new RegExp(element.pattern) : undefined,
+        pattern: elem?.pattern ? new RegExp(elem.pattern) : undefined,
       })
     }
 
