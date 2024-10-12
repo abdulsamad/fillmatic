@@ -26,7 +26,7 @@ const SpecialButtons = () => {
       setIsAutofilling(true)
 
       if (action) {
-        // chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${messageId}` })
+        chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${messageId}`, action })
       } else {
         await chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${messageId}` })
       }
