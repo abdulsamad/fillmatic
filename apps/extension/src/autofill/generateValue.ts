@@ -1,24 +1,23 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-import { getSiteRule } from '@/utils/site-rules'
 // import { getUserRule } from '@/utils/user-rules'
 // import { getProfile } from '@/utils/user-profiles'
 
 import { useConfigStore as configStore } from '@/store/config'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
-import { AutoFillMessage, SupportedInputsType } from '@/types'
+import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
 
 export const generateValue = async (
   type: HTMLInputTypeAttribute | 'contenteditable',
   element: SupportedInputsType | Element,
-  message?: AutoFillMessage,
 ) => {
   if (!isSupportedElement(element)) return ''
 
-  const currentUrl = window.location.href
-  const siteRule = getSiteRule(currentUrl)
+  const siteRule = contentScriptStore.getState().siteRule
+  const message = contentScriptStore.getState().message
+
   // const userRule = getUserRule(currentUrl)
   // const profile = config.selectedProfile ? getProfile(config.selectedProfile) : undefined
 
@@ -44,7 +43,7 @@ export const generateValue = async (
 
   /* Check for site-specific rules first */
   if (siteRule && message && isSupportedInput(element)) {
-    const elementName = element.name || element.id
+    const elementName = element.id || element.name
     const matchingRule = siteRule.rules.find((rule) => rule.match === elementName && rule.messageId === message.id)
 
     if (matchingRule) {

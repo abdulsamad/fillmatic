@@ -1,30 +1,30 @@
-import { SupportedInputsType, AutoFillMessage } from '@/types'
+import { SupportedInputsType } from '@/types'
 import { log } from '@/utils'
+
 import { gatherVisibleInputsInOrder, fillElement } from '.'
 
 interface IinitiateAutofill {
   rootElement: Element | null
-  message?: AutoFillMessage
 }
 
-export const initiateAutofill = async ({ rootElement, message }: IinitiateAutofill) => {
+export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
   /* Inputs */
   let inputs = gatherVisibleInputsInOrder(rootElement)
 
   log(`Initially found ${inputs.length} visible input elements`)
 
-  await autoFillInputsSequentially({ inputs, message })
+  await autoFillInputsSequentially({ inputs })
 
   // Check for any inputs that have mounted after focus (for eg: Stripe checkout form)
   const finalInputs = gatherVisibleInputsInOrder(rootElement)
   const newInputs = finalInputs.filter((input) => !inputs.includes(input))
 
-  if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs, message })
+  if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs })
 
   /* Contenteditable */
   const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)
 
-  await autoFillContenteditableSequentially({ elems: contenteditableElements, message })
+  await autoFillContenteditableSequentially({ elems: contenteditableElements })
 
   /* iframe */
   // const iframes = document.querySelectorAll('iframe')
@@ -45,22 +45,20 @@ export const initiateAutofill = async ({ rootElement, message }: IinitiateAutofi
 
 interface IautoFillInputsSequentially {
   inputs: SupportedInputsType[]
-  message?: AutoFillMessage
 }
 
-const autoFillInputsSequentially = async ({ inputs, message }: IautoFillInputsSequentially) => {
+const autoFillInputsSequentially = async ({ inputs }: IautoFillInputsSequentially) => {
   for (const input of inputs) {
-    await fillElement({ elem: input, message })
+    await fillElement({ elem: input })
   }
 }
 
 interface IautoFillContenteditableSequentially {
   elems: NodeListOf<Element>
-  message?: AutoFillMessage
 }
 
-const autoFillContenteditableSequentially = async ({ elems, message }: IautoFillContenteditableSequentially) => {
+const autoFillContenteditableSequentially = async ({ elems }: IautoFillContenteditableSequentially) => {
   for (const elem of elems) {
-    await fillElement({ elem, message })
+    await fillElement({ elem })
   }
 }

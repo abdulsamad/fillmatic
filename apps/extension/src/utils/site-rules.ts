@@ -10,11 +10,16 @@ export type SiteRule = {
   }
   rules: Array<{
     match: string
-    name: string
     messageId: string
+    name: string
     value: string
     action?: () => void
   }>
+  // formFill?: {
+  //   identifier: string
+  //   fields: Record<string, string>
+  //   submit?: boolean
+  // }
 }
 
 const siteRules: SiteRule[] = [
@@ -32,6 +37,15 @@ const siteRules: SiteRule[] = [
   //       value: 'FillMatic Special Demo Data',
   //     },
   //   ],
+  //   // formFill: {
+  //   //   identifier: '#demo-form',
+  //   //   fields: {
+  //   //     name: 'John Doe',
+  //   //     email: 'john@example.com',
+  //   //     message: 'This is a demo message',
+  //   //   },
+  //   //   submit: true,
+  //   // },
   // },
   {
     name: 'Stripe Actions',
@@ -54,9 +68,30 @@ const siteRules: SiteRule[] = [
       },
     ],
   },
+  {
+    name: 'Lemon Squeezy Actions',
+    matcher: {
+      type: 'startsWith',
+      value: 'https://abdulsamad.lemonsqueezy.com',
+    },
+    rules: [
+      {
+        match: 'Field-numberInput',
+        name: 'Fill Success Card',
+        messageId: 'kmY6F',
+        value: '4242424242424242',
+      },
+      {
+        match: 'Field-numberInput',
+        name: 'Fill Declined Card',
+        messageId: 'LSZtL',
+        value: '4000000000000002',
+      },
+    ],
+  },
 ]
 
-export const getSiteRule = (url: string): SiteRule | undefined => {
+export const getSiteRule = async (url: string): Promise<SiteRule | undefined> => {
   return siteRules.find((rule) => {
     switch (rule.matcher.type) {
       case 'hostname':

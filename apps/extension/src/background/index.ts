@@ -1,4 +1,4 @@
-import { log } from '@/utils'
+import { getCurrentTab, log } from '@/utils'
 import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
 
@@ -12,6 +12,21 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 // chrome.action.onClicked.addListener(async () => {
 //
+// })
+
+// chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+//   ;(async () => {
+//     const {} = MESSAGES
+//
+//     switch (msg) {
+//       case '':
+//         const tab = await getCurrentTab()
+//         await sendResponse(tab)
+//         break
+//     }
+//   })()
+//
+//   return true
 // })
 
 chrome.commands.onCommand.addListener(async (command: string, tab) => {
@@ -36,6 +51,7 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
     case 'AUTOFILL_CURRENT_INPUT':
       await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_INPUT })
       break
+
     default:
       return
   }

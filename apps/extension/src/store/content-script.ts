@@ -1,26 +1,26 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
+import { AutoFillMessage } from '@/types'
 import { SiteRule } from '@/utils/site-rules'
 
 interface ContentScriptStore {
   firstName?: string
   lastName?: string
   lastGeneratedPassword: string
-  siteRules?: SiteRule
-  message?: string
+  siteRule?: SiteRule
+  message?: AutoFillMessage
 }
 
 export const useContentScriptStore = create(
   devtools<ContentScriptStore>((set, get) => ({
     // State
-    firstName: undefined,
-    lastName: undefined,
+    firstName: '',
+    lastName: '',
     lastGeneratedPassword: '',
-    siteRules: undefined,
-    message: '',
+    siteRule: undefined,
+    message: undefined,
 
     // Actions
-    //
   })),
 )

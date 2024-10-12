@@ -78,7 +78,11 @@ export const usePopupStore = create(
 
             const { INIT_AUTOFILL_FORM } = MESSAGES
 
-            await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_FORM, form })
+            await chrome.tabs.sendMessage(currentTab.id, {
+              type: INIT_AUTOFILL_FORM,
+              tab: { id: currentTab.id, url: currentTab.url },
+              form,
+            })
             break
           }
           case 'site': {
@@ -87,17 +91,24 @@ export const usePopupStore = create(
             if ('action' in restProps) {
               chrome.tabs.sendMessage(currentTab.id, {
                 type: `SITE_AUTOFILL_${restProps.messageId}`,
+                tab: { id: currentTab.id, url: currentTab.url },
                 action: restProps.action,
               })
             } else {
-              await chrome.tabs.sendMessage(currentTab.id, { type: `SITE_AUTOFILL_${restProps.messageId}` })
+              await chrome.tabs.sendMessage(currentTab.id, {
+                type: `SITE_AUTOFILL_${restProps.messageId}`,
+                tab: { id: currentTab.id, url: currentTab.url },
+              })
             }
             break
           }
           default: {
             const { INIT_AUTOFILL_ALL } = MESSAGES
 
-            await chrome.tabs.sendMessage(currentTab.id, { type: INIT_AUTOFILL_ALL })
+            await chrome.tabs.sendMessage(currentTab.id, {
+              type: INIT_AUTOFILL_ALL,
+              tab: { id: currentTab.id, url: currentTab.url },
+            })
             break
           }
         }

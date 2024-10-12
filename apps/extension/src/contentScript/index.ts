@@ -1,13 +1,16 @@
-import { log } from '@/utils'
-import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
-import { MESSAGES } from '@/consts'
 import { Form, SupportedInputsType } from '@/types'
+import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
+import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
+import { log } from '@/utils'
+import { getSiteRule } from '@/utils/site-rules'
+import { MESSAGES } from '@/consts'
 
 // Init Log
 log('CONTENT SCRIPT is running...')
 
 interface RequestPayload {
   type: MESSAGES
+  tab?: { id: number; url: string }
   form?: Form
 }
 
@@ -54,6 +57,11 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         }
 
         case INIT_AUTOFILL_ALL: {
+          const tabUrl = request.tab?.url
+          const siteRule = await getSiteRule(tabUrl!)
+
+          contentScriptStore.setState({ siteRule })
+
           await initiateAutofill({ rootElement: null })
 
           sendResponse({ type: AUTOFILL_COMPLETE })
@@ -63,6 +71,10 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         case INIT_AUTOFILL_FORM: {
           if (request?.form) {
             const elem = document.querySelectorAll('form')[request.form.index]
+            const tabUrl = request.tab?.url
+            const siteRule = await getSiteRule(tabUrl!)
+
+            contentScriptStore.setState({ siteRule })
 
             await initiateAutofill({ rootElement: elem })
 
@@ -79,6 +91,11 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
             activeElement instanceof HTMLTextAreaElement ||
             activeElement instanceof HTMLSelectElement
           ) {
+            const tabUrl = request.tab?.url
+            const siteRule = await getSiteRule(tabUrl!)
+
+            contentScriptStore.setState({ siteRule })
+
             fillElement({ elem: activeElement as SupportedInputsType })
           }
           break
@@ -100,7 +117,12 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         default: {
           /* Handle Site Specifc Message */
           if (request.type.startsWith('SITE_AUTOFILL_')) {
-            await initiateAutofill({ rootElement: null, message: { id: request.type?.slice(14) } })
+            const tabUrl = request.tab?.url
+            const siteRule = await getSiteRule(tabUrl!)
+
+            contentScriptStore.setState({ siteRule, message: { id: request.type?.slice(14) } })
+
+            await initiateAutofill({ rootElement: null })
 
             sendResponse({ type: AUTOFILL_COMPLETE })
           }

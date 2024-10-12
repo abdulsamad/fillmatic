@@ -1,5 +1,4 @@
 import { useConfigStore as configStore } from '@/store/config'
-import { AutoFillMessage } from '@/types'
 import { log, typeWithEffect, getElementType, isSupportedInput, isContentEditable, matchElement } from '@/utils'
 import { handleFileInput } from '@/autofill'
 
@@ -7,10 +6,9 @@ import { generateValue } from './generateValue'
 
 interface IFillElement {
   elem: Element
-  message?: AutoFillMessage
 }
 
-export const fillElement = async ({ elem, message }: IFillElement) => {
+export const fillElement = async ({ elem }: IFillElement) => {
   try {
     const config = configStore.getState()
 
@@ -40,7 +38,7 @@ export const fillElement = async ({ elem, message }: IFillElement) => {
         return
       }
 
-      const value = await generateValue(type, elem, message)
+      const value = await generateValue(type, elem)
 
       switch (type) {
         case 'checkbox':
