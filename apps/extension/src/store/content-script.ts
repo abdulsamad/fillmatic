@@ -1,10 +1,14 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
+import { SiteRule } from '@/utils/site-rules'
+
 interface ContentScriptStore {
   firstName?: string
   lastName?: string
   lastGeneratedPassword: string
+  siteRules?: SiteRule
+  message?: string
 }
 
 export const useContentScriptStore = create(
@@ -13,6 +17,8 @@ export const useContentScriptStore = create(
     firstName: undefined,
     lastName: undefined,
     lastGeneratedPassword: '',
+    siteRules: undefined,
+    message: '',
 
     // Actions
     //
