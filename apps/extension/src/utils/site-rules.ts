@@ -1,6 +1,6 @@
 import { isDev } from '.'
 
-export type MatcherType = 'hostname' | 'startsWith' | 'regex'
+export type MatcherType = 'hostname' | 'startsWith' | 'endsWith' | 'regex'
 
 export type SiteRule = {
   name: string
@@ -8,6 +8,9 @@ export type SiteRule = {
     type: MatcherType
     value: string
   }
+  active: boolean
+  ignoredFields?: string
+  matchInIframe?: boolean // Check URL for iframe via location.href not Chrome Tabs API
   rules: Array<{
     match: string
     messageId: string
@@ -23,36 +26,38 @@ export type SiteRule = {
 }
 
 const siteRules: SiteRule[] = [
-  // {
-  //   name: 'Fillmatic Demo',
-  //   matcher: {
-  //     type: 'startsWith',
-  //     value: isDev ? 'http://localhost:3000' : 'https://fillmatic.pages.dev/demo/',
-  //   },
-  //   rules: [
-  //     {
-  //       match: 'text',
-  //       name: 'Fill Specific Data',
-  //       messageId: 'kmY6E',
-  //       value: 'FillMatic Special Demo Data',
-  //     },
-  //   ],
-  //   // formFill: {
-  //   //   identifier: '#demo-form',
-  //   //   fields: {
-  //   //     name: 'John Doe',
-  //   //     email: 'john@example.com',
-  //   //     message: 'This is a demo message',
-  //   //   },
-  //   //   submit: true,
-  //   // },
-  // },
+  {
+    name: 'Fillmatic Demo',
+    matcher: {
+      type: 'startsWith',
+      value: isDev ? 'http://localhost:3000' : 'https://fillmatic.pages.dev/demo/',
+    },
+    active: isDev,
+    rules: [
+      {
+        match: 'text',
+        name: 'Fill Specific Data',
+        messageId: 'kmY6E',
+        value: 'FillMatic Special Demo Data',
+      },
+    ],
+    // formFill: {
+    //   identifier: '#demo-form',
+    //   fields: {
+    //     name: 'John Doe',
+    //     email: 'john@example.com',
+    //     message: 'This is a demo message',
+    //   },
+    //   submit: true,
+    // },
+  },
   {
     name: 'Stripe Actions',
     matcher: {
       type: 'startsWith',
       value: 'https://checkout.stripe.com/c/pay/cs_test',
     },
+    active: true,
     rules: [
       {
         match: 'cardNumber',
@@ -74,6 +79,7 @@ const siteRules: SiteRule[] = [
       type: 'regex',
       value: 'https://[^.]+\\.lemonsqueezy\\.com/checkout',
     },
+    active: true,
     rules: [
       {
         match: 'Field-numberInput',
@@ -93,11 +99,15 @@ const siteRules: SiteRule[] = [
 
 export const getSiteRule = async (url: string): Promise<SiteRule | undefined> => {
   return siteRules.find((rule) => {
+    if (!rule.active) return false
+
     switch (rule.matcher.type) {
       case 'hostname':
         return new URL(url).hostname === rule.matcher.value
       case 'startsWith':
         return url.startsWith(rule.matcher.value)
+      case 'endsWith':
+        return url.endsWith(rule.matcher.value)
       case 'regex':
         return new RegExp(rule.matcher.value).test(url)
       default:

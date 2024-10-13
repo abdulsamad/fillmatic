@@ -57,17 +57,24 @@ export const Popup = () => {
   const { startDelay, cancelDelay } = useTimeout()
 
   useLayoutEffect(() => {
-    isInternalPage()
-      .then((res) => setIsDisabled(res))
-      .catch(() => setIsDisabled(false))
-  }, [])
+    ;async () => {
+      try {
+        // Disable on Interal Pages
+        const isInternal = await isInternalPage()
 
-  useLayoutEffect(() => {
-    getCurrentTab().then((tab) => {
-      if (!tab.id) return null
+        setIsDisabled(isInternal)
 
-      setCurrentTab(tab)
-    })
+        // Save Current Tab to store
+        const tab = await getCurrentTab()
+
+        if (!tab.id) return null
+
+        setCurrentTab(tab)
+      } catch (err) {
+        console.error(err)
+        setIsDisabled(false)
+      }
+    }
   }, [])
 
   useEffect(() => {
