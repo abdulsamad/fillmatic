@@ -92,76 +92,103 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
     case 'tel-local':
     case 'tel-local-prefix':
     case 'tel-local-suffix':
-    case 'tel-extension':
+    case 'tel-extension': {
       return faker.phone.number()
-    case 'email':
+    }
+    case 'email': {
+      const firstName = faker.person.firstName()
+      const lastName = faker.person.lastName()
+
+      contentScriptStore.setState({ firstName, lastName })
+
       return faker.internet.email({
-        firstName: contentScriptState.firstName,
-        lastName: contentScriptState.lastName,
+        firstName: contentScriptState.firstName || firstName,
+        lastName: contentScriptState.lastName || lastName,
         provider: config.tempEmailProvider,
       })
-    case 'impp':
+    }
+    case 'impp': {
       return faker.internet.url()
+    }
 
     // Personal Information Tokens
-    case 'name':
+    case 'name': {
       return faker.person.fullName()
-    case 'honorific-prefix':
+    }
+    case 'honorific-prefix': {
       return faker.person.prefix()
-    case 'given-name':
+    }
+    case 'given-name': {
       const firstName = faker.person.firstName()
       contentScriptStore.setState({ firstName })
       return firstName
-    case 'additional-name':
+    }
+    case 'additional-name': {
       return faker.person.middleName()
-    case 'family-name':
+    }
+    case 'family-name': {
       const lastName = faker.person.lastName()
       contentScriptStore.setState({ lastName })
       return lastName
-    case 'honorific-suffix':
+    }
+    case 'honorific-suffix': {
       return faker.person.suffix()
-    case 'nickname':
-      return faker.internet.userName()
+    }
+    case 'nickname': {
+      return faker.internet.userName({
+        firstName: contentScriptState.firstName,
+        lastName: contentScriptState.lastName,
+      })
+    }
     // case 'username':
     //   return faker.internet.userName()
     // case 'new-password':
     // case 'current-password':
     //   return handlePasswordGeneration(element)
-    case 'one-time-code':
+    case 'one-time-code': {
       return faker.number.int({ min: 100000, max: 999999 }).toString()
-    case 'organization-title':
+    }
+    case 'organization-title': {
       return faker.person.jobTitle()
-    case 'organization':
+    }
+    case 'organization': {
       return faker.company.name()
+    }
 
     // Address Tokens
     case 'street-address':
     case 'address-line1':
     case 'address-line2':
-    case 'address-line3':
+    case 'address-line3': {
       return faker.location.streetAddress()
+    }
     case 'address-level4':
     case 'address-level3':
     case 'address-level2':
-    case 'address-level1':
+    case 'address-level1': {
       return faker.location.city()
+    }
     case 'country':
-    case 'country-name':
+    case 'country-name': {
       return faker.location.country()
-    case 'postal-code':
+    }
+    case 'postal-code': {
       return faker.location.zipCode()
+    }
 
     // Payment Tokens
     case 'cc-name':
     case 'cc-given-name':
     case 'cc-additional-name':
-    case 'cc-family-name':
+    case 'cc-family-name': {
       const fullName = faker.person.fullName()
       contentScriptStore.setState({ firstName: fullName })
       return fullName
-    case 'cc-number':
+    }
+    case 'cc-number': {
       return faker.finance.creditCardNumber()
-    case 'cc-exp':
+    }
+    case 'cc-exp': {
       const currentDate = new Date()
       const placeholder = elem?.placeholder || elem?.pattern || 'MM/YY'
       const separator = placeholder.includes('/') ? '/' : '-'
@@ -181,59 +208,78 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
       }
 
       return `${month}${separator}${year}`
-    case 'cc-exp-month':
+    }
+    case 'cc-exp-month': {
       return faker.date.future().getMonth().toString().padStart(2, '0')
-    case 'cc-exp-year':
+    }
+    case 'cc-exp-year': {
       return faker.date.future().getFullYear().toString()
-    case 'cc-csc':
+    }
+    case 'cc-csc': {
       return faker.finance.creditCardCVV()
-    case 'cc-type':
+    }
+    case 'cc-type': {
       return faker.finance.creditCardIssuer()
-    case 'transaction-currency':
+    }
+    case 'transaction-currency': {
       return faker.finance.currencyCode()
-    case 'transaction-amount':
+    }
+    case 'transaction-amount': {
       return faker.finance.amount()
+    }
 
     // Other Tokens
-    case 'language':
+    case 'language': {
       return faker.location.country()
-    // case 'bday':
-    // case 'bday-day':
-    // case 'bday-month':
-    // case 'bday-year':
-    //   return faker.date.birthdate().toISOString()?.split('T')[0]
-    case 'sex':
+    }
+    case 'sex': {
       return faker.person.sex()
-    case 'url':
+    }
+    case 'url': {
       return faker.internet.url()
-    case 'photo':
+    }
+    case 'photo': {
       return faker.image.url()
+    }
 
     // Recipient Tokens
-    case 'recipient-name':
+    case 'recipient-name': {
       return faker.person.fullName()
-    case 'recipient-email':
+    }
+    case 'recipient-email': {
+      const firstName = faker.person.firstName()
+      const lastName = faker.person.lastName()
+
+      contentScriptStore.setState({ firstName, lastName })
+
       return faker.internet.email({
-        firstName: contentScriptState.firstName,
-        lastName: contentScriptState.lastName,
+        firstName: contentScriptState.firstName || firstName,
+        lastName: contentScriptState.lastName || lastName,
         provider: config.tempEmailProvider,
       })
-    case 'recipient-phone':
+    }
+    case 'recipient-phone': {
       return faker.phone.number()
+    }
 
     // Group Tokens
-    case 'group-name':
+    case 'group-name': {
       return faker.company.name()
-    case 'group-description':
+    }
+    case 'group-description': {
       return faker.lorem.sentence()
-    case 'group-member':
+    }
+    case 'group-member': {
       return faker.person.fullName()
+    }
 
     // Named Tokens
-    case 'named-entity':
+    case 'named-entity': {
       return faker.company.name()
-    case 'named-entity-type':
+    }
+    case 'named-entity-type': {
       return faker.company.buzzNoun()
+    }
   }
 }
 
@@ -242,7 +288,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
   const contentScriptState = contentScriptStore.getState()
 
   switch (type) {
-    case 'text':
+    case 'text': {
       if (elem instanceof HTMLInputElement) {
         switch (true) {
           case matchElement(elem, 'full name') ||
@@ -251,7 +297,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
             matchElement(elem, 'last name') ||
             matchElement(elem, 'surname') ||
             matchElement(elem, 'family name') ||
-            matchElement(elem, 'name'):
+            matchElement(elem, 'name'): {
             if (matchElement(elem, 'full name')) {
               const fullName = faker.person.fullName()
               contentScriptStore.setState({ firstName: fullName })
@@ -270,18 +316,26 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
               return elem.maxLength > 0 ? lastName.slice(0, elem.maxLength) : lastName
             }
             break
-          case matchElement(elem, 'email') || matchElement(elem, 'e-mail') || matchElement(elem, 'mail'):
+          }
+          case matchElement(elem, 'email') || matchElement(elem, 'e-mail') || matchElement(elem, 'mail'): {
+            const firstName = faker.person.firstName()
+            const lastName = faker.person.lastName()
+
+            contentScriptStore.setState({ firstName, lastName })
+
             return faker.internet.email({
-              firstName: contentScriptState.firstName,
-              lastName: contentScriptState.lastName,
+              firstName: contentScriptState.firstName || firstName,
+              lastName: contentScriptState.lastName || lastName,
               provider: config.tempEmailProvider,
             })
+          }
           case matchElement(elem, 'phone') ||
             matchElement(elem, 'tel') ||
             matchElement(elem, 'mobile') ||
-            matchElement(elem, 'cell'):
+            matchElement(elem, 'cell'): {
             return faker.phone.number()
-          case matchElement(elem, 'date'):
+          }
+          case matchElement(elem, 'date'): {
             const isDateOfBirth = matchElement(elem, 'birth') || matchElement(elem, 'dob')
             let date: Date
 
@@ -320,7 +374,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
             }
 
             return formatDate(date, elem.placeholder?.toLowerCase())
-
+          }
           case matchElement(elem, 'address') ||
             matchElement(elem, 'street') ||
             matchElement(elem, 'city') ||
@@ -328,7 +382,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
             matchElement(elem, 'zip') ||
             matchElement(elem, 'postal') ||
             matchElement(elem, 'suburb') ||
-            matchElement(elem, 'district'):
+            matchElement(elem, 'district'): {
             if (matchElement(elem, 'street')) {
               return faker.location.streetAddress()
             } else if (matchElement(elem, 'city')) {
@@ -345,6 +399,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
             } else {
               return faker.location.streetAddress()
             }
+          }
           case matchElement(elem, 'confirm password') ||
             matchElement(elem, 'reenter password') ||
             matchElement(elem, 'reenter') ||
@@ -353,41 +408,53 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
             matchElement(elem, 're-enter') ||
             matchElement(elem, 'confirm re-enter') ||
             matchElement(elem, 're-enter PIN') ||
-            matchElement(elem, 'confirm'):
+            matchElement(elem, 'confirm'): {
             return handlePasswordGeneration(elem, true)
-          case matchElement(elem, 'company') || matchElement(elem, 'organization'):
+          }
+          case matchElement(elem, 'company') || matchElement(elem, 'organization'): {
             return faker.company.name()
-          case matchElement(elem, 'job title') || matchElement(elem, 'job'):
+          }
+          case matchElement(elem, 'job title') || matchElement(elem, 'job'): {
             return faker.person.jobTitle()
-          case matchElement(elem, 'department'):
+          }
+          case matchElement(elem, 'department'): {
             return faker.commerce.department()
-          case matchElement(elem, 'cardnumber'):
+          }
+          case matchElement(elem, 'cardnumber'): {
             return faker.finance.creditCardNumber({
               issuer: 'visa',
             })
-          case matchElement(elem, 'cardExpiry'):
+          }
+          case matchElement(elem, 'cardExpiry'): {
             const futureDate = faker.date.future()
             const month = (futureDate.getMonth() + 1).toString().padStart(2, '0')
             const year = futureDate.getFullYear().toString().slice(-2)
             return `${month}/${year}`
-          case matchElement(elem, 'cvv') || matchElement(elem, 'cvc'):
+          }
+          case matchElement(elem, 'cvv') || matchElement(elem, 'cvc'): {
             return faker.finance.creditCardCVV()
-          case matchElement(elem, 'cardtype'):
+          }
+          case matchElement(elem, 'cardtype'): {
             return faker.finance.creditCardIssuer()
-          case matchElement(elem, 'Day'):
+          }
+          case matchElement(elem, 'Day'): {
             if (elem instanceof HTMLInputElement && elem.maxLength === 2) {
               return faker.date.birthdate().getDate().toString().padStart(2, '0')
             } else {
               return faker.date.birthdate().getDate().toString()
             }
-          default:
+          }
+          default: {
             return elem.maxLength > 0 ? faker.lorem.word().slice(0, elem.maxLength) : faker.lorem.word()
+          }
         }
       }
       return faker.lorem.word()
-    case 'search':
+    }
+    case 'search': {
       return faker.lorem.word()
-    case 'password':
+    }
+    case 'password': {
       if (elem instanceof HTMLInputElement) {
         if (matchElement(elem, 'confirm') || matchElement(elem, 'reenter') || matchElement(elem, 're-enter')) {
           return handlePasswordGeneration(elem, true)
@@ -395,31 +462,42 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
         return handlePasswordGeneration(elem)
       }
       return faker.internet.password({ length: 8 })
-    case 'email':
+    }
+    case 'email': {
+      const firstName = faker.person.firstName()
+      const lastName = faker.person.lastName()
+
+      contentScriptStore.setState({ firstName, lastName })
+
       return faker.internet.email({
-        firstName: contentScriptState.firstName,
-        lastName: contentScriptState.lastName,
+        firstName: contentScriptState.firstName || firstName,
+        lastName: contentScriptState.lastName || lastName,
         provider: config.tempEmailProvider,
       })
-    case 'number':
+    }
+    case 'number': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? parseInt(elem.min, 10) : 1
         const max = elem.max ? parseInt(elem.max, 10) : 100
         return faker.number.int({ min, max }).toString()
       }
       return faker.number.int({ min: 1, max: 100 }).toString()
-    case 'url':
+    }
+    case 'url': {
       return faker.internet.url()
-    case 'tel':
+    }
+    case 'tel': {
       return faker.helpers.fromRegExp('501-[0-9]{3}-[0-9]{3}')
-    case 'date':
+    }
+    case 'date': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? new Date(elem.min) : new Date('1970-01-01')
         const max = elem.max ? new Date(elem.max) : new Date()
         return faker.date.between({ from: min, to: max }).toISOString()?.split('T')[0]
       }
       return faker.date.recent().toISOString()?.split('T')[0]
-    case 'time':
+    }
+    case 'time': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? elem.min : '00:00'
         const max = elem.max ? elem.max : '23:59'
@@ -431,7 +509,8 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       }
       return faker.date.recent().toTimeString()?.split(' ')[0].slice(0, 5)
-    case 'datetime-local':
+    }
+    case 'datetime-local': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? new Date(elem.min) : new Date('1970-01-01T00:00')
         const max = elem.max ? new Date(elem.max) : new Date()
@@ -439,14 +518,16 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
         return date.toISOString().slice(0, 16).replace('T', ' ')
       }
       return faker.date.recent().toISOString().slice(0, 16).replace('T', ' ')
-    case 'month':
+    }
+    case 'month': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? new Date(elem.min + '-01') : new Date('1970-01-01')
         const max = elem.max ? new Date(elem.max + '-01') : new Date()
         return faker.date.between({ from: min, to: max }).toISOString().slice(0, 7)
       }
       return faker.date.recent().toISOString().slice(0, 7)
-    case 'week':
+    }
+    case 'week': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? new Date(elem.min.replace('W', '-')) : new Date('1970-01-01')
         const max = elem.max ? new Date(elem.max.replace('W', '-')) : new Date()
@@ -459,18 +540,21 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
       const onejan = new Date(d.getFullYear(), 0, 1)
       const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
       return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
-    case 'textarea':
+    }
+    case 'textarea': {
       if (elem instanceof HTMLTextAreaElement && elem.maxLength > 0) {
         return faker.lorem.paragraph().slice(0, elem.maxLength)
       }
       return faker.lorem.paragraph()
-    case 'select':
+    }
+    case 'select': {
       if (elem instanceof HTMLSelectElement) {
         const options = Array.from(elem.options)
         return faker.helpers.arrayElement(options).value
       }
       return ''
-    case 'checkbox':
+    }
+    case 'checkbox': {
       if (elem instanceof HTMLInputElement) {
         // Check if the field matches any in alwaysCheckFields
         if (config?.alwaysCheckFields?.split(',').some((field) => matchElement(elem, field.trim()))) {
@@ -490,26 +574,32 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
         return faker.datatype.boolean()
       }
       return faker.datatype.boolean()
-    case 'radio':
+    }
+    case 'radio': {
       if (elem instanceof HTMLInputElement && elem.name) {
         const radios = document.querySelectorAll(`input[name="${elem.name}"][type="radio"]`)
         const randomRadio = faker.helpers.arrayElement(Array.from(radios)) as HTMLInputElement
         return randomRadio === elem
       }
       return faker.datatype.boolean()
-    case 'color':
+    }
+    case 'color': {
       return faker.color.rgb({ format: 'hex', prefix: '#' })
-    case 'range':
+    }
+    case 'range': {
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? parseInt(elem.min, 10) : 1
         const max = elem.max ? parseInt(elem.max, 10) : 100
         return faker.number.int({ min, max }).toString()
       }
       return ''
-    case 'contenteditable':
+    }
+    case 'contenteditable': {
       return faker.lorem.sentence()
-    default:
+    }
+    default: {
       return ''
+    }
   }
 }
 

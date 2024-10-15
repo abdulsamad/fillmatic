@@ -36,23 +36,30 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
 
   switch (command as ExtensionCommands) {
     case 'AUTOFILL_ALL':
-      await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_ALL })
-      break
-    case 'AUTOFILL_CURRENT_FORM':
-      // Get form
-      const forms = (await chrome.tabs.sendMessage(tab.id, { type: GET_FORMS })).forms as any[]
-      const focusedForm = forms.find((elem) => elem.focused)
-
-      if (focusedForm) {
-        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_FORM, form: focusedForm })
+      {
+        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_ALL })
       }
+      break
 
+    case 'AUTOFILL_CURRENT_FORM':
+      {
+        // Get form
+        const forms = (await chrome.tabs.sendMessage(tab.id, { type: GET_FORMS })).forms as any[]
+        const focusedForm = forms.find((elem) => elem.focused)
+
+        if (focusedForm) {
+          await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_FORM, form: focusedForm })
+        }
+      }
       break
     case 'AUTOFILL_CURRENT_INPUT':
-      await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_INPUT })
+      {
+        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_INPUT })
+      }
       break
 
-    default:
+    default: {
       return
+    }
   }
 })
