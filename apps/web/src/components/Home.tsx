@@ -1,10 +1,6 @@
-import {
-  ClipboardCheck,
-  Zap,
-  Code,
-  Clock,
-  type LucideProps,
-} from "lucide-react";
+import { Zap, Code, Clock, type LucideProps } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,15 +12,33 @@ import {
 } from "@/components/ui/card";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Textarea } from "@/components/ui/textarea";
+import AnimatedGradientText from "@/components/ui/animated-gradient-text";
 
-export default function LandingPage() {
+export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b text-slate-100">
+      <header className="px-4 lg:px-6 h-16 flex items-center border-b">
         <div className="container mx-auto flex justify-between items-center">
           <a className="flex items-center justify-center" href="#">
-            <ClipboardCheck className="h-6 w-6 text-purple-600" />
-            <span className="ml-2 text-lg font-bold">FillMatic</span>
+            <img
+              src="icon192.png"
+              alt="FillMatic Logo"
+              width={35}
+              className=""
+            />
+            <h1 className="text-3xl ml-2">
+              <span className="-skew-x-2">Fill</span>
+              <span className="text-gradient italic">Matic</span>
+            </h1>
+            <AnimatedGradientText className="h-4 ml-2">
+              <span
+                className={cn(
+                  `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`,
+                )}
+              >
+                Beta
+              </span>
+            </AnimatedGradientText>
           </a>
           <nav className="flex gap-4 sm:gap-6">
             <a
@@ -47,13 +61,13 @@ export default function LandingPage() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2 max-w-3xl mx-auto">
-                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-gray-700">
+                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
                   Automate Form Filling for Developers
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl lg:text-2xl">
-                  Save time and boost productivity with FillMatic. The smart
-                  Chrome extension for developers to handle repetitive form
-                  tasks.
+                <p className="mx-auto max-w-[700px] md:text-xl lg:text-2xl">
+                  Save time and boost productivity with Fill
+                  <span className="italic">M</span>atic. The smart Chrome
+                  extension for developers to handle repetitive form tasks.
                 </p>
               </div>
               <div className="pt-4">
@@ -78,8 +92,9 @@ export default function LandingPage() {
         </section>
         <section id="features" className="w-full py-8 md:py-20 lg:py-24">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12 text-slate-100">
-              Why Developers Choose FillMatic
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+              Why Developers Choose Fill
+              <span className="italic">M</span>atic
             </h2>
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard
@@ -108,7 +123,8 @@ export default function LandingPage() {
             <div className="flex flex-col items-center space-y-4 text-center max-w-2xl mx-auto">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  Help Shape FillMatic
+                  Help Shape Fill
+                  <span className="italic">M</span>atic
                 </h2>
                 <p className="text-gray-500 md:text-xl">
                   Your input drives our development. Share your ideas and
@@ -184,7 +200,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:h-24">
             <p className="text-sm text-gray-500">
-              © 2024 FillMatic. All rights reserved.
+              © 2024 Fill
+              <span className="italic">M</span>atic. All rights reserved.
             </p>
             <nav className="flex gap-4 sm:gap-6">
               <a
@@ -226,9 +243,7 @@ const FeatureCard = ({ Icon, title, description }: FeatureCardProps) => {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-gray-500 text-lg my-4">
-        {description}
-      </CardContent>
+      <CardContent className="text-lg my-4">{description}</CardContent>
     </Card>
   );
 };
