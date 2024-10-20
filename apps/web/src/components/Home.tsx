@@ -71,21 +71,25 @@ export default function Home() {
                 </p>
               </div>
               <div className="pt-4">
-                <Button
-                  size="lg"
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
-                  asChild
-                >
-                  <RainbowButton>
+                <div className="flex justify-center">
+                  <Button variant="link" size="lg" asChild>
                     <a
                       href="https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnkhpfomlopbehcpmgmfndfje"
                       target="_blank"
                       rel="noopener"
                     >
-                      Add to Chrome
+                      <img
+                        src="webstore.png"
+                        alt="Available in the Chrome Web Store"
+                        className="rounded-xl"
+                        width={220}
+                      />
+                      <span className="text-sm font-medium sr-only">
+                        Install from Chrome Web Store
+                      </span>
                     </a>
-                  </RainbowButton>
-                </Button>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -122,7 +126,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center max-w-2xl mx-auto">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-10">
                   Help Shape Fill
                   <span className="italic">M</span>atic
                 </h2>
