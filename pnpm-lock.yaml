@@ -175,8 +175,8 @@ importers:
         version: 5.0.0-rc.2(@types/react@18.3.11)(react@18.3.1)
     devDependencies:
       '@crxjs/vite-plugin':
-        specifier: 2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: 2.0.0-beta.26
+        version: 2.0.0-beta.26
       '@types/chrome':
         specifier: ^0.0.246
         version: 0.0.246
@@ -702,8 +702,8 @@ packages:
   '@cloudflare/workers-types@4.20241011.0':
     resolution: {integrity: sha512-emwBnuFB/2lS1z6NXAeBqrSL8Xwnr7YpgdLuchOmgu/igqBsLLNPBb4Qmgh3neFWUe9wbzQyx030836YF3c3Xw==}
 
-  '@crxjs/vite-plugin@2.0.0-beta.25':
-    resolution: {integrity: sha512-g5ytTNiFpFCi+T0trSDJLohVz5PufLBLh6OGljyGTHkQCKiApuEgZ1bAjgPXluMDhMUvbPfZT10LYl5ROefXog==}
+  '@crxjs/vite-plugin@2.0.0-beta.26':
+    resolution: {integrity: sha512-fZiSeOB4LOwq3cLIwHJnJ4x/duBU/Gkn3JKF7b7mZIRAXtu1waorJ6QaH7qoZPcN5LzyA3J+/t3Kuwa/oo8XNg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -2250,10 +2250,6 @@ packages:
   '@webcomponents/custom-elements@1.6.0':
     resolution: {integrity: sha512-CqTpxOlUCPWRNUPZDxT5v2NnHXA4oox612iUGnmTUGQFhZ1Gkj8kirtl/2wcF6MqX7+PqqicZzOCBKKfIn0dww==}
 
-  acorn-walk@8.3.3:
-    resolution: {integrity: sha512-MxXdReSRhGO7VlFe1bRG/oI7/mdLV9B9JJT0N8vZOhF7gFRR5l3M8W9G8JxmKV+JC5mGqJ0QvqfSOLsCPa4nUw==}
-    engines: {node: '>=0.4.0'}
-
   acorn-walk@8.3.4:
     resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
     engines: {node: '>=0.4.0'}
@@ -2663,15 +2659,6 @@ packages:
 
   debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
-  debug@4.3.6:
-    resolution: {integrity: sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==}
     engines: {node: '>=6.0'}
     peerDependencies:
       supports-color: '*'
@@ -3578,9 +3565,6 @@ packages:
 
   parse5-parser-stream@7.1.2:
     resolution: {integrity: sha512-JyeQc9iwFLn5TbvvqACIF/VXG6abODeB3Fwmv/TGdLk2LfbWkaySGY72at4+Ty7EkPZj854u4CrICqNk2qIbow==}
-
-  parse5@7.1.2:
-    resolution: {integrity: sha512-Czj1WaSVpaoj0wbhMzLmWD69anp2WH7FXMB9n1Sy8/ZFF9jolSQVMu1Ij5WIyGmcBmhk7EOndpO4mIpihVqAXw==}
 
   parse5@7.2.0:
     resolution: {integrity: sha512-ZkDsAOcxsUMZ4Lz5fVciOehNcJ+Gb8gTzcA4yl3wnc273BAybYWrQ+Ks/OjCjSEpjvQkDSeZbybK9qj2VHHdGA==}
@@ -5098,21 +5082,21 @@ snapshots:
 
   '@cloudflare/workers-types@4.20241011.0': {}
 
-  '@crxjs/vite-plugin@2.0.0-beta.25':
+  '@crxjs/vite-plugin@2.0.0-beta.26':
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@webcomponents/custom-elements': 1.6.0
-      acorn-walk: 8.3.3
+      acorn-walk: 8.3.4
       cheerio: 1.0.0
       connect-injector: 0.4.4
       convert-source-map: 1.9.0
-      debug: 4.3.6
+      debug: 4.3.7
       es-module-lexer: 0.10.5
       fast-glob: 3.3.2
       fs-extra: 10.1.0
       jsesc: 3.0.2
       magic-string: 0.26.7
-      picocolors: 1.0.1
+      picocolors: 1.1.0
       react-refresh: 0.13.0
       rollup: 2.78.1
       rxjs: 7.5.7
@@ -6557,10 +6541,6 @@ snapshots:
 
   '@webcomponents/custom-elements@1.6.0': {}
 
-  acorn-walk@8.3.3:
-    dependencies:
-      acorn: 8.12.1
-
   acorn-walk@8.3.4:
     dependencies:
       acorn: 8.12.1
@@ -6886,7 +6866,7 @@ snapshots:
       domutils: 3.1.0
       encoding-sniffer: 0.2.0
       htmlparser2: 9.1.0
-      parse5: 7.1.2
+      parse5: 7.2.0
       parse5-htmlparser2-tree-adapter: 7.0.0
       parse5-parser-stream: 7.1.2
       undici: 6.19.8
@@ -7081,10 +7061,6 @@ snapshots:
       ms: 2.0.0
 
   debug@4.3.4:
-    dependencies:
-      ms: 2.1.2
-
-  debug@4.3.6:
     dependencies:
       ms: 2.1.2
 
@@ -8179,15 +8155,11 @@ snapshots:
   parse5-htmlparser2-tree-adapter@7.0.0:
     dependencies:
       domhandler: 5.0.3
-      parse5: 7.1.2
+      parse5: 7.2.0
 
   parse5-parser-stream@7.1.2:
     dependencies:
-      parse5: 7.1.2
-
-  parse5@7.1.2:
-    dependencies:
-      entities: 4.5.0
+      parse5: 7.2.0
 
   parse5@7.2.0:
     dependencies:

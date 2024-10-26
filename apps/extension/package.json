@@ -65,7 +65,7 @@
     "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "2.0.0-beta.25",
+    "@crxjs/vite-plugin": "2.0.0-beta.26",
     "@types/chrome": "^0.0.246",
     "@types/dom-chromium-ai": "^0.0.0",
     "@types/node": "^22.5.1",
