@@ -95,6 +95,29 @@ const siteRules: SiteRule[] = [
       },
     ],
   },
+  {
+    name: 'Paddle Actions',
+    matcher: {
+      type: 'startsWith',
+      value: 'https://sandbox-buy.paddle.com/checkout',
+    },
+    active: true,
+    matchInIframe: true,
+    rules: [
+      {
+        match: 'cardNumber',
+        name: 'Fill Success Card',
+        messageId: '05428',
+        value: '4000056655665556	',
+      },
+      {
+        match: 'cardNumber',
+        name: 'Fill Declined Card',
+        messageId: 'bcc27',
+        value: '4000000000000002',
+      },
+    ],
+  },
 ]
 
 export const getSiteRule = async (url: string): Promise<SiteRule | undefined> => {
