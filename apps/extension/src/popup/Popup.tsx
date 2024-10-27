@@ -57,7 +57,7 @@ export const Popup = () => {
   const { startDelay, cancelDelay } = useTimeout()
 
   useLayoutEffect(() => {
-    ;async () => {
+    ;(async () => {
       try {
         // Disable on Interal Pages
         const isInternal = await isInternalPage()
@@ -74,7 +74,7 @@ export const Popup = () => {
         console.error(err)
         setIsDisabled(false)
       }
-    }
+    })()
   }, [])
 
   useEffect(() => {
