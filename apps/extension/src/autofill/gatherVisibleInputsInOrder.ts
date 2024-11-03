@@ -18,7 +18,7 @@ export const isElementVisible = (element: Element): boolean => {
 export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): SupportedInputsType[] => {
   const allInputs = Array.from(
     (rootElement || document).querySelectorAll(
-      'input:not(:disabled), select:not(:disabled), textarea:not(:disabled)',
+      'input:not(:disabled):not([readonly]), select:not(:disabled):not([readonly]), textarea:not(:disabled):not([readonly])',
     ) as NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   )
 
