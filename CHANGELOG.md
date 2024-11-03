@@ -4,6 +4,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [v0.0.6] - 2024-11-04
+#### Added
+- **feat**: New landing page base with shadcn design components.
+
+#### Changed
+- **refactor**: Updated logo link for Chrome Webstore and revised privacy policy page.
+- **refactor**: Enhanced initialization of popup and improved block-level scoping for switch cases.
+- **refactor**: Turbo repo and Vite CRX plugin updated.
+
+#### Fixed
+- **fix:** Ignored readonly inputs to prevent autofill issues.
+- **fix:** Resolved build failure impacting deployment.
+
+---
+
 ### [v0.0.5] - 2024-10-20  
 #### Added  
 - **feat:** Sites rules logic and Stripe integration.  
