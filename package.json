@@ -7,6 +7,7 @@
     "build": "turbo build",
     "postbuild": "bestzip deploy/${npm_package_name}-v${npm_package_version}.zip apps/extension/build/*",
     "dev": "turbo dev",
+    "dev:extension": "pnpm --filter extension dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
