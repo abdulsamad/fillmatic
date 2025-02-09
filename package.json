@@ -5,10 +5,10 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "build:extension": "pnpm --filter extension build",
     "postbuild": "bestzip deploy/${npm_package_name}-v${npm_package_version}.zip apps/extension/build/*",
     "dev": "turbo dev",
     "dev:extension": "pnpm --filter extension dev",
-    "dev:build": "pnpm --filter extension build",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
