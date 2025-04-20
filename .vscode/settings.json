@@ -1,6 +1,9 @@
 {
   "eslint.workingDirectories": [{ "mode": "auto" }],
-  "files.associations": { "**/extension/src/globals.css": "tailwindcss" },
+  "files.associations": {
+    "**/extension/src/globals.css": "tailwindcss",
+    "**/web/src/styles/globals.css": "tailwindcss"
+  },
   "npm.exclude": ["**/apps/**", "**/packages/**"],
   "npm.scriptExplorerExclude": ["prepare", "format"]
 }
