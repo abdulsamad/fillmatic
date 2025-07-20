@@ -18,7 +18,7 @@ export const formSchema = z.object({
     .refine((value) => (value === '' ? true : value.split(`,`).every((field) => field.trim().length > 0)), {
       message: `Each ignored field must not be empty`,
     }),
-  tempEmailProvider: z.enum([`mailinator.com`, `mailsac.com`]),
+  tempEmailProvider: z.enum([`mailinator.com`, `mailsac.com`, `yopmail.com`]),
   alwaysCheckFields: z
     .string()
     .max(2000, { message: `Always check fields cannot exceed 2000 characters` })

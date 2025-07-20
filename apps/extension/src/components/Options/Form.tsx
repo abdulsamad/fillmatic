@@ -240,6 +240,7 @@ const OptionsForm = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="yopmail.com">YOPmail</SelectItem>
                           <SelectItem value="mailinator.com">Mailinator</SelectItem>
                           <SelectItem value="mailsac.com">mailsac</SelectItem>
                         </SelectContent>
