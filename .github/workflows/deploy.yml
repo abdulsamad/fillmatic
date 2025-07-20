@@ -33,19 +33,12 @@ jobs:
         uses: codex-team/action-nodejs-package-info@v1.1
         id: package
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload extension to Chrome Web Store
+        uses: mobilefirstllc/cws-publish@latest
         with:
-          name: ${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}
-          path: ./deploy/*.zip
-          retention-days: 7
-
-      - name: Upload & release
-        uses: mnao305/chrome-extension-upload@v5.0.0
-        with:
-          file-path: ./deploy/${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}.zip
-          extension-id: hogefuga(${{ secrets.CHROME_WEB_STORE_EXTENSION_ID }})
-          client-id: ${{ secrets.CHROME_WEB_STORE_CLIENT_ID }}
-          client-secret: ${{ secrets.CHROME_WEB_STORE_CLIENT_SECRET }}
-          refresh-token: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
-          publish: false
+          action: "upload"
+          client_id: ${{ secrets.CHROME_WEB_STORE_CLIENT_ID }}
+          client_secret: ${{ secrets.CHROME_WEB_STORE_CLIENT_SECRET }}
+          refresh_token: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
+          extension_id: ${{ secrets.CHROME_WEB_STORE_EXTENSION_ID }}
+          zip_file: ./deploy/${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}.zip
