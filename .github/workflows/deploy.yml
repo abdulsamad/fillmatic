@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - "*"
-  pull_request:
-    branches: [main]
 
 jobs:
   build:
@@ -28,7 +26,7 @@ jobs:
         run: pnpm install
 
       - name: Build and zip the build (dist) folder
-        run: pnpm run build && pnpm run postbuild
+        run: pnpm run build:extension && pnpm run postbuild
 
       - name: Get package.json data
         uses: codex-team/action-nodejs-package-info@v1.1
