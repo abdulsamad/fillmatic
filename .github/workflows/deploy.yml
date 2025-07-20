@@ -2,7 +2,8 @@ name: Extension Continuos Integration
 
 on:
   push:
-    branches: [main]
+    tags:
+      - "*"
   pull_request:
     branches: [main]
 
@@ -29,7 +30,7 @@ jobs:
       - name: Build and zip the build (dist) folder
         run: pnpm run build && pnpm run postbuild
 
-      - name: Get package info
+      - name: Get package.json data
         uses: codex-team/action-nodejs-package-info@v1.1
         id: package
 
@@ -42,3 +43,10 @@ jobs:
           refresh_token: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
           extension_id: ${{ secrets.CHROME_WEB_STORE_EXTENSION_ID }}
           zip_file: ./deploy/${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}.zip
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}
+          path: ./deploy/*.zip
+          retention-days: 7
