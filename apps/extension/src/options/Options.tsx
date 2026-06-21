@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import OptionsForm from '@/components/Options/Form'
 
 export const Options = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn] = useState(false)
 
   return (
     <TooltipProvider>

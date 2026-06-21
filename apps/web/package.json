@@ -5,6 +5,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "lint": "eslint src",
     "preview": "astro build && wrangler pages dev",
     "astro": "astro",
     "deploy": "astro build && wrangler pages deploy",
@@ -71,8 +72,14 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260621.1",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4.3.1",
     "@tailwindcss/vite": "^4.3.1",
+    "eslint": "^10.5.0",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.6.0",
+    "typescript-eslint": "^8.61.1",
     "wrangler": "^4.103.0"
   }
 }

@@ -501,8 +501,8 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? elem.min : '00:00'
         const max = elem.max ? elem.max : '23:59'
-        const [minHour, minMinute] = min?.split(':').map(Number)
-        const [maxHour, maxMinute] = max?.split(':').map(Number)
+        const [minHour, _minMinute] = min.split(':').map(Number)
+        const [maxHour, maxMinute] = max.split(':').map(Number)
         const hour = faker.number.int({ min: minHour, max: maxHour })
         const minute =
           hour === maxHour ? faker.number.int({ min: 0, max: maxMinute }) : faker.number.int({ min: 0, max: 59 })

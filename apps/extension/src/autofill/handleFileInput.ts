@@ -1,4 +1,3 @@
-import { log } from '@/utils'
 
 const sampleFiles = {
   aac: 'sample.aac',

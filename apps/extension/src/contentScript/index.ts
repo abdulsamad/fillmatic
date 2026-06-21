@@ -17,7 +17,7 @@ interface RequestPayload {
 chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendResponse) => {
   ;(async () => {
     try {
-      sender.tab ? log(`Tab Message`) : log(`Extension Message`)
+      log(sender.tab ? `Tab Message` : `Extension Message`)
 
       const {
         INIT_AUTOFILL_ALL,

@@ -25,7 +25,7 @@ const SpecialButtons = () => {
       <div className="space-y-2">
         <h2 className="text-sm font-semibold text-muted-foreground">{siteRule.name}</h2>
         <div className="grid gap-2">
-          {siteRule.rules.map(({ match, name, messageId, action }) => (
+          {siteRule.rules.map(({ name, messageId }) => (
             <Button
               key={messageId}
               variant="secondary"

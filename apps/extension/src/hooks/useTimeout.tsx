@@ -6,7 +6,7 @@ export const useTimeout = (delay = 600) => {
   const delayRef = useRef<NodeJS.Timeout | null>(null)
 
   const startDelay = useCallback(
-    (callback: any) => {
+    (callback: () => void) => {
       delayRef.current = setTimeout(callback, delay)
       setIsTimeoutActive(true)
       return delayRef.current

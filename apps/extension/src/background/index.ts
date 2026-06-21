@@ -1,4 +1,4 @@
-import { getCurrentTab, log } from '@/utils'
+import { log } from '@/utils'
 import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
 
@@ -44,7 +44,7 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
     case 'AUTOFILL_CURRENT_FORM':
       {
         // Get form
-        const forms = (await chrome.tabs.sendMessage(tab.id, { type: GET_FORMS })).forms as any[]
+        const forms = (await chrome.tabs.sendMessage(tab.id, { type: GET_FORMS })).forms as { focused: boolean }[]
         const focusedForm = forms.find((elem) => elem.focused)
 
         if (focusedForm) {

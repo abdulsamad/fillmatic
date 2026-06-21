@@ -4,20 +4,16 @@ import { devtools } from 'zustand/middleware'
 import { Form, ExtensionCommands } from '@/types'
 import { MESSAGES } from '@/consts'
 
-interface CommonProps {
-  // Add any common properties here
-}
-
-interface FillAllParams extends CommonProps {
+interface FillAllParams {
   fillType: 'all'
 }
 
-interface FillSingleParams extends CommonProps {
+interface FillSingleParams {
   fillType: 'single'
   form: Form
 }
 
-interface FillSiteParams extends CommonProps {
+interface FillSiteParams {
   fillType: 'site'
   messageId: string
   action?: () => void

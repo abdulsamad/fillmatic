@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "lint": "eslint src",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
     "postbuild": "pnpm -C ../.. run postbuild"
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.7.0",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.1",
     "@types/chrome": "^0.2.0",
     "@types/dom-chromium-ai": "^0.0.17",
@@ -75,10 +77,15 @@
     "@vitejs/plugin-react": "^6.0.2",
     "autoprefixer": "^10.5.0",
     "bestzip": "^3.0.1",
+    "eslint": "^10.5.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.6.0",
     "postcss": "^8.5.15",
     "prettier": "^3.8.4",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1",
     "vite": "^8.0.16"
   }
 }

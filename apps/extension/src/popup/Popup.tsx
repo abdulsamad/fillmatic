@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { usePopupStore } from '@/store/popup'
 import { Form } from '@/types'
 import { useTimeout } from '@/hooks/useTimeout'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/sonner'
@@ -75,7 +75,7 @@ export const Popup = () => {
         setIsDisabled(false)
       }
     })()
-  }, [])
+  }, [setCurrentTab, setIsDisabled])
 
   useEffect(() => {
     if (!currentTab?.id) return
@@ -86,11 +86,11 @@ export const Popup = () => {
 
       setForms(res.forms)
     })
-  }, [currentTab])
+  }, [currentTab, setForms])
 
   useEffect(() => {
     getAllCommands().then((commands) => setCommands(commands))
-  }, [])
+  }, [setCommands])
 
   const sendScrollElementIntoViewMessage = useCallback(
     (form: Form) => () => {
@@ -100,7 +100,7 @@ export const Popup = () => {
         chrome.tabs.sendMessage(currentTab.id, { type: MESSAGES['SCROLL_FORM_INTO_VIEW'], form })
       })
     },
-    [currentTab],
+    [currentTab, startDelay],
   )
 
   return (

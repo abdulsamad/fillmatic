@@ -13,7 +13,7 @@ interface ContentScriptStore {
 }
 
 export const useContentScriptStore = create(
-  devtools<ContentScriptStore>((set, get) => ({
+  devtools<ContentScriptStore>((_set, _get) => ({
     // State
     firstName: undefined, // Initialize as undefined to allow dynamic generation when needed
     lastName: undefined, // Initialize as undefined to allow dynamic generation when needed

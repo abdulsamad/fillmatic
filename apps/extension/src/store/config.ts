@@ -11,7 +11,7 @@ interface ConfigStore extends formSchemaType {
 export const useConfigStore = create(
   devtools(
     persist<ConfigStore>(
-      (set, get) => ({
+      (set, _get) => ({
         // State
         ...DEFAULT_CONFIG,
 

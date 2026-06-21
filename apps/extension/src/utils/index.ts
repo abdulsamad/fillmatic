@@ -23,15 +23,15 @@ export const isContentEditable = (elem: Element) =>
 export const isSupportedElement = (elem: Element) => isSupportedInput(elem) || isContentEditable(elem)
 
 export const getCurrentTab = async () => {
-  let queryOptions = { active: true, lastFocusedWindow: true }
-  let [tab] = await chrome.tabs.query(queryOptions)
+  const queryOptions = { active: true, lastFocusedWindow: true }
+  const [tab] = await chrome.tabs.query(queryOptions)
 
   return tab || -1
 }
 
 export const isInternalPage = async () => {
-  let queryOptions = { active: true, lastFocusedWindow: true }
-  let [tab] = await chrome.tabs.query(queryOptions)
+  const queryOptions = { active: true, lastFocusedWindow: true }
+  const [tab] = await chrome.tabs.query(queryOptions)
 
   if (!tab.url) return false
 

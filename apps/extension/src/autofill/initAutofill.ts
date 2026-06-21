@@ -9,7 +9,7 @@ interface IinitiateAutofill {
 
 export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
   /* Inputs */
-  let inputs = gatherVisibleInputsInOrder(rootElement)
+  const inputs = gatherVisibleInputsInOrder(rootElement)
 
   log(`Initially found ${inputs.length} visible input elements`)
 
