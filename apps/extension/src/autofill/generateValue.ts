@@ -616,7 +616,7 @@ const handlePasswordGeneration = async (elem: HTMLInputElement, reenter = false)
     const { lastGeneratedPassword } = contentScriptState
 
     if (lastGeneratedPassword) {
-      generatedPassword = lastGeneratedPassword.slice(0, elem.maxLength || lastGeneratedPassword.length)
+      generatedPassword = elem.maxLength > 0 ? lastGeneratedPassword.slice(0, elem.maxLength) : lastGeneratedPassword
     }
   } else if (matchElement(elem, 'pin')) {
     const hardcodedPin = '111111'
