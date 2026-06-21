@@ -15,7 +15,7 @@ import { Slider } from '@/components/ui/slider'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { formSchema, formSchemaType } from './formSchema'
+import { formSchema, formSchemaType, TYPING_SPEED_MIN, TYPING_SPEED_MAX } from './formSchema'
 
 const OptionsForm = () => {
   const saveConfig = useConfigStore((state) => state.saveConfig)
@@ -114,14 +114,8 @@ const OptionsForm = () => {
                         <FormLabel>Typing Speed</FormLabel>
                         <FormControl>
                           <Slider
-                            min={
-                              formSchema.shape.typingSpeed._def.checks.find((check) => check.kind === 'min')?.value ??
-                              40
-                            }
-                            max={
-                              formSchema.shape.typingSpeed._def.checks.find((check) => check.kind === 'max')?.value ??
-                              400
-                            }
+                            min={TYPING_SPEED_MIN}
+                            max={TYPING_SPEED_MAX}
                             step={10}
                             value={[field.value]}
                             className="w-full"

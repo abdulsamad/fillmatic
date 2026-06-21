@@ -13,10 +13,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "bestzip": "^2.2.1",
+    "bestzip": "^3.0.1",
     "prettier": "^3.8.4",
     "turbo": "^2.9.18",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {

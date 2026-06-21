@@ -135,7 +135,7 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
       return faker.person.suffix()
     }
     case 'nickname': {
-      return faker.internet.userName({
+      return faker.internet.username({
         firstName: contentScriptState.firstName,
         lastName: contentScriptState.lastName,
       })

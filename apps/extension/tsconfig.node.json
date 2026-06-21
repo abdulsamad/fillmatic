@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true
   },
   "include": ["src/manifest.ts", "vite.config.ts"]
 }

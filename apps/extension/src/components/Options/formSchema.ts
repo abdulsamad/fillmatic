@@ -1,11 +1,14 @@
 import { z } from 'zod'
 
+export const TYPING_SPEED_MIN = 40
+export const TYPING_SPEED_MAX = 800
+
 export const formSchema = z.object({
   typingEffect: z.boolean(),
   typingSpeed: z
     .number()
-    .min(40, { message: `Typing speed must be at least 40 characters per minute` })
-    .max(800, { message: `Typing speed cannot exceed 400 characters per minute` }),
+    .min(TYPING_SPEED_MIN, { message: `Typing speed must be at least ${TYPING_SPEED_MIN} characters per minute` })
+    .max(TYPING_SPEED_MAX, { message: `Typing speed cannot exceed ${TYPING_SPEED_MAX} characters per minute` }),
   forceAutofill: z.boolean(),
   samePasswordEverytime: z.boolean(),
   commonPassword: z
