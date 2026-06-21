@@ -151,7 +151,7 @@ export default function Home() {
         </section>
 
         {/* ── Features ── */}
-        <section id="features" className="w-full py-20 md:py-28">
+        <section id="features" className="w-full py-20 md:py-28 scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-14">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
@@ -186,7 +186,7 @@ export default function Home() {
         </section>
 
         {/* ── How it works ── */}
-        <section id="how-it-works" className="w-full py-20 md:py-28 bg-violet-50">
+        <section id="how-it-works" className="w-full py-20 md:py-28 bg-violet-50 scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center mb-14">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
@@ -222,7 +222,7 @@ export default function Home() {
         </section>
 
         {/* ── Feedback ── */}
-        <section id="feedback" className="w-full py-20 md:py-28">
+        <section id="feedback" className="w-full py-20 md:py-28 scroll-mt-16">
           <div className="container mx-auto px-4 md:px-6 max-w-lg">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
