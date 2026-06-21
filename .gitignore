@@ -51,3 +51,6 @@ chrome-extension/public/manifest.json
 
 # etc
 .idea
+
+# AI
+CLAUDE.md

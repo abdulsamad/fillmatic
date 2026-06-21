@@ -25,15 +25,13 @@ export const useConfigStore = create(
         storage: createJSONStorage(() => ({
           getItem: async (name: string) => {
             const value = await chrome.storage.local.get(name)
-            return value[name] || null
+            return (value[name] as string) || null
           },
           setItem: async (name: string, value: string) => {
             await chrome.storage.local.set({ [name]: value })
-            return { [name]: value }
           },
           removeItem: async (name: string) => {
             await chrome.storage.local.remove(name)
-            return null
           },
         })),
         version: 0,

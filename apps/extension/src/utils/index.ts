@@ -200,7 +200,7 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
   return false
 }
 
-export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key]).state
+export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key] as string).state
 
 export const getAllCommands = async (): Promise<Record<ExtensionCommands, string>> => {
   const commandsRef: Record<string, string | undefined> = {}

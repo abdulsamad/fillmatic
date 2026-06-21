@@ -30,7 +30,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 // })
 
 chrome.commands.onCommand.addListener(async (command: string, tab) => {
-  if (!tab.id) return
+  if (!tab || !tab.id) return
 
   const { INIT_AUTOFILL_ALL, INIT_AUTOFILL_FORM, INIT_AUTOFILL_INPUT, GET_FORMS } = MESSAGES
 
