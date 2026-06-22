@@ -1,4 +1,4 @@
-import { useConfigStore as configStore } from '@/store/config'
+import { getEffectiveConfig } from '@/store/profiles'
 import {
   log,
   typeWithEffect,
@@ -18,7 +18,7 @@ interface IFillElement {
 
 export const fillElement = async ({ elem }: IFillElement) => {
   try {
-    const config = configStore.getState()
+    const config = getEffectiveConfig()
 
     if (isSupportedInput(elem)) {
       /* Inputs */

@@ -1,32 +1,14 @@
-import { SupportedInputsType } from '@/types'
+import { type UserRule } from './user-rules'
 
 export type Profile = {
+  id: string
   name: string
-  rules: {
-    [key: string]: string | ((element: SupportedInputsType) => string | boolean)
-  }
-}
-
-// This would be stored in the user's settings and loaded here
-export const profiles: Profile[] = [
-  {
-    name: 'Personal',
-    rules: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-    },
-  },
-  {
-    name: 'Work',
-    rules: {
-      firstName: 'Jane',
-      lastName: 'Smith',
-      email: 'jane.smith@company.com',
-    },
-  },
-]
-
-export const getProfile = (name: string): Profile | undefined => {
-  return profiles.find((profile) => profile.name === name)
+  // Each field is optional — undefined means "inherit from General settings"
+  tempEmailProvider?: string
+  commonPassword?: string
+  samePasswordEverytime?: boolean
+  ignoredFields?: string
+  alwaysCheckFields?: string
+  // Per-profile field rules (same shape as global UserRule)
+  rules?: UserRule[]
 }

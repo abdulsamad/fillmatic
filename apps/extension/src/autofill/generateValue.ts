@@ -1,10 +1,7 @@
 import { HTMLInputTypeAttribute } from 'react'
 import { faker } from '@faker-js/faker'
 
-// import { getUserRule } from '@/utils/user-rules'
-// import { getProfile } from '@/utils/user-profiles'
-
-import { useConfigStore as configStore } from '@/store/config'
+import { getEffectiveConfig, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
@@ -14,34 +11,29 @@ interface GenerateValueParams {
   elem: SupportedInputsType | Element
 }
 
+const getActiveUserRuleValue = (elem: Element): string | undefined => {
+  const { profiles, activeProfileId } = useProfileStore.getState()
+  const profile = profiles.find((p) => p.id === activeProfileId)
+  const rules = profile?.rules ?? []
+  if (!rules.length || !(elem instanceof HTMLElement)) return undefined
+  const url = window.location.href
+  for (const rule of rules) {
+    if (url.includes(rule.siteMatcher)) {
+      for (const { fieldPattern, value } of rule.rules) {
+        if (matchElement(elem as HTMLElement, fieldPattern)) return value
+      }
+    }
+  }
+  return undefined
+}
+
 export const generateValue = async ({ type, elem }: GenerateValueParams): Promise<string | boolean | undefined> => {
   if (!isSupportedElement(elem)) return ''
 
   const siteRule = contentScriptStore.getState().siteRule
   const message = contentScriptStore.getState().message
 
-  // const userRule = getUserRule(currentUrl)
-  // const profile = config.selectedProfile ? getProfile(config.selectedProfile) : undefined
-
   if (!isSupportedElement(elem)) return ''
-
-  /* Check profile rules first */
-  // if (profile && element instanceof HTMLElement) {
-  //   const elementName = element.name || element.id
-  //   if (elementName && profile.rules[elementName]) {
-  //     const rule = profile.rules[elementName]
-  //     return typeof rule === 'function' ? rule(element as SupportedInputsType) : rule
-  //   }
-  // }
-
-  /* Check for user-defined rules first */
-  // if (userRule && element instanceof HTMLElement) {
-  //   const elementName = element.name || element.id
-  //   if (elementName && userRule.rules[elementName]) {
-  //     const rule = userRule.rules[elementName]
-  //     return typeof rule === 'function' ? rule(element as SupportedInputsType) : rule
-  //   }
-  // }
 
   /* Check for site-specific rules first */
   if (siteRule && message && isSupportedInput(elem)) {
@@ -52,6 +44,10 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
       return matchingRule.value
     }
   }
+
+  /* Check user-defined field rules */
+  const userRuleValue = getActiveUserRuleValue(elem)
+  if (userRuleValue !== undefined) return userRuleValue
 
   /* Generate based on AutoComplete */
   const autoCompleteTokensToSkip = [
@@ -78,7 +74,7 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
 }
 
 const handleAutocompleteToken = (elem: HTMLInputElement) => {
-  const config = configStore.getState()
+  const config = getEffectiveConfig()
   const contentScriptState = contentScriptStore.getState()
   const tokens = elem.autocomplete.toLowerCase()?.split(' ')
   const mainToken = tokens[tokens.length - 1] // Get the last token
@@ -284,7 +280,7 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
 }
 
 const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', elem: SupportedInputsType | Element) => {
-  const config = configStore.getState()
+  const config = getEffectiveConfig()
   const contentScriptState = contentScriptStore.getState()
 
   switch (type) {
@@ -605,7 +601,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
 
 const handlePasswordGeneration = async (elem: HTMLInputElement, reenter = false) => {
   let generatedPassword: string = ''
-  const config = configStore.getState()
+  const config = getEffectiveConfig()
   const contentScriptState = contentScriptStore.getState()
   const maxLength = elem.maxLength > 0 ? elem.maxLength : 8
   const minLength = elem.minLength > 0 ? elem.minLength : undefined

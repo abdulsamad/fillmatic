@@ -3,11 +3,13 @@ import { Settings, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLi
 import { useShallow } from 'zustand/react/shallow'
 
 import { usePopupStore } from '@/store/popup'
+import { useProfileStore } from '@/store/profiles'
 import { Form } from '@/types'
 import { useTimeout } from '@/hooks/useTimeout'
 import { Avatar } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
@@ -55,6 +57,9 @@ export const Popup = () => {
   )
 
   const { startDelay, cancelDelay } = useTimeout()
+  const { profiles, activeProfileId, setActiveProfile } = useProfileStore(
+    useShallow(({ profiles, activeProfileId, setActiveProfile }) => ({ profiles, activeProfileId, setActiveProfile })),
+  )
 
   useLayoutEffect(() => {
     ;(async () => {
@@ -120,6 +125,19 @@ export const Popup = () => {
             </Avatar>
           </div>
         </header>
+        <div className="px-3 py-1 border-b flex items-center gap-2">
+          <CircleUserRoundIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <Select value={activeProfileId} onValueChange={setActiveProfile}>
+            <SelectTrigger className="h-6 text-xs border-0 shadow-none p-0 focus:ring-0 flex-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {profiles.map((p) => (
+                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <main className="p-4 space-y-6 h-full relative">
           <div className="space-y-4">
             <Tooltip>

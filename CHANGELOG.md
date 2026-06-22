@@ -4,6 +4,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [v0.0.9] - TBD
+
+#### Added
+- **feat:** Identity profiles — create named profiles (Work, Personal, Staging, etc.) that override specific General settings. Each profile can set its own email provider, password mode, common password, ignored fields, and always-check fields. The Default profile (non-deletable) inherits all General settings.
+- **feat:** Per-profile field rules — define site-specific field overrides (e.g. fill `promo_code` with `SAVE20` on `checkout.myapp.com`) scoped to the active profile. Rules are managed in the new Field Rules tab and stored within the profile.
+- **feat:** Profile selector in the popup — a compact selector bar lets you switch the active profile without opening Options. Switching takes effect on the next fill.
+- **feat:** General settings tab shows the effective value from the active profile for any overridden field, with an amber "From *Profile*" indicator. Editing an overridden field and saving updates both General and the profile.
+
+#### Changed
+- **refactor:** `generateValue.ts` now calls `getEffectiveConfig()` (merges General config with active profile overrides) instead of reading directly from the config store — profile settings take priority in the autofill pipeline.
+- **refactor:** Options page reorganised into three tabs: General, Profiles, and Field Rules.
+
+---
+
 ### [v0.0.8] - 2026-06-22
 
 #### Fixed
