@@ -1,4 +1,4 @@
-name: Extension Continuos Integration
+name: Build & Publish to Chrome Web Store
 
 on:
   push:
