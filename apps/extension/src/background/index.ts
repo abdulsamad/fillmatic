@@ -4,6 +4,11 @@ import { ExtensionCommands } from '@/types'
 
 log('BACKGROUND SCRIPT is running...')
 
+if (import.meta.env.DEV) {
+  chrome.action.setBadgeText({ text: 'DEV' })
+  chrome.action.setBadgeBackgroundColor({ color: '#FF3B30' })
+}
+
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
     chrome.tabs.create({ url: `https://fillmatic.pages.dev/demo/` })
