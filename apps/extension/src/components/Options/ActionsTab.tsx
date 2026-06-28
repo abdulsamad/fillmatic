@@ -270,11 +270,6 @@ const ActionsTab = () => {
                     {action.group && (
                       <Badge variant="secondary" className="text-xs font-normal py-0">{action.group}</Badge>
                     )}
-                    {locked && (
-                      <Badge variant="secondary" className="text-xs font-normal py-0 gap-1">
-                        <LockIcon className="h-2.5 w-2.5" /> Default
-                      </Badge>
-                    )}
                     {!action.active && (
                       <Badge variant="outline" className="text-xs font-normal py-0">Disabled</Badge>
                     )}
