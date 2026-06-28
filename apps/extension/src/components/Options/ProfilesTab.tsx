@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PlusIcon, PencilIcon, Trash2Icon, UserCircleIcon, LockIcon } from 'lucide-react'
+import { PlusIcon, PencilIcon, Trash2Icon, UserCircleIcon } from 'lucide-react'
 
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { type Profile } from '@/utils/user-profiles'
@@ -101,7 +101,7 @@ const ProfilesTab = () => {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-base font-semibold">Profiles</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5 w-140">
             Switch profiles to use different settings per environment. Edit settings for a profile by selecting it, then going to the General tab.
           </p>
         </div>
@@ -130,11 +130,6 @@ const ProfilesTab = () => {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium">{profile.name}</span>
                     {isActive && <Badge variant="outline" className="text-xs text-primary border-primary/40 py-0">Active</Badge>}
-                    {isDefault && (
-                      <Badge variant="secondary" className="text-xs font-normal py-0 gap-1">
-                        <LockIcon className="h-2.5 w-2.5" /> Default
-                      </Badge>
-                    )}
                   </div>
                   {isDefault && !summary ? (
                     <p className="text-xs text-muted-foreground">Uses General settings. Select a custom profile to override them.</p>
