@@ -272,7 +272,7 @@ const ActionsTab = () => {
                     )}
                     {locked && (
                       <Badge variant="secondary" className="text-xs font-normal py-0 gap-1">
-                        <LockIcon className="h-2.5 w-2.5" /> Built-in
+                        <LockIcon className="h-2.5 w-2.5" /> Default
                       </Badge>
                     )}
                     {!action.active && (
