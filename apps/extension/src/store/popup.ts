@@ -16,7 +16,6 @@ interface FillSingleParams {
 interface FillSiteParams {
   fillType: 'site'
   messageId: string
-  action?: () => void
 }
 
 interface PopupStore {
@@ -82,20 +81,12 @@ export const usePopupStore = create(
             break
           }
           case 'site': {
-            if (!('messageId' in restProps)) throw new Error(`messageId is required to fill site's paricular data`)
+            if (!('messageId' in restProps)) throw new Error(`messageId is required to run an action`)
 
-            if ('action' in restProps) {
-              chrome.tabs.sendMessage(currentTab.id, {
-                type: `SITE_AUTOFILL_${restProps.messageId}`,
-                tab: { id: currentTab.id, url: currentTab.url },
-                action: restProps.action,
-              })
-            } else {
-              await chrome.tabs.sendMessage(currentTab.id, {
-                type: `SITE_AUTOFILL_${restProps.messageId}`,
-                tab: { id: currentTab.id, url: currentTab.url },
-              })
-            }
+            await chrome.tabs.sendMessage(currentTab.id, {
+              type: `ACTION_AUTOFILL_${restProps.messageId}`,
+              tab: { id: currentTab.id, url: currentTab.url },
+            })
             break
           }
           default: {

@@ -1,10 +1,7 @@
-export type UserRuleEntry = {
-  fieldPattern: string
-  value: string
-}
+import { type FieldTarget } from '@/utils/actions'
 
 export type UserRule = {
   id: string
   siteMatcher: string
-  rules: UserRuleEntry[]
+  rules: FieldTarget[]
 }

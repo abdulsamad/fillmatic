@@ -1,43 +1,59 @@
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { usePopupStore } from '@/store/popup'
-import { getSiteRule, SiteRule } from '@/utils/site-rules'
+import { useActionsStore } from '@/store/actions'
+import { getMatchingActions, type Action } from '@/utils/actions'
 import { Button } from '@/components/ui/button'
 
 const SpecialButtons = () => {
-  const [siteRule, setSiteRule] = useState<SiteRule>()
+  const actions = useActionsStore((state) => state.actions)
 
   const { isAutofilling, currentTab, fillData } = usePopupStore(
     useShallow(({ isAutofilling, fillData, currentTab }) => ({ isAutofilling, fillData, currentTab })),
   )
 
-  useEffect(() => {
-    if (!currentTab?.url) return
+  const groups = useMemo(() => {
+    if (!currentTab?.url) return [] as Array<{ label: string; actions: Action[] }>
 
-    getSiteRule(currentTab.url).then((rule) => setSiteRule(rule))
-  }, [currentTab])
+    const matching = getMatchingActions(actions, currentTab.url)
 
-  if (!siteRule) return null
+    // Preserve order while grouping by the optional `group` label
+    const order: string[] = []
+    const map = new Map<string, Action[]>()
+    for (const action of matching) {
+      const label = action.group || 'Actions'
+      if (!map.has(label)) {
+        map.set(label, [])
+        order.push(label)
+      }
+      map.get(label)!.push(action)
+    }
+    return order.map((label) => ({ label, actions: map.get(label)! }))
+  }, [actions, currentTab?.url])
+
+  if (groups.length === 0) return null
 
   return (
     <div className="space-y-4 bg-background text-foreground">
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold text-muted-foreground">{siteRule.name}</h2>
-        <div className="grid gap-2">
-          {siteRule.rules.map(({ name, messageId }) => (
-            <Button
-              key={messageId}
-              variant="secondary"
-              disabled={isAutofilling}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={() => fillData({ fillType: 'site', messageId })}
-            >
-              {name}
-            </Button>
-          ))}
+      {groups.map((group) => (
+        <div key={group.label} className="space-y-2">
+          <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
+          <div className="grid gap-2">
+            {group.actions.map((action) => (
+              <Button
+                key={action.id}
+                variant="secondary"
+                disabled={isAutofilling}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => fillData({ fillType: 'site', messageId: action.id })}
+              >
+                {action.name}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   )
 }

@@ -2,8 +2,10 @@ import { Form, SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
 import { log } from '@/utils'
-import { getSiteRule } from '@/utils/site-rules'
+import { getActionsFromStorage } from '@/utils/actions'
 import { MESSAGES } from '@/consts'
+
+const ACTION_AUTOFILL_PREFIX = 'ACTION_AUTOFILL_'
 
 // Init Log
 log('CONTENT SCRIPT is running...')
@@ -28,17 +30,18 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         SCROLL_FORM_INTO_VIEW,
       } = MESSAGES
       const activeElement = document.activeElement
-      const isSiteLevelAutofill = request.type.startsWith('SITE_AUTOFILL_')
+      const isActionAutofill = request.type.startsWith(ACTION_AUTOFILL_PREFIX)
 
-      // Add siteRule to store
-      if ([INIT_AUTOFILL_ALL, INIT_AUTOFILL_FORM, INIT_AUTOFILL_INPUT].includes(request.type) || isSiteLevelAutofill) {
-        const tabUrl = request.tab?.url
-        const siteRule = await getSiteRule(tabUrl!)
+      // Resolve the active action (if any) into the content-script store
+      if ([INIT_AUTOFILL_ALL, INIT_AUTOFILL_FORM, INIT_AUTOFILL_INPUT].includes(request.type) || isActionAutofill) {
+        let activeAction
+        if (isActionAutofill) {
+          const actionId = request.type.slice(ACTION_AUTOFILL_PREFIX.length)
+          const actions = await getActionsFromStorage()
+          activeAction = actions.find((action) => action.id === actionId)
+        }
 
-        contentScriptStore.setState({
-          siteRule,
-          message: isSiteLevelAutofill ? { id: request.type?.slice(14) } : undefined,
-        })
+        contentScriptStore.setState({ activeAction })
       }
 
       switch (request.type) {
@@ -117,8 +120,8 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
           break
 
         default: {
-          /* Handle Site Specifc Message */
-          if (isSiteLevelAutofill) {
+          /* Handle action-specific message */
+          if (isActionAutofill) {
             await initiateAutofill({ rootElement: null })
 
             sendResponse({ type: AUTOFILL_COMPLETE })
