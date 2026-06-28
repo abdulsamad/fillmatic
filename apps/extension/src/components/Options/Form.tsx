@@ -126,7 +126,6 @@ const OptionsForm = () => {
       </TabsList>
 
       <TabsContent value="general" className="space-y-10">
-        <ProfileBanner profileName={activeProfile?.name ?? 'Default'} isDefault={isDefaultActive} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -314,6 +313,8 @@ const OptionsForm = () => {
                 </FormItem>
               )}
             />
+
+            <ProfileBanner profileName={activeProfile?.name ?? 'Default'} isDefault={isDefaultActive} />
 
             <div className="flex justify-end space-x-4 mt-12">
               <Button type="button" variant="outline" size="sm" onClick={handleReset}>
