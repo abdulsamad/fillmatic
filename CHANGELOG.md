@@ -11,10 +11,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **feat:** Per-profile field rules — define site-specific field overrides (e.g. fill `promo_code` with `SAVE20` on `checkout.myapp.com`) scoped to the active profile. Rules are managed in the new Field Rules tab and stored within the profile.
 - **feat:** Profile selector in the popup — a compact selector bar lets you switch the active profile without opening Options. Switching takes effect on the next fill.
 - **feat:** General settings tab shows the effective value from the active profile for any overridden field, with an amber "From *Profile*" indicator. Editing an overridden field and saving updates both General and the profile.
+- **feat:** User-configurable Actions — replaces the old hardcoded Stripe / Lemon Squeezy / Paddle integrations with a fully user-editable Actions system. Each Action has a URL matcher, an optional popup group label, and a list of FieldTargets. The four built-in integrations ship as editable defaults. Manage actions in the new **Actions** tab in Options; matching buttons appear in the popup on the right sites.
+- **feat:** Shared FieldTarget model — Actions and Field Rules both use the same `{ attribute, operator, match, value }` schema (attribute ∈ `id|name|placeholder|label|autocomplete`, operator ∈ `exact|contains|regex`). A shared `FieldTargetsEditor` component handles the CRUD UI for both.
+- **feat:** Entitlements seam (`src/utils/entitlements.ts`) — dormant feature-gating helpers (`can(feature)`, `withinLimit(resource, count)`) backed by a hardcoded Premium plan. Nothing is restricted yet; the seam is ready for when login/billing lands.
 
 #### Changed
 - **refactor:** `generateValue.ts` now calls `getEffectiveConfig()` (merges General config with active profile overrides) instead of reading directly from the config store — profile settings take priority in the autofill pipeline.
-- **refactor:** Options page reorganised into three tabs: General, Profiles, and Field Rules.
+- **refactor:** Options page reorganised into four tabs: General, Profiles, Field Rules, and Actions.
+- **refactor:** Field Rules fully migrated to the explicit FieldTarget model (attribute × operator × match × value) — no more fuzzy heuristic matching for user-defined rules.
+- **refactor:** Removed `src/utils/site-rules.ts`; hardcoded site matchers deleted in favour of editable DEFAULT_ACTIONS.
+
+#### Fixed
+- **fix:** React / Vue controlled inputs now correctly trigger `onChange` — fills use native prototype setters (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set`) to bypass framework value trackers so the dispatched `input` event is seen as a real change.
+- **fix:** Real DOM `focus({ preventScroll: true })` and `blur()` are now called around every fill in addition to synthetic focus/blur events, so framework listeners keyed off actual focus state fire correctly.
+- **fix:** `<select>` elements are now set once via `setNativeValue` + `triggerEvent` instead of being char-typed through `typeWithEffect`.
+- **fix:** `contenteditable` elements now route through `typeWithEffect` (using `textContent`) so `input` events fire — previously the value was assigned directly with no events.
+- **fix:** Unknown `autocomplete` tokens (not in the W3C spec switch) now fall through to `handleDefaultInputs` instead of returning `undefined` and skipping the field.
+- **fix:** Keyboard events in `typeWithEffect` now set `{ bubbles: true }` and a `beforeinput` `InputEvent` is dispatched before each value assignment, matching the real browser typing sequence.
+- **fix:** User-supplied strings in `ignoredFields` / `alwaysCheckFields` containing regex-special characters (e.g. `c++`, `price($)`) are now escaped before use in `matchElement`, preventing a `SyntaxError` from silently breaking autofill on the page.
 
 ---
 
