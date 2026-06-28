@@ -2,10 +2,12 @@ import {
   Zap,
   Target,
   Keyboard,
-  CreditCard,
+  UserCircle,
   SlidersHorizontal,
   Sparkles,
   ArrowRight,
+  ShieldCheck,
+  BookMarked,
   type LucideProps,
 } from "lucide-react";
 
@@ -32,19 +34,31 @@ const FEATURES: { Icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">
     Icon: Keyboard,
     title: "Natural Typing Simulation",
     description:
-      "Simulates human typing at a configurable speed, firing focus, input, change, and blur events so React, Vue, and Angular forms respond correctly.",
-  },
-  {
-    Icon: CreditCard,
-    title: "Site-Specific Rules",
-    description:
-      "Built-in rules for Stripe, Lemon Squeezy, and Paddle automatically fill valid test card numbers — no memorising test credentials.",
+      "Simulates real typing with focus, beforeinput, input, change, and blur events — React, Vue, and Angular controlled inputs respond correctly every time.",
   },
   {
     Icon: Zap,
-    title: "One Keyboard Shortcut",
+    title: "Custom Actions",
     description:
-      "Trigger a full form fill without lifting your hands from the keyboard. Works on any form, on any site.",
+      "Create one-click fill buttons for specific sites. Built-in actions for Stripe, Lemon Squeezy, and Paddle ship out of the box — all fully editable.",
+  },
+  {
+    Icon: UserCircle,
+    title: "Identity Profiles",
+    description:
+      "Switch between named profiles (Work, Personal, Staging) that each carry their own email provider, password, and field overrides.",
+  },
+  {
+    Icon: BookMarked,
+    title: "Field Rules",
+    description:
+      "Pin a fixed value to any field on any site using explicit attribute matching — great for promo codes, usernames, or anything that should always fill the same way.",
+  },
+  {
+    Icon: ShieldCheck,
+    title: "Framework-Safe Filling",
+    description:
+      "Uses native prototype setters to bypass React and Vue value trackers, so onChange always fires and controlled inputs update their visible state.",
   },
   {
     Icon: SlidersHorizontal,
@@ -143,8 +157,8 @@ export default function Home() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
-              <Button asChild variant="ghost" size="lg" className="rounded-full">
-                <a href="#how-it-works">See how it works</a>
+              <Button asChild variant="outline" size="lg" className="rounded-full">
+                <a href="/demo">Try the demo</a>
               </Button>
             </div>
           </div>
@@ -294,7 +308,7 @@ export default function Home() {
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2025 Fill<span className="italic">M</span>atic. All rights reserved.
+            © 2026 Fill<span className="italic">M</span>atic. All rights reserved.
           </p>
           <nav className="flex gap-6">
             <a
