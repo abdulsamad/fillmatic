@@ -1,15 +1,13 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-import { AutoFillMessage } from '@/types'
-import { SiteRule } from '@/utils/site-rules'
+import { Action } from '@/utils/actions'
 
 interface ContentScriptStore {
   firstName?: string
   lastName?: string
   lastGeneratedPassword: string
-  siteRule?: SiteRule
-  message?: AutoFillMessage
+  activeAction?: Action
 }
 
 export const useContentScriptStore = create(
@@ -18,7 +16,6 @@ export const useContentScriptStore = create(
     firstName: undefined, // Initialize as undefined to allow dynamic generation when needed
     lastName: undefined, // Initialize as undefined to allow dynamic generation when needed
     lastGeneratedPassword: '',
-    siteRule: undefined,
-    message: undefined,
+    activeAction: undefined,
   })),
 )

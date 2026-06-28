@@ -20,6 +20,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { formSchema, formSchemaType, TYPING_SPEED_MIN, TYPING_SPEED_MAX } from './formSchema'
 import ProfilesTab from './ProfilesTab'
 import FieldRulesTab from './FieldRulesTab'
+import ActionsTab from './ActionsTab'
 
 const OverrideNote = ({ profileName }: { profileName: string }) => (
   <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
@@ -110,6 +111,7 @@ const OptionsForm = () => {
         <TabsTrigger value="general">General</TabsTrigger>
         <TabsTrigger value="profiles">Profiles</TabsTrigger>
         <TabsTrigger value="field-rules">Field Rules</TabsTrigger>
+        <TabsTrigger value="actions">Actions</TabsTrigger>
       </TabsList>
 
       <TabsContent value="general" className="space-y-10">
@@ -324,6 +326,10 @@ const OptionsForm = () => {
 
       <TabsContent value="field-rules">
         <FieldRulesTab />
+      </TabsContent>
+
+      <TabsContent value="actions">
+        <ActionsTab />
       </TabsContent>
     </Tabs>
   )

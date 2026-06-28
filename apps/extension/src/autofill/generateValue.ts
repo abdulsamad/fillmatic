@@ -5,6 +5,7 @@ import { getEffectiveConfig, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
+import { matchFieldTarget } from '@/utils/actions'
 
 interface GenerateValueParams {
   type: HTMLInputTypeAttribute | 'contenteditable'
@@ -19,8 +20,8 @@ const getActiveUserRuleValue = (elem: Element): string | undefined => {
   const url = window.location.href
   for (const rule of rules) {
     if (url.includes(rule.siteMatcher)) {
-      for (const { fieldPattern, value } of rule.rules) {
-        if (matchElement(elem as HTMLElement, fieldPattern)) return value
+      for (const field of rule.rules) {
+        if (matchFieldTarget(elem, field)) return field.value
       }
     }
   }
@@ -30,18 +31,16 @@ const getActiveUserRuleValue = (elem: Element): string | undefined => {
 export const generateValue = async ({ type, elem }: GenerateValueParams): Promise<string | boolean | undefined> => {
   if (!isSupportedElement(elem)) return ''
 
-  const siteRule = contentScriptStore.getState().siteRule
-  const message = contentScriptStore.getState().message
+  const activeAction = contentScriptStore.getState().activeAction
 
   if (!isSupportedElement(elem)) return ''
 
-  /* Check for site-specific rules first */
-  if (siteRule && message && isSupportedInput(elem)) {
-    const elementName = elem.id || elem.name
-    const matchingRule = siteRule.rules.find((rule) => rule.match === elementName && rule.messageId === message.id)
+  /* Check for the active action's field targets first */
+  if (activeAction && isSupportedInput(elem)) {
+    const matchingField = activeAction.fields.find((field) => matchFieldTarget(elem, field))
 
-    if (matchingRule) {
-      return matchingRule.value
+    if (matchingField) {
+      return matchingField.value
     }
   }
 
