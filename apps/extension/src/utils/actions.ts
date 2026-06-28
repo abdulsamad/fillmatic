@@ -44,11 +44,11 @@ export const STORAGE_KEY = 'actions'
 export const DEFAULT_ACTIONS: Action[] = [
   {
     id: 'default-demo',
-    name: 'Fill Specific Data',
-    group: 'Fillmatic Demo',
+    name: 'Fill Demo Form',
+    group: 'FillMatic Demo',
     matcher: {
       type: 'startsWith',
-      value: isDev ? 'http://localhost:3000' : 'https://fillmatic.pages.dev/demo/',
+      value: isDev ? 'http://localhost:3000' : 'https://fillmatic.pages.dev/demo',
     },
     active: isDev,
     fields: [{ attribute: 'name', operator: 'exact', match: 'text', value: 'FillMatic Special Demo Data' }],
