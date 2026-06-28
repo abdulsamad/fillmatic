@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PlusIcon, PencilIcon, Trash2Icon, ZapIcon, GlobeIcon } from 'lucide-react'
+import { PlusIcon, PencilIcon, Trash2Icon, ZapIcon, GlobeIcon, LockIcon } from 'lucide-react'
 
 import { useActionsStore } from '@/store/actions'
 import { type Action } from '@/utils/actions'
@@ -221,6 +221,8 @@ const matcherSummary = (a: Action): string => {
   return `${labels[a.matcher.type]}: ${a.matcher.value}`
 }
 
+const isDefaultAction = (a: Action) => a.id.startsWith('default-')
+
 const ActionsTab = () => {
   const { actions, deleteAction } = useActionsStore()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -253,10 +255,12 @@ const ActionsTab = () => {
         </div>
       ) : (
         <div className="space-y-2">
-          {actions.map((action) => (
+          {actions.map((action) => {
+            const locked = isDefaultAction(action)
+            return (
             <div
               key={action.id}
-              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${action.active ? 'hover:bg-muted/30' : 'opacity-60 hover:bg-muted/30'}`}
+              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${action.active ? '' : 'opacity-60'} ${locked ? 'bg-muted/30' : 'hover:bg-muted/30'}`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <ZapIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
@@ -265,6 +269,11 @@ const ActionsTab = () => {
                     <span className="text-sm font-medium">{action.name}</span>
                     {action.group && (
                       <Badge variant="secondary" className="text-xs font-normal py-0">{action.group}</Badge>
+                    )}
+                    {locked && (
+                      <Badge variant="secondary" className="text-xs font-normal py-0 gap-1">
+                        <LockIcon className="h-2.5 w-2.5" /> Built-in
+                      </Badge>
                     )}
                     {!action.active && (
                       <Badge variant="outline" className="text-xs font-normal py-0">Disabled</Badge>
@@ -276,31 +285,40 @@ const ActionsTab = () => {
                 </div>
               </div>
               <div className="flex items-center gap-1 ml-2 shrink-0">
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(action)}>
-                  <PencilIcon className="h-3.5 w-3.5" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive">
-                      <Trash2Icon className="h-3.5 w-3.5" />
+                {locked ? (
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground cursor-default" disabled>
+                    <LockIcon className="h-3.5 w-3.5" />
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(action)}>
+                      <PencilIcon className="h-3.5 w-3.5" />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete "{action.name}"?</AlertDialogTitle>
-                      <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => deleteAction(action.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive">
+                          <Trash2Icon className="h-3.5 w-3.5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete "{action.name}"?</AlertDialogTitle>
+                          <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteAction(action.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
