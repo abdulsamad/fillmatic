@@ -29,10 +29,19 @@ export const isSupportedElement = (elem: Element): boolean => isSupportedInput(e
  * fires. Calling the prototype setter bypasses the instance patch, leaving the tracker stale, so
  * the dispatched event is detected as a real change. (Same approach used by Testing Library.)
  */
-const inputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
-const textareaValueSetter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set
-const selectValueSetter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set
-const checkedSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set
+// Guard with typeof — these DOM globals don't exist in the service worker context.
+const inputValueSetter = typeof HTMLInputElement !== 'undefined'
+  ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+  : undefined
+const textareaValueSetter = typeof HTMLTextAreaElement !== 'undefined'
+  ? Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set
+  : undefined
+const selectValueSetter = typeof HTMLSelectElement !== 'undefined'
+  ? Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set
+  : undefined
+const checkedSetter = typeof HTMLInputElement !== 'undefined'
+  ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set
+  : undefined
 
 export const setNativeValue = (el: SupportedInputsType, value: string) => {
   const setter =
