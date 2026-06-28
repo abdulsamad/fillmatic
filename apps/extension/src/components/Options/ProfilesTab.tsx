@@ -70,7 +70,7 @@ const ProfileDialog = ({ open, onClose, initial }: ProfileDialogProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Profile name <span className="text-destructive">*</span></FormLabel>
+                  <FormLabel className='mb-2'>Profile name <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Work, Personal, Staging" autoFocus {...field} />
                   </FormControl>
@@ -164,7 +164,9 @@ const ProfilesTab = () => {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete "{profile.name}"?</AlertDialogTitle>
-                        <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
+                        <AlertDialogDescription>
+                          This will permanently delete the <strong>{profile.name}</strong> profile along with all its settings and field rules. Your General (default) settings are not affected. This cannot be undone.
+                        </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
