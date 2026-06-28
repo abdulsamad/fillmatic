@@ -7,6 +7,8 @@ import {
   isContentEditable,
   matchElement,
   triggerEvent,
+  setNativeValue,
+  setNativeChecked,
 } from '@/utils'
 import { handleFileInput } from '@/autofill'
 
@@ -56,11 +58,9 @@ export const fillElement = async ({ elem }: IFillElement) => {
             const selectedInputs = document.querySelectorAll(`input[name="${name}"]:checked`)
 
             if (selectedInputs.length === 0) {
-              if (typeof value === 'boolean') {
-                elem.checked = value
-              } else if (typeof value === 'string') {
-                elem.checked = value.toLowerCase() === 'true'
-              }
+              const checked = typeof value === 'boolean' ? value : String(value ?? '').toLowerCase() === 'true'
+              // Native setter so framework value trackers register the change.
+              setNativeChecked(elem, checked)
             }
 
             triggerEvent(elem, 'input')
@@ -70,9 +70,11 @@ export const fillElement = async ({ elem }: IFillElement) => {
           break
 
         case 'color':
-          elem.value = value as string
+        case 'select':
+          // Set once via the native setter (no char-by-char typing for these), then
+          // trigger events to simulate user interaction.
+          setNativeValue(elem, value as string)
 
-          // Trigger necessary events to simulate user interaction
           triggerEvent(elem, 'input')
           triggerEvent(elem, 'change')
           triggerEvent(elem, 'blur')
@@ -82,12 +84,13 @@ export const fillElement = async ({ elem }: IFillElement) => {
         default: {
           const elemsWithoutTypeEffect = ['week', 'month', 'date', 'time', 'datetime-local']
 
-          await typeWithEffect(value as string, elem, !elemsWithoutTypeEffect.includes(type))
+          await typeWithEffect((value ?? '') as string, elem, !elemsWithoutTypeEffect.includes(type))
         }
       }
     } else if (isContentEditable(elem)) {
-      /* Contenteditable */
-      elem.innerHTML = (await generateValue({ type: 'contenteditable', elem })) as string
+      /* Contenteditable — route through typeWithEffect so input events fire (uses textContent) */
+      const value = await generateValue({ type: 'contenteditable', elem })
+      await typeWithEffect((value ?? '') as string, elem as HTMLElement, true)
     }
   } catch (err) {
     log(`Error in fillElement: ${err}`)

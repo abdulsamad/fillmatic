@@ -14,13 +14,43 @@ export function cn(...inputs: ClassValue[]) {
 
 export const isDev = import.meta.env.DEV
 
-export const isSupportedInput = (elem: Element) =>
+export const isSupportedInput = (elem: Element): elem is SupportedInputsType =>
   elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement
 
-export const isContentEditable = (elem: Element) =>
+export const isContentEditable = (elem: Element): boolean =>
   elem instanceof HTMLElement && elem.contentEditable?.toLowerCase() === 'true' && !isSupportedInput(elem)
 
-export const isSupportedElement = (elem: Element) => isSupportedInput(elem) || isContentEditable(elem)
+export const isSupportedElement = (elem: Element): boolean => isSupportedInput(elem) || isContentEditable(elem)
+
+/**
+ * Native value/checked setters captured from the prototype. Frameworks like React patch the
+ * element instance's own setter and keep an internal value tracker; assigning `el.value` directly
+ * updates that tracker, so a following `input` event reads as "no change" and `onChange` never
+ * fires. Calling the prototype setter bypasses the instance patch, leaving the tracker stale, so
+ * the dispatched event is detected as a real change. (Same approach used by Testing Library.)
+ */
+const inputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+const textareaValueSetter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set
+const selectValueSetter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set
+const checkedSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set
+
+export const setNativeValue = (el: SupportedInputsType, value: string) => {
+  const setter =
+    el instanceof HTMLInputElement
+      ? inputValueSetter
+      : el instanceof HTMLTextAreaElement
+        ? textareaValueSetter
+        : selectValueSetter
+  if (setter) setter.call(el, value)
+  else el.value = value
+}
+
+export const setNativeChecked = (el: HTMLInputElement, checked: boolean) => {
+  if (checkedSetter) checkedSetter.call(el, checked)
+  else el.checked = checked
+}
+
+export const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 export const getCurrentTab = async () => {
   const queryOptions = { active: true, lastFocusedWindow: true }
@@ -42,111 +72,71 @@ export const isInternalPage = async () => {
   )
 }
 
-export const typeWithEffect = (text: string, element: SupportedInputsType, typeEffect: boolean): Promise<void> => {
+export const typeWithEffect = (text: string, element: HTMLElement, typeEffect: boolean): Promise<void> => {
+  const value = text ?? ''
+  const editable = isContentEditable(element)
+
   return new Promise((resolve) => {
-    // Trigger initial focus event
+    // Move real DOM focus (preventScroll avoids the page jumping per field), then
+    // dispatch a synthetic focus for listeners that key off the event directly.
+    element.focus?.({ preventScroll: true })
     element.dispatchEvent(new FocusEvent('focus', { bubbles: true }))
 
+    const finish = () => {
+      // contenteditable has no `change` event; inputs do.
+      if (!editable) {
+        element.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+      element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+      element.blur?.()
+      resolve()
+    }
+
     if (configStore.getState().typingEffect && typeEffect) {
-      const textArr = text.split('')
+      const textArr = value.split('')
+
+      // Empty value: still run the focus/blur + change lifecycle so listeners fire.
+      if (textArr.length === 0) {
+        finish()
+        return
+      }
+
       const charPerMinute = configStore.getState().typingSpeed * 5 // Assuming average word length of 5 characters
       const msPerChar = 60000 / charPerMinute // Convert to milliseconds per character
 
       textArr.forEach((str: string, index) => {
         const slice = textArr.slice(0, index + 1).join('')
         setTimeout(() => {
-          if (isContentEditable(element)) {
-            // Simulate typing for contenteditable elements
-            const keydownEvent = new KeyboardEvent('keydown', { key: str, bubbles: true })
-            element.dispatchEvent(keydownEvent)
+          element.dispatchEvent(new KeyboardEvent('keydown', { key: str, bubbles: true }))
+          element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: str, bubbles: true }))
 
-            const beforeinputEvent = new InputEvent('beforeinput', {
-              inputType: 'insertText',
-              data: str,
-              bubbles: true,
-            })
-            element.dispatchEvent(beforeinputEvent)
-
-            // Update content
+          if (editable) {
             element.textContent = slice
-
-            const inputEvent = new InputEvent('input', { inputType: 'insertText', data: str, bubbles: true })
-            element.dispatchEvent(inputEvent)
-
-            const keyupEvent = new KeyboardEvent('keyup', { key: str, bubbles: true })
-            element.dispatchEvent(keyupEvent)
           } else {
-            // Existing behavior for input elements
-            element.value = slice
-
-            // Trigger keyboard events for each keystroke
-            const keydownEvent = new KeyboardEvent('keydown', { key: str })
-            element.dispatchEvent(keydownEvent)
-
-            // Only trigger keyup event for text, password, search, url, tel, and email input types
-            if (
-              element instanceof HTMLInputElement &&
-              ['text', 'password', 'search', 'url', 'tel', 'email'].includes(element.type)
-            ) {
-              const keyupEvent = new KeyboardEvent('keyup', { key: str })
-              element.dispatchEvent(keyupEvent)
-            }
-
-            // Trigger input event
-            const inputEvent = new Event('input', { bubbles: true })
-            element.dispatchEvent(inputEvent)
+            setNativeValue(element as SupportedInputsType, slice)
           }
 
-          if (textArr.length === index + 1) {
-            if (isContentEditable(element)) {
-              // Trigger blur event for contenteditable
-              element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
-            } else {
-              // Trigger change event for input elements
-              const changeEvent = new Event('change', { bubbles: true })
-              element.dispatchEvent(changeEvent)
+          element.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: str, bubbles: true }))
+          element.dispatchEvent(new KeyboardEvent('keyup', { key: str, bubbles: true }))
 
-              // Trigger blur event for input elements
-              element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
-            }
-            resolve()
-          }
+          if (textArr.length === index + 1) finish()
         }, msPerChar * index)
       })
 
       return
     }
 
-    if (isContentEditable(element)) {
-      // Set content for contenteditable without type effect
-      element.textContent = text
+    // No typing effect: set the value once and run the event lifecycle.
+    element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: value, bubbles: true }))
 
-      // Trigger input event
-      const inputEvent = new InputEvent('input', { inputType: 'insertText', data: text, bubbles: true })
-      element.dispatchEvent(inputEvent)
-
-      // Trigger blur event
-      element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+    if (editable) {
+      element.textContent = value
     } else {
-      // Trigger input event
-      const focusEvent = new Event('focus', { bubbles: true })
-      element.dispatchEvent(focusEvent)
-
-      // Set value for input elements without type effect
-      element.value = text
-
-      // Trigger input event
-      const inputEvent = new Event('input', { bubbles: true })
-      element.dispatchEvent(inputEvent)
-
-      // Trigger change event
-      const changeEvent = new Event('change', { bubbles: true })
-      element.dispatchEvent(changeEvent)
-
-      // Trigger blur event
-      element.dispatchEvent(new FocusEvent('blur', { bubbles: true }))
+      setNativeValue(element as SupportedInputsType, value)
     }
-    resolve()
+
+    element.dispatchEvent(new InputEvent('input', { inputType: 'insertText', data: value, bubbles: true }))
+    finish()
   })
 }
 
@@ -191,9 +181,16 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
   const joinedWord = words.join('')
 
   for (const w of [word.toLowerCase(), joinedWord]) {
-    const regex = new RegExp(`\\b${w}\\b`)
-    if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
-      return true
+    if (!w) continue
+    try {
+      // Escape so a regex-special char in user config (e.g. "c++") can't throw and
+      // break matching for every element.
+      const regex = new RegExp(`\\b${escapeRegExp(w)}\\b`)
+      if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
+        return true
+      }
+    } catch {
+      // Ignore malformed patterns and continue.
     }
   }
 

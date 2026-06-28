@@ -65,7 +65,10 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
     // Resovle to default propery if any one the token is from the skipped token
     !elem.autocomplete.split(' ').some((token) => autoCompleteTokensToSkip.includes(token))
   ) {
-    return handleAutocompleteToken(elem)
+    const fromAutocomplete = handleAutocompleteToken(elem)
+    // Only use it when the token was recognized; otherwise fall back to default
+    // generation (returning undefined here would skip the field entirely).
+    if (fromAutocomplete !== undefined) return fromAutocomplete
   }
 
   /* Fallback to default generation logic */
