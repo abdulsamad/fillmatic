@@ -6,7 +6,7 @@ import path from 'path'
 
 import manifest from './src/manifest'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(() => {
   return {
     resolve: {
       alias: {

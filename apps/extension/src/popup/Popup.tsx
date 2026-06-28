@@ -6,7 +6,7 @@ import { usePopupStore } from '@/store/popup'
 import { useProfileStore } from '@/store/profiles'
 import { Form } from '@/types'
 import { useTimeout } from '@/hooks/useTimeout'
-import { Avatar } from '@/components/ui/avatar'
+// import { Avatar } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -62,7 +62,7 @@ export const Popup = () => {
   )
 
   useLayoutEffect(() => {
-    ;(async () => {
+    ; (async () => {
       try {
         // Disable on Interal Pages
         const isInternal = await isInternalPage()
@@ -118,11 +118,11 @@ export const Popup = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Avatar className="w-8 h-8 flex items-center">
-              {/* <AvatarImage src="https://github.com/shadcn.png" alt="User" /> */}
-              {/* <AvatarFallback>CN</AvatarFallback> */}
-              <CircleUserRoundIcon fontSize={20} />
-            </Avatar>
+            {/* <Avatar className="w-8 h-8 flex items-center">
+                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+            <AvatarFallback>CN</AvatarFallback>
+            <CircleUserRoundIcon fontSize={20} />
+          </Avatar> */}
           </div>
         </header>
         <div className="px-3 py-1 border-b flex items-center gap-2">
@@ -224,7 +224,7 @@ export const Popup = () => {
           </Tooltip>
         </footer>
       </TooltipProvider>
-    </div>
+    </div >
   )
 }
 
