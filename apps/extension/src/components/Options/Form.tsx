@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { InfoIcon } from 'lucide-react'
+import { InfoIcon, UserCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -22,12 +22,20 @@ import ProfilesTab from './ProfilesTab'
 import FieldRulesTab from './FieldRulesTab'
 import ActionsTab from './ActionsTab'
 
-const OverrideNote = ({ profileName }: { profileName: string }) => (
-  <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
-    <InfoIcon className="h-3 w-3 shrink-0" />
-    <span>From <span className="font-medium">"{profileName}"</span> profile</span>
-  </p>
-)
+const ProfileBanner = ({ profileName, isDefault }: { profileName: string; isDefault: boolean }) =>
+  isDefault ? (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/60 border text-xs text-muted-foreground">
+      <InfoIcon className="h-3.5 w-3.5 shrink-0" />
+      These are your <strong>default</strong> settings — used by all profiles unless overridden.
+    </div>
+  ) : (
+    <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+      <UserCircleIcon className="h-4 w-4 shrink-0" />
+      <span>
+        Editing <strong>{profileName}</strong> profile — changes here will be saved to this profile and won't affect your default settings.
+      </span>
+    </div>
+  )
 
 const OptionsForm = () => {
   const saveConfig = useConfigStore((state) => state.saveConfig)
@@ -58,7 +66,8 @@ const OptionsForm = () => {
   const { profiles, activeProfileId, updateProfile } = useProfileStore(
     useShallow(({ profiles, activeProfileId, updateProfile }) => ({ profiles, activeProfileId, updateProfile })),
   )
-  const activeProfile = activeProfileId !== DEFAULT_PROFILE_ID ? profiles.find((p) => p.id === activeProfileId) : undefined
+  const isDefaultActive = activeProfileId === DEFAULT_PROFILE_ID
+  const activeProfile = profiles.find((p) => p.id === activeProfileId)
 
   // Merges General config with active profile's overrides — what the form shows and saves from
   const effectiveValues = (): formSchemaType => ({
@@ -82,21 +91,23 @@ const OptionsForm = () => {
   }, [activeProfileId])
 
   const onSubmit = async (values: formSchemaType) => {
-    // Save to General config
-    saveConfig(values)
-
-    // For any field the active profile was already overriding, update that profile too
-    if (activeProfile) {
-      const patch: Partial<typeof activeProfile> = {}
-      if (activeProfile.tempEmailProvider !== undefined) patch.tempEmailProvider = values.tempEmailProvider
-      if (activeProfile.samePasswordEverytime !== undefined) patch.samePasswordEverytime = values.samePasswordEverytime
-      if (activeProfile.commonPassword !== undefined) patch.commonPassword = values.commonPassword
-      if (activeProfile.ignoredFields !== undefined) patch.ignoredFields = values.ignoredFields
-      if (activeProfile.alwaysCheckFields !== undefined) patch.alwaysCheckFields = values.alwaysCheckFields
-      if (Object.keys(patch).length > 0) updateProfile({ ...activeProfile, ...patch })
+    if (isDefaultActive) {
+      // Default profile: everything goes to General
+      saveConfig(values)
+    } else if (activeProfile) {
+      // Custom profile active: non-overridable fields (typing, forceAutofill) → General only
+      saveConfig({ ...config, typingEffect: values.typingEffect, typingSpeed: values.typingSpeed, forceAutofill: values.forceAutofill })
+      // Overridable fields → profile only (General keeps its own independent values)
+      updateProfile({
+        ...activeProfile,
+        tempEmailProvider: values.tempEmailProvider,
+        samePasswordEverytime: values.samePasswordEverytime,
+        commonPassword: values.commonPassword,
+        ignoredFields: values.ignoredFields,
+        alwaysCheckFields: values.alwaysCheckFields,
+      })
     }
-
-    toast.success('Settings saved successfully!')
+    toast.success('Settings saved!')
   }
 
   const handleReset = () => {
@@ -115,6 +126,7 @@ const OptionsForm = () => {
       </TabsList>
 
       <TabsContent value="general" className="space-y-10">
+        <ProfileBanner profileName={activeProfile?.name ?? 'Default'} isDefault={isDefaultActive} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -220,7 +232,6 @@ const OptionsForm = () => {
                     </FormControl>
                     <FormMessage />
                   </div>
-                  {activeProfile?.samePasswordEverytime !== undefined && <OverrideNote profileName={activeProfile.name} />}
                   {field.value && (
                     <FormField
                       control={form.control}
@@ -236,7 +247,6 @@ const OptionsForm = () => {
                               value={cpField.value || ''}
                             />
                           </FormControl>
-                          {activeProfile?.commonPassword !== undefined && <OverrideNote profileName={activeProfile.name} />}
                           <FormDescription>This password will be used for all password inputs.</FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -256,7 +266,6 @@ const OptionsForm = () => {
                   <FormControl>
                     <Input type="text" placeholder="Enter fields to ignore" {...field} />
                   </FormControl>
-                  {activeProfile?.ignoredFields !== undefined && <OverrideNote profileName={activeProfile.name} />}
                   <FormMessage />
                 </FormItem>
               )}
@@ -280,7 +289,6 @@ const OptionsForm = () => {
                       <SelectItem value="mailsac.com">mailsac</SelectItem>
                     </SelectContent>
                   </Select>
-                  {activeProfile?.tempEmailProvider !== undefined && <OverrideNote profileName={activeProfile.name} />}
                   <FormMessage />
                 </FormItem>
               )}
@@ -299,7 +307,6 @@ const OptionsForm = () => {
                       {...field}
                     />
                   </FormControl>
-                  {activeProfile?.alwaysCheckFields !== undefined && <OverrideNote profileName={activeProfile.name} />}
                   <FormDescription className="italic">
                     These fields will be always be checked when filling out forms.
                   </FormDescription>
