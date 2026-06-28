@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PlusIcon, Trash2Icon, GlobeIcon, XIcon, UserCircleIcon } from 'lucide-react'
+import { PlusIcon, Trash2Icon, GlobeIcon, UserCircleIcon } from 'lucide-react'
 
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { type UserRule } from '@/utils/user-rules'
@@ -12,17 +12,17 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Badge } from '@/components/ui/badge'
+import FieldTargetsEditor from './FieldTargetsEditor'
+import { fieldTargetsSchema, EMPTY_FIELD_TARGET } from './fieldTargets'
 
 const ruleSchema = z.object({
   siteMatcher: z.string().min(1, 'Site matcher is required'),
-  rules: z
-    .array(z.object({ fieldPattern: z.string().min(1, 'Required'), value: z.string().min(1, 'Required') }))
-    .min(1, 'Add at least one rule'),
+  rules: fieldTargetsSchema,
 })
 
 type RuleFormValues = z.infer<typeof ruleSchema>
 
-const EMPTY_FORM: RuleFormValues = { siteMatcher: '', rules: [{ fieldPattern: '', value: '' }] }
+const EMPTY_FORM: RuleFormValues = { siteMatcher: '', rules: [{ ...EMPTY_FIELD_TARGET }] }
 
 interface RuleDialogProps {
   open: boolean
@@ -36,7 +36,6 @@ const RuleDialog = ({ open, onClose, initial, onSave }: RuleDialogProps) => {
     resolver: zodResolver(ruleSchema),
     defaultValues: initial ? { siteMatcher: initial.siteMatcher, rules: initial.rules } : EMPTY_FORM,
   })
-  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'rules' })
 
   const onSubmit = (values: RuleFormValues) => {
     onSave({ id: initial?.id ?? crypto.randomUUID(), ...values })
@@ -74,54 +73,7 @@ const RuleDialog = ({ open, onClose, initial, onSave }: RuleDialogProps) => {
               )}
             />
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Field rules</label>
-                <Button type="button" variant="outline" size="sm" onClick={() => append({ fieldPattern: '', value: '' })}>
-                  <PlusIcon className="h-3.5 w-3.5 mr-1" /> Add row
-                </Button>
-              </div>
-              <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-xs font-medium text-muted-foreground px-1">
-                <span>Field name / pattern</span><span>Value to fill</span><span />
-              </div>
-              {fields.map((f, i) => (
-                <div key={f.id} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-start">
-                  <FormField
-                    control={form.control}
-                    name={`rules.${i}.fieldPattern`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl><Input placeholder="e.g. promo_code" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`rules.${i}.value`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl><Input placeholder="e.g. SAVE20" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 text-muted-foreground hover:text-destructive mt-0"
-                    onClick={() => remove(i)}
-                    disabled={fields.length === 1}
-                  >
-                    <XIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              {form.formState.errors.rules?.root && (
-                <p className="text-xs text-destructive">{form.formState.errors.rules.root.message}</p>
-              )}
-            </div>
+            <FieldTargetsEditor name="rules" label="Field rules" />
 
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
@@ -198,9 +150,9 @@ const FieldRulesTab = () => {
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{rule.siteMatcher}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {rule.rules.slice(0, 3).map((r) => (
-                      <Badge key={r.fieldPattern} variant="secondary" className="text-xs font-normal py-0">
-                        {r.fieldPattern} → {r.value}
+                    {rule.rules.slice(0, 3).map((r, idx) => (
+                      <Badge key={`${r.attribute}-${r.match}-${idx}`} variant="secondary" className="text-xs font-normal py-0">
+                        {r.match} → {r.value}
                       </Badge>
                     ))}
                     {rule.rules.length > 3 && (
