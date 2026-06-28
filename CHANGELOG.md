@@ -4,22 +4,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-### [v0.0.9] - TBD
+### [v0.0.9] - 2026-06-29
 
 #### Added
-- **feat:** Identity profiles — create named profiles (Work, Personal, Staging, etc.) that override specific General settings. Each profile can set its own email provider, password mode, common password, ignored fields, and always-check fields. The Default profile (non-deletable) inherits all General settings.
+- **feat:** Identity profiles — create named profiles (Work, Personal, Staging, etc.) that override specific General settings. Each profile can set its own email provider, password mode, common password, ignored fields, and always-check fields. The Default profile (non-deletable, locked) inherits all General settings.
 - **feat:** Per-profile field rules — define site-specific field overrides (e.g. fill `promo_code` with `SAVE20` on `checkout.myapp.com`) scoped to the active profile. Rules are managed in the new Field Rules tab and stored within the profile.
 - **feat:** Profile selector in the popup — a compact selector bar lets you switch the active profile without opening Options. Switching takes effect on the next fill.
-- **feat:** General settings tab shows the effective value from the active profile for any overridden field, with an amber "From *Profile*" indicator. Editing an overridden field and saving updates both General and the profile.
-- **feat:** User-configurable Actions — replaces the old hardcoded Stripe / Lemon Squeezy / Paddle integrations with a fully user-editable Actions system. Each Action has a URL matcher, an optional popup group label, and a list of FieldTargets. The four built-in integrations ship as editable defaults. Manage actions in the new **Actions** tab in Options; matching buttons appear in the popup on the right sites.
+- **feat:** General tab profile banner — shows which profile is active and where changes will save. Default profile shows a muted "default settings" note; custom profiles show an amber banner with the profile name.
+- **feat:** User-configurable Actions — replaces the old hardcoded Stripe / Lemon Squeezy / Paddle integrations with a fully user-editable Actions system. Each Action has a URL matcher, an optional popup group label, and a list of FieldTargets. The four built-in integrations ship as read-only defaults. Manage actions in the new **Actions** tab in Options; matching buttons appear in the popup on the right sites.
 - **feat:** Shared FieldTarget model — Actions and Field Rules both use the same `{ attribute, operator, match, value }` schema (attribute ∈ `id|name|placeholder|label|autocomplete`, operator ∈ `exact|contains|regex`). A shared `FieldTargetsEditor` component handles the CRUD UI for both.
 - **feat:** Entitlements seam (`src/utils/entitlements.ts`) — dormant feature-gating helpers (`can(feature)`, `withinLimit(resource, count)`) backed by a hardcoded Premium plan. Nothing is restricted yet; the seam is ready for when login/billing lands.
+- **feat:** DEV badge on extension icon — in development builds a red "DEV" badge is shown on the extension icon via `chrome.action.setBadgeText`; tree-shaken away in production so nothing ships to the Web Store.
+- **feat:** Redesigned landing page — new sections: integrations strip, Core Features (4-up), Power Features (asymmetric grid with Actions, Profiles, Field Rules), "Everything you get, free" checklist, and Payment Integrations callout. Header now includes a CTA button and the hero links to the `/demo` page.
 
 #### Changed
 - **refactor:** `generateValue.ts` now calls `getEffectiveConfig()` (merges General config with active profile overrides) instead of reading directly from the config store — profile settings take priority in the autofill pipeline.
 - **refactor:** Options page reorganised into four tabs: General, Profiles, Field Rules, and Actions.
 - **refactor:** Field Rules fully migrated to the explicit FieldTarget model (attribute × operator × match × value) — no more fuzzy heuristic matching for user-defined rules.
 - **refactor:** Removed `src/utils/site-rules.ts`; hardcoded site matchers deleted in favour of editable DEFAULT_ACTIONS.
+- **refactor:** Default profile is now locked (no rename, no delete); a disabled lock icon is shown in its row for visual consistency with locked default Actions.
+- **refactor:** Default Actions are read-only (locked); a disabled lock icon replaces the edit/delete buttons. Users can still add custom actions freely.
+- **refactor:** Profile delete confirmation now explicitly warns that the profile's settings and field rules will be permanently deleted.
+- **refactor:** Demo Action renamed to "Fill Demo Form" / "FillMatic Demo"; prod matcher updated to `https://fillmatic.pages.dev/demo` (no trailing slash ambiguity).
 
 #### Fixed
 - **fix:** React / Vue controlled inputs now correctly trigger `onChange` — fills use native prototype setters (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set`) to bypass framework value trackers so the dispatched `input` event is seen as a real change.
