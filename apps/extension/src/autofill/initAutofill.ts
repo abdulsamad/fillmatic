@@ -1,6 +1,6 @@
 import { SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
-import { log } from '@/utils'
+import { invalidateMatchCache, log } from '@/utils'
 
 import { gatherVisibleInputsInOrder, fillElement } from '.'
 
@@ -14,6 +14,10 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
   // fields *within* a single autofill pass (e.g. email matches name, confirm
   // password matches password).
   contentScriptStore.setState({ firstName: undefined, lastName: undefined, lastGeneratedPassword: '' })
+
+  // Drop cached per-element match text so this run re-reads labels/attributes
+  // (the page may have changed since the last fill).
+  invalidateMatchCache()
 
   /* Inputs */
   const inputs = gatherVisibleInputsInOrder(rootElement)
