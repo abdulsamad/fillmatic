@@ -3,21 +3,20 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Demo — FillMatic">
-  <!-- Page background -->
   <div class="page-bg">
+
     <!-- Hero -->
     <section class="hero">
       <div class="hero-badge">Interactive Demo</div>
       <h1>Try it out</h1>
       <p class="hero-sub">
-        Open FillMatic and hit <strong>Fill all fields</strong> to fill everything
-        at once or pick a specific form from the popup named forms show up as their
-        own buttons so you can fill and submit just that one.
+        Open FillMatic and hit <strong>Fill all fields</strong> to fill everything at once. Named forms show up as their own buttons in the popup so you can fill and submit just that one.
       </p>
     </section>
 
-    <!-- Forms grid -->
+    <!-- Top two forms -->
     <section class="forms-grid">
+
       <!-- Form 1: Signup -->
       <div class="form-card">
         <div class="form-card-header">
@@ -27,93 +26,42 @@ import Layout from "../layouts/Layout.astro";
           <div class="field-row">
             <div class="field">
               <label for="signup-first">First name</label>
-              <input
-                type="text"
-                id="signup-first"
-                name="first_name"
-                placeholder="Jane"
-                autocomplete="given-name"
-              />
+              <input type="text" id="signup-first" name="first_name" placeholder="Jane" autocomplete="given-name" />
             </div>
             <div class="field">
               <label for="signup-last">Last name</label>
-              <input
-                type="text"
-                id="signup-last"
-                name="last_name"
-                placeholder="Smith"
-                autocomplete="family-name"
-              />
+              <input type="text" id="signup-last" name="last_name" placeholder="Smith" autocomplete="family-name" />
             </div>
           </div>
           <div class="field">
             <label for="signup-username">Username</label>
-            <input
-              type="text"
-              id="signup-username"
-              name="username"
-              placeholder="janesmith"
-              autocomplete="username"
-            />
+            <input type="text" id="signup-username" name="username" placeholder="janesmith" autocomplete="username" />
           </div>
           <div class="field">
             <label for="signup-email">Email address</label>
-            <input
-              type="email"
-              id="signup-email"
-              name="email"
-              placeholder="jane@example.com"
-              autocomplete="email"
-            />
+            <input type="email" id="signup-email" name="email" placeholder="jane@example.com" autocomplete="email" />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="signup-password">Password</label>
-              <input
-                type="password"
-                id="signup-password"
-                name="password"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                minlength="8"
-              />
+              <input type="password" id="signup-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" />
             </div>
             <div class="field">
               <label for="signup-confirm">Confirm password</label>
-              <input
-                type="password"
-                id="signup-confirm"
-                name="confirm_password"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                minlength="8"
-              />
+              <input type="password" id="signup-confirm" name="confirm_password" placeholder="••••••••" autocomplete="new-password" minlength="8" />
             </div>
           </div>
           <div class="field">
             <label for="signup-phone">Phone number</label>
-            <input
-              type="tel"
-              id="signup-phone"
-              name="phone"
-              placeholder="+1 555 000 0000"
-              autocomplete="tel"
-            />
+            <input type="tel" id="signup-phone" name="phone" placeholder="+1 555 000 0000" autocomplete="tel" />
           </div>
           <div class="field">
             <label for="signup-dob">Date of birth</label>
-            <input
-              type="date"
-              id="signup-dob"
-              name="date_of_birth"
-              autocomplete="bday"
-            />
+            <input type="date" id="signup-dob" name="date_of_birth" autocomplete="bday" />
           </div>
           <div class="field checkbox-field">
             <input type="checkbox" id="signup-terms" name="terms" />
-            <label for="signup-terms"
-              >I agree to the <a href="#">Terms &amp; Conditions</a></label
-            >
+            <label for="signup-terms">I agree to the <a href="#">Terms &amp; Conditions</a></label>
           </div>
           <button type="submit" class="submit-btn">Create account</button>
         </form>
@@ -121,11 +69,7 @@ import Layout from "../layouts/Layout.astro";
           <div class="success-icon">✓</div>
           <h3>Account created!</h3>
           <p>FillMatic filled and submitted this form instantly.</p>
-          <button
-            class="reset-btn"
-            data-target="signup-form"
-            data-success="signup-success">Try again</button
-          >
+          <button class="reset-btn" data-target="signup-form" data-success="signup-success">Try again</button>
         </div>
       </div>
 
@@ -138,66 +82,29 @@ import Layout from "../layouts/Layout.astro";
           <div class="field-row">
             <div class="field">
               <label for="checkout-first">First name</label>
-              <input
-                type="text"
-                id="checkout-first"
-                name="first_name"
-                placeholder="Jane"
-                autocomplete="given-name"
-              />
+              <input type="text" id="checkout-first" name="first_name" placeholder="Jane" autocomplete="given-name" />
             </div>
             <div class="field">
               <label for="checkout-last">Last name</label>
-              <input
-                type="text"
-                id="checkout-last"
-                name="last_name"
-                placeholder="Smith"
-                autocomplete="family-name"
-              />
+              <input type="text" id="checkout-last" name="last_name" placeholder="Smith" autocomplete="family-name" />
             </div>
           </div>
           <div class="field">
             <label for="checkout-email">Email</label>
-            <input
-              type="email"
-              id="checkout-email"
-              name="email"
-              placeholder="jane@example.com"
-              autocomplete="email"
-            />
+            <input type="email" id="checkout-email" name="email" placeholder="jane@example.com" autocomplete="email" />
           </div>
           <div class="field">
             <label for="checkout-address">Street address</label>
-            <input
-              type="text"
-              id="checkout-address"
-              name="address"
-              placeholder="123 Main St"
-              autocomplete="street-address"
-            />
+            <input type="text" id="checkout-address" name="address" placeholder="123 Main St" autocomplete="street-address" />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="checkout-city">City</label>
-              <input
-                type="text"
-                id="checkout-city"
-                name="city"
-                placeholder="San Francisco"
-                autocomplete="address-level2"
-              />
+              <input type="text" id="checkout-city" name="city" placeholder="San Francisco" autocomplete="address-level2" />
             </div>
             <div class="field">
               <label for="checkout-zip">ZIP / Postal</label>
-              <input
-                type="text"
-                id="checkout-zip"
-                name="postal_code"
-                placeholder="94103"
-                autocomplete="postal-code"
-                maxlength="10"
-              />
+              <input type="text" id="checkout-zip" name="postal_code" placeholder="94103" autocomplete="postal-code" maxlength="10" />
             </div>
           </div>
           <div class="field">
@@ -214,50 +121,23 @@ import Layout from "../layouts/Layout.astro";
               <option value="Other">Other</option>
             </select>
           </div>
-          <div class="section-label">Payment details</div>
+          <div class="section-label">Payment</div>
           <div class="field">
             <label for="checkout-card-name">Name on card</label>
-            <input
-              type="text"
-              id="checkout-card-name"
-              name="card_name"
-              placeholder="Jane Smith"
-              autocomplete="cc-name"
-            />
+            <input type="text" id="checkout-card-name" name="card_name" placeholder="Jane Smith" autocomplete="cc-name" />
           </div>
           <div class="field">
             <label for="checkout-card-number">Card number</label>
-            <input
-              type="text"
-              id="checkout-card-number"
-              name="card_number"
-              placeholder="4242 4242 4242 4242"
-              autocomplete="cc-number"
-              maxlength="19"
-            />
+            <input type="text" id="checkout-card-number" name="card_number" placeholder="4242 4242 4242 4242" autocomplete="cc-number" maxlength="19" />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="checkout-expiry">Expiry (MM/YY)</label>
-              <input
-                type="text"
-                id="checkout-expiry"
-                name="cc_exp"
-                placeholder="MM/YY"
-                autocomplete="cc-exp"
-                maxlength="5"
-              />
+              <input type="text" id="checkout-expiry" name="cc_exp" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5" />
             </div>
             <div class="field">
               <label for="checkout-cvv">CVV</label>
-              <input
-                type="text"
-                id="checkout-cvv"
-                name="cvv"
-                placeholder="123"
-                autocomplete="cc-csc"
-                maxlength="4"
-              />
+              <input type="text" id="checkout-cvv" name="cvv" placeholder="123" autocomplete="cc-csc" maxlength="4" />
             </div>
           </div>
           <button type="submit" class="submit-btn">Pay now</button>
@@ -266,22 +146,167 @@ import Layout from "../layouts/Layout.astro";
           <div class="success-icon">✓</div>
           <h3>Order placed!</h3>
           <p>FillMatic filled and submitted this form instantly.</p>
-          <button
-            class="reset-btn"
-            data-target="checkout-form"
-            data-success="checkout-success">Try again</button
-          >
+          <button class="reset-btn" data-target="checkout-form" data-success="checkout-success">Try again</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Full-width kitchen sink form -->
+    <!-- name="text" is included so the "Fill Demo Form" action in the FillMatic popup overrides that field with special demo data -->
+    <section class="forms-grid full-width-grid">
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>All input types</h2>
+        </div>
+        <form name="All inputs" id="allinputs-form" class="glass-form kitchen-sink" novalidate>
+
+          <div class="section-label">Text inputs</div>
+          <div class="field-row three-col">
+            <div class="field">
+              <label for="k-text">Text</label>
+              <input type="text" id="k-text" name="text" placeholder="Plain text" minlength="1" maxlength="100" />
+            </div>
+            <div class="field">
+              <label for="k-search">Search</label>
+              <input type="search" id="k-search" name="search" placeholder="Search…" />
+            </div>
+            <div class="field">
+              <label for="k-url">URL</label>
+              <input type="url" id="k-url" name="url" placeholder="https://example.com" />
+            </div>
+          </div>
+          <div class="field-row three-col">
+            <div class="field">
+              <label for="k-email">Email</label>
+              <input type="email" id="k-email" name="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="k-tel">Phone</label>
+              <input type="tel" id="k-tel" name="phone" placeholder="+1 555 000 0000" autocomplete="tel" />
+            </div>
+            <div class="field">
+              <label for="k-number">Number</label>
+              <input type="number" id="k-number" name="number" placeholder="42" min="0" max="1000" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="k-textarea">Message</label>
+            <textarea id="k-textarea" name="message" placeholder="Write something…" rows="3"></textarea>
+          </div>
+          <div class="field">
+            <label for="k-demo-note">Demo action note</label>
+            <textarea id="k-demo-note" name="demo_note" placeholder="Click 'Fill Demo Form' in the FillMatic popup to see this filled with custom text from the action…" rows="4"></textarea>
+          </div>
+
+          <div class="section-label">Date &amp; time</div>
+          <div class="field-row three-col">
+            <div class="field">
+              <label for="k-date">Date</label>
+              <input type="date" id="k-date" name="date" min="2000-01-01" max="2030-12-31" />
+            </div>
+            <div class="field">
+              <label for="k-time">Time</label>
+              <input type="time" id="k-time" name="time" min="00:00" max="23:59" />
+            </div>
+            <div class="field">
+              <label for="k-datetime">Date &amp; time</label>
+              <input type="datetime-local" id="k-datetime" name="datetime" min="2000-01-01T00:00" max="2030-12-31T23:59" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="k-month">Month</label>
+              <input type="month" id="k-month" name="month" min="2000-01" max="2030-12" />
+            </div>
+            <div class="field">
+              <label for="k-week">Week</label>
+              <input type="week" id="k-week" name="week" min="2000-W01" max="2030-W52" />
+            </div>
+          </div>
+
+          <div class="section-label">Pickers &amp; controls</div>
+          <div class="field-row three-col">
+            <div class="field">
+              <label for="k-color">Color</label>
+              <input type="color" id="k-color" name="color" class="color-input" />
+            </div>
+            <div class="field">
+              <label for="k-range">Range <span id="range-val">50</span></label>
+              <input type="range" id="k-range" name="range" min="0" max="100" value="50" class="range-input" />
+            </div>
+            <div class="field">
+              <label for="k-select">Preference</label>
+              <select id="k-select" name="preference">
+                <option value="">Choose…</option>
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-label">Choices</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Subscription</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="plan" value="free" /> Free
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="plan" value="pro" /> Pro
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="plan" value="team" /> Team
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <label>Notifications</label>
+              <div class="checkbox-group">
+                <label class="radio-label">
+                  <input type="checkbox" name="notify_email" /> Email
+                </label>
+                <label class="radio-label">
+                  <input type="checkbox" name="notify_sms" /> SMS
+                </label>
+                <label class="radio-label">
+                  <input type="checkbox" name="notify_push" /> Push
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">Security</div>
+          <div class="field-row">
+            <div class="field">
+              <label for="k-password">Password</label>
+              <input type="password" id="k-password" name="password" placeholder="••••••••" minlength="8" />
+            </div>
+            <div class="field">
+              <label for="k-confirm">Confirm password</label>
+              <input type="password" id="k-confirm" name="confirm_password" placeholder="••••••••" minlength="8" />
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+        <div class="form-success" id="allinputs-success" hidden>
+          <div class="success-icon">✓</div>
+          <h3>All done!</h3>
+          <p>Every input type filled successfully.</p>
+          <button class="reset-btn" data-target="allinputs-form" data-success="allinputs-success">Try again</button>
         </div>
       </div>
     </section>
 
-    <!-- Footer note -->
     <footer class="demo-footer">
       Nothing here is real — all values are dummy data. ·
-      <a href="mailto:hello@abdulsamad.dev?subject=FillMatic Feedback"
-        >Send feedback</a
-      >
+      <a href="mailto:hello@abdulsamad.dev?subject=FillMatic Feedback">Send feedback</a>
     </footer>
+
   </div>
 </Layout>
 
@@ -298,59 +323,46 @@ import Layout from "../layouts/Layout.astro";
 
   document.querySelectorAll<HTMLButtonElement>(".reset-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const formEl = document.getElementById(
-        btn.dataset.target!,
-      ) as HTMLFormElement;
+      const formEl = document.getElementById(btn.dataset.target!) as HTMLFormElement;
       const successEl = document.getElementById(btn.dataset.success!);
-      if (formEl) {
-        formEl.reset();
-        formEl.hidden = false;
-      }
+      if (formEl) { formEl.reset(); formEl.hidden = false; }
       if (successEl) successEl.hidden = true;
     });
   });
+
+  const rangeEl = document.getElementById("k-range") as HTMLInputElement;
+  const rangeVal = document.getElementById("range-val");
+  if (rangeEl && rangeVal) {
+    rangeEl.addEventListener("input", () => { rangeVal.textContent = rangeEl.value; });
+  }
 </script>
 
 <style>
-  /* ── Base ── */
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+  *, *::before, *::after { box-sizing: border-box; }
 
   .page-bg {
     min-height: 100vh;
     background:
-      radial-gradient(
-        ellipse 80% 50% at 50% -10%,
-        rgba(99, 102, 241, 0.18) 0%,
-        transparent 70%
-      ),
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,.18) 0%, transparent 70%),
       linear-gradient(160deg, #0f0f18 0%, #141420 45%, #0d1117 100%);
     padding: 3rem 1.5rem 4rem;
     font-family: "Inter", "Segoe UI", system-ui, sans-serif;
     color: #e2e8f0;
   }
 
-  a {
-    color: #818cf8;
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
+  a { color: #818cf8; text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
   code {
     font-family: "JetBrains Mono", "Fira Code", monospace;
-    font-size: 0.8em;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 0.15em 0.4em;
+    font-size: .8em;
+    background: rgba(255,255,255,.08);
+    padding: .15em .4em;
     border-radius: 4px;
     color: #a5b4fc;
   }
 
-  /* ── Hero ── */
+  /* Hero */
   .hero {
     text-align: center;
     max-width: 600px;
@@ -359,15 +371,15 @@ import Layout from "../layouts/Layout.astro";
 
   .hero-badge {
     display: inline-block;
-    font-size: 0.72rem;
+    font-size: .72rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: #818cf8;
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: rgba(99,102,241,.12);
+    border: 1px solid rgba(99,102,241,.3);
     border-radius: 999px;
-    padding: 0.3em 0.9em;
+    padding: .3em .9em;
     margin-bottom: 1.25rem;
   }
 
@@ -375,7 +387,7 @@ import Layout from "../layouts/Layout.astro";
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -.02em;
     margin: 0 0 1rem;
     background: linear-gradient(135deg, #e2e8f0 30%, #818cf8 100%);
     -webkit-background-clip: text;
@@ -387,71 +399,63 @@ import Layout from "../layouts/Layout.astro";
     font-size: 1.05rem;
     color: #94a3b8;
     line-height: 1.7;
-    margin: 0 0 2rem;
+    margin: 0;
   }
 
-  /* ── Forms grid ── */
+  /* Grids */
   .forms-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
     gap: 2rem;
     max-width: 1100px;
-    margin: 0 auto;
+    margin: 2rem auto 0;
   }
 
-  /* ── Form card ── */
+  .full-width-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Form card */
   .form-card {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255,255,255,.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,.08);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow:
-      0 8px 40px rgba(0, 0, 0, 0.4),
-      0 1px 0 rgba(255, 255, 255, 0.06) inset;
-    transition:
-      box-shadow 0.3s ease,
-      transform 0.3s ease;
+    box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.06) inset;
+    transition: box-shadow .3s ease, transform .3s ease;
   }
 
   .form-card:hover {
-    box-shadow:
-      0 12px 60px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(99, 102, 241, 0.2),
-      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    box-shadow: 0 12px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(99,102,241,.2), 0 1px 0 rgba(255,255,255,.06) inset;
     transform: translateY(-2px);
   }
 
   .form-card-header {
     padding: 1.75rem 2rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: linear-gradient(
-      180deg,
-      rgba(99, 102, 241, 0.06) 0%,
-      transparent 100%
-    );
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    background: linear-gradient(180deg, rgba(99,102,241,.06) 0%, transparent 100%);
   }
 
   .form-card-header h2 {
     font-size: 1.35rem;
     font-weight: 700;
-    margin: 0 0 0.5rem;
+    margin: 0;
     color: #f1f5f9;
   }
 
-  .form-card-header p {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  /* ── Glass form ── */
+  /* Glass form */
   .glass-form {
     padding: 1.75rem 2rem 2rem;
     display: flex;
     flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .kitchen-sink {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1.1rem;
   }
 
@@ -461,67 +465,85 @@ import Layout from "../layouts/Layout.astro";
     gap: 1rem;
   }
 
+  .three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
   .field {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: .4rem;
   }
 
-  .field label {
-    font-size: 0.78rem;
+  .field > label {
+    font-size: .78rem;
     font-weight: 600;
     color: #94a3b8;
-    letter-spacing: 0.02em;
+    letter-spacing: .02em;
     text-transform: uppercase;
   }
 
   .field input,
-  .field select {
+  .field select,
+  .field textarea {
     width: 100%;
-    padding: 0.65rem 0.9rem;
-    font-size: 0.9rem;
+    padding: .65rem .9rem;
+    font-size: .9rem;
     font-family: inherit;
     color: #e2e8f0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
     border-radius: 10px;
     outline: none;
-    transition:
-      border-color 0.2s,
-      background 0.2s,
-      box-shadow 0.2s;
+    transition: border-color .2s, background .2s, box-shadow .2s;
     appearance: none;
     -webkit-appearance: none;
+    resize: vertical;
   }
 
   .field select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.9rem center;
+    background-position: right .9rem center;
     padding-right: 2.2rem;
     cursor: pointer;
   }
 
-  .field select option {
-    background: #1e1b2e;
-    color: #e2e8f0;
-  }
-
-  .field input::placeholder {
-    color: #475569;
-  }
+  .field select option { background: #1e1b2e; color: #e2e8f0; }
+  .field input::placeholder,
+  .field textarea::placeholder { color: #475569; }
 
   .field input:focus,
-  .field select:focus {
-    border-color: rgba(99, 102, 241, 0.6);
-    background: rgba(99, 102, 241, 0.08);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  .field select:focus,
+  .field textarea:focus {
+    border-color: rgba(99,102,241,.6);
+    background: rgba(99,102,241,.08);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
   }
 
+  /* Color + range special styling */
+  .color-input {
+    height: 44px;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+
+  .color-input::-webkit-color-swatch-wrapper { padding: 0; }
+  .color-input::-webkit-color-swatch { border: none; border-radius: 7px; }
+
+  .range-input {
+    padding: 0;
+    height: 4px;
+    accent-color: #6366f1;
+    cursor: pointer;
+    margin-top: .6rem;
+  }
+
+  /* Checkbox / radio groups */
   .checkbox-field {
     flex-direction: row;
     align-items: center;
-    gap: 0.6rem;
+    gap: .6rem;
   }
 
   .checkbox-field input[type="checkbox"] {
@@ -530,11 +552,10 @@ import Layout from "../layouts/Layout.astro";
     flex-shrink: 0;
     accent-color: #6366f1;
     cursor: pointer;
-    border-radius: 4px;
   }
 
   .checkbox-field label {
-    font-size: 0.85rem;
+    font-size: .85rem;
     font-weight: 400;
     color: #94a3b8;
     text-transform: none;
@@ -542,20 +563,45 @@ import Layout from "../layouts/Layout.astro";
     cursor: pointer;
   }
 
-  .section-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #4f46e5;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  .radio-group,
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: .25rem;
   }
 
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .875rem;
+    color: #94a3b8;
+    cursor: pointer;
+  }
+
+  .radio-label input {
+    width: auto;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+
+  /* Section divider */
+  .section-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #4f46e5;
+    padding-top: .5rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+
+  /* Buttons */
   .submit-btn {
-    margin-top: 0.4rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
+    margin-top: .4rem;
+    padding: .75rem 1.5rem;
+    font-size: .9rem;
     font-weight: 600;
     font-family: inherit;
     color: #fff;
@@ -563,30 +609,20 @@ import Layout from "../layouts/Layout.astro";
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
-    transition:
-      opacity 0.2s,
-      transform 0.15s,
-      box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(79,70,229,.35);
+    transition: opacity .2s, transform .15s, box-shadow .2s;
   }
 
-  .submit-btn:hover {
-    opacity: 0.92;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(79, 70, 229, 0.45);
-  }
+  .submit-btn:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,70,229,.45); }
+  .submit-btn:active { transform: translateY(0); }
 
-  .submit-btn:active {
-    transform: translateY(0);
-  }
-
-  /* ── Success state ── */
+  /* Success */
   .form-success {
     padding: 3rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: .75rem;
     text-align: center;
   }
 
@@ -600,58 +636,41 @@ import Layout from "../layouts/Layout.astro";
     justify-content: center;
     font-size: 1.5rem;
     color: #fff;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+    box-shadow: 0 8px 24px rgba(16,185,129,.35);
   }
 
-  .form-success h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #f1f5f9;
-    margin: 0;
-  }
-
-  .form-success p {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin: 0;
-  }
+  .form-success h3 { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin: 0; }
+  .form-success p { font-size: .875rem; color: #64748b; margin: 0; }
 
   .reset-btn {
-    margin-top: 0.5rem;
-    padding: 0.55rem 1.25rem;
-    font-size: 0.85rem;
+    margin-top: .5rem;
+    padding: .55rem 1.25rem;
+    font-size: .85rem;
     font-weight: 600;
     font-family: inherit;
     color: #a5b4fc;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.25);
+    background: rgba(99,102,241,.1);
+    border: 1px solid rgba(99,102,241,.25);
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background .2s;
   }
 
-  .reset-btn:hover {
-    background: rgba(99, 102, 241, 0.18);
-  }
+  .reset-btn:hover { background: rgba(99,102,241,.18); }
 
-  /* ── Footer ── */
+  /* Footer */
   .demo-footer {
     text-align: center;
     margin-top: 3rem;
-    font-size: 0.8rem;
+    font-size: .8rem;
     color: #334155;
   }
 
-  /* ── Responsive ── */
-  @media (max-width: 520px) {
-    .field-row {
-      grid-template-columns: 1fr;
-    }
-    .glass-form {
-      padding: 1.25rem 1.25rem 1.5rem;
-    }
-    .form-card-header {
-      padding: 1.25rem 1.25rem 1rem;
-    }
+  /* Responsive */
+  @media (max-width: 680px) {
+    .field-row,
+    .three-col { grid-template-columns: 1fr; }
+    .glass-form { padding: 1.25rem 1.25rem 1.5rem; }
+    .form-card-header { padding: 1.25rem 1.25rem 1rem; }
   }
 </style>

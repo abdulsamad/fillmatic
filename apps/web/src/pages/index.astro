@@ -1,8 +1,909 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Home from '@/components/Home';
+
+const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnkhpfomlopbehcpmgmfndfje';
 ---
 
 <Layout title='FillMatic — Autofill forms for developers'>
-	<Home client:load />
+<div class="site">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <img src="icon192.png" alt="FillMatic" width="26" />
+        <span>Fill<em>Matic</em></span>
+      </a>
+      <nav class="header-nav">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#feedback">Feedback</a>
+        <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-sm">Add to Chrome</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="badge">Chrome Extension — free forever</div>
+        <h1>Stop filling test forms<br /><span class="gradient-text">by hand</span></h1>
+        <p>
+          FillMatic reads every field on a page and fills it with the right kind of data instantly.
+          Built for developers who test the same forms day after day.
+        </p>
+        <div class="hero-actions">
+          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            Add to Chrome — it's free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="/demo" class="btn btn-ghost btn-lg">Try the demo</a>
+        </div>
+        <p class="hero-footnote">No account needed &nbsp;·&nbsp; Works on any form &nbsp;·&nbsp; Manifest V3</p>
+      </div>
+    </section>
+
+    <!-- Works with strip -->
+    <section class="strip">
+      <p class="strip-label">Works great with</p>
+      <div class="strip-items">
+        {[
+          { name: 'Stripe', sub: 'test cards' },
+          { name: 'Lemon Squeezy', sub: 'checkout' },
+          { name: 'Paddle', sub: 'billing' },
+          { name: 'React', sub: 'controlled inputs' },
+          { name: 'Vue', sub: 'v-model fields' },
+          { name: 'Angular', sub: 'reactive forms' },
+        ].map(({ name, sub }) => (
+          <div class="strip-item">
+            <span class="strip-name">{name}</span>
+            <span class="strip-sub">{sub}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Core Features -->
+    <section id="features" class="section scroll-mt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">Core autofill</div>
+          <h2>Fills the right data, every time</h2>
+          <p>It reads autocomplete attributes, name, id, placeholder, and label text. No random strings in email fields, no text where a number belongs.</p>
+        </div>
+        <div class="card-grid four-col">
+          {[
+            {
+              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`,
+              title: 'Smart field detection',
+              desc: 'Reads autocomplete attributes, aria labels, name, id, placeholder, and label text to figure out what each field expects.',
+            },
+            {
+              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+              title: 'Realistic fake data',
+              desc: 'Generates proper names, emails, phone numbers, addresses, card numbers. Looks real enough to pass validation.',
+            },
+            {
+              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h8"/></svg>`,
+              title: 'Natural typing',
+              desc: 'Fires focus, beforeinput, input, change, and blur events at configurable speed. React, Vue, and Angular all respond correctly.',
+            },
+            {
+              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+              title: 'Framework-safe',
+              desc: "Uses native prototype setters to bypass React and Vue value trackers so onChange always fires and the UI updates correctly.",
+            },
+          ].map(({ icon, title, desc }) => (
+            <div class="glass-card">
+              <div class="card-icon" set:html={icon} />
+              <h3>{title}</h3>
+              <p>{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Power Features -->
+    <section class="section section-tinted">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">Power features</div>
+          <h2>Built for serious form testing</h2>
+          <p>Profiles, Actions, and Field Rules let you control exactly what gets filled — down to individual fields on specific sites.</p>
+        </div>
+        <div class="power-grid">
+
+          <!-- Actions big card -->
+          <div class="glass-card power-card-large">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3>Custom Actions</h3>
+            <p>One-click buttons that show up in the popup on matching URLs. Each action runs a full autofill and overrides specific fields with values you set.</p>
+            <div class="action-list">
+              {[
+                { name: 'Stripe', desc: 'Fill test card 4242 4242 4242 4242' },
+                { name: 'Lemon Squeezy', desc: 'Use test card on Lemon checkout' },
+                { name: 'Paddle', desc: 'Sandbox billing with valid test data' },
+                { name: 'Any site', desc: 'Any URL pattern you define' },
+              ].map(({ name, desc }) => (
+                <div class="action-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <div>
+                    <strong>{name}</strong>
+                    <span>{desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Profiles -->
+          <div class="glass-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <h3>Identity Profiles</h3>
+            <p>Switch between Work, Personal, and Staging profiles with one click. Each carries its own email domain, password, and field overrides.</p>
+            <div class="tag-row">
+              {['Work', 'Personal', 'Staging', '+ your own'].map(t => <span class="tag">{t}</span>)}
+            </div>
+          </div>
+
+          <!-- Field Rules -->
+          <div class="glass-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+            </div>
+            <h3>Field Rules</h3>
+            <p>Match any field by id, name, placeholder, label, or autocomplete — using exact, contains, or regex. Whatever you pin always wins.</p>
+            <div class="code-snippet">
+              <span class="c-attr">name</span> contains <span class="c-val">"coupon"</span> <span class="c-arrow">→</span> SAVE20
+            </div>
+          </div>
+
+          <!-- Deep config -->
+          <div class="glass-card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <h3>Deep customisation</h3>
+            <p>Typing speed, temp email provider (Mailinator, YOPmail, mailsac), ignored fields, shared passwords, always-checked boxes — all per profile.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="section scroll-mt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">How it works</div>
+          <h2>From install to filled in 60 seconds</h2>
+        </div>
+        <div class="steps">
+          {[
+            { n: '01', title: 'Install in one click', desc: 'Add FillMatic from the Chrome Web Store. No account, no sign-up.' },
+            { n: '02', title: 'Open any web form', desc: 'Navigate to a registration page, checkout, or any form you test regularly.' },
+            { n: '03', title: 'Fill with one click', desc: 'Click the FillMatic icon or press the keyboard shortcut. Every visible field fills in milliseconds.' },
+          ].map(({ n, title, desc }) => (
+            <div class="step">
+              <span class="step-number">{n}</span>
+              <h3>{title}</h3>
+              <p>{desc}</p>
+            </div>
+          ))}
+        </div>
+        <div class="cta-center">
+          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            Get FillMatic free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Everything included -->
+    <section class="section section-accent">
+      <div class="section-inner">
+        <div class="section-head light">
+          <h2>Everything included, no paid tier</h2>
+          <p>FillMatic is free and always will be.</p>
+        </div>
+        <div class="checklist">
+          {[
+            'Fills text, email, password, select, checkbox, radio, date and every other input type',
+            'Keyboard shortcut so you never have to touch the mouse',
+            'Handles dynamic forms that mount new fields after page load',
+            'Per-profile field rules and email addresses',
+            'No account required — works completely offline',
+            'Built by a developer for developers — feedback always welcome',
+          ].map(item => (
+            <div class="check-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+        <div class="cta-center">
+          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome — free</a>
+          <a href="/demo" class="btn btn-ghost-light btn-lg">See it in action</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment integrations -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">Payment integrations</div>
+          <h2>Test payment flows without memorising test cards</h2>
+          <p>FillMatic ships with built-in Actions for the most common payment processors. Click once and the right card fills in — no copy-pasting from docs.</p>
+        </div>
+        <div class="card-grid three-col">
+          {[
+            { name: 'Stripe', card: '4242 4242 4242 4242', color: '#6366f1' },
+            { name: 'Lemon Squeezy', card: '4242 4242 4242 4242', color: '#d97706' },
+            { name: 'Paddle', card: '4000 0566 5566 5556', color: '#2563eb' },
+          ].map(({ name, card, color }) => (
+            <div class="glass-card payment-card">
+              <span class="payment-badge" style={`color: ${color}; border-color: ${color}33; background: ${color}11`}>{name}</span>
+              <svg class="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <p class="payment-num">{card}</p>
+              <p class="payment-sub">Filled automatically on checkout</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Feedback -->
+    <section id="feedback" class="section section-tinted scroll-mt">
+      <div class="section-inner narrow">
+        <div class="section-head">
+          <h2>Share your feedback</h2>
+          <p>Got an idea or something that's not working? I read every message.</p>
+        </div>
+        <div class="glass-card feedback-card">
+          <form action="https://airform.io/hello@abdulsamad.dev" method="POST" class="feedback-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="fb-name">Name</label>
+                <input type="text" id="fb-name" name="Name" placeholder="Your name" required />
+              </div>
+              <div class="field">
+                <label for="fb-email">Email</label>
+                <input type="email" id="fb-email" name="Email" placeholder="you@example.com" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="fb-msg">Message</label>
+              <textarea id="fb-msg" name="Feedback" placeholder="What would you like to see improved?" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">Send feedback</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="icon192.png" alt="FillMatic" width="18" />
+        <span>© 2026 Fill<em>Matic</em>. All rights reserved.</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="/demo">Demo</a>
+        <a href="/privacy">Privacy</a>
+        <a href={STORE_URL} target="_blank" rel="noopener">Chrome Web Store</a>
+      </nav>
+    </div>
+  </footer>
+
+</div>
 </Layout>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .site {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,.15) 0%, transparent 70%),
+      linear-gradient(160deg, #0f0f18 0%, #141420 45%, #0d1117 100%);
+    color: #e2e8f0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Header ── */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(15,15,24,.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #f1f5f9;
+  }
+
+  .logo em {
+    font-style: italic;
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .header-nav a {
+    font-size: .875rem;
+    font-weight: 500;
+    color: #64748b;
+    transition: color .2s;
+  }
+
+  .header-nav a:hover { color: #e2e8f0; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: opacity .2s, transform .15s, box-shadow .2s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-sm { font-size: .8rem; padding: .4rem 1rem; }
+  .btn-lg { font-size: .95rem; padding: .75rem 1.75rem; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(79,70,229,.35);
+  }
+
+  .btn-primary:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,70,229,.45); }
+
+  .btn-ghost {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    color: #cbd5e1;
+  }
+
+  .btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+  .btn-light {
+    background: #fff;
+    color: #1e1b4b;
+  }
+
+  .btn-light:hover { opacity: .92; }
+
+  .btn-ghost-light {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+  }
+
+  .btn-ghost-light:hover { background: rgba(255,255,255,.1); }
+
+  .w-full { width: 100%; justify-content: center; }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #818cf8;
+    background: rgba(99,102,241,.12);
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 999px;
+    padding: .3em .9em;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 7rem 1.5rem 5rem;
+    text-align: center;
+  }
+
+  .hero-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -.03em;
+    color: #f1f5f9;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    justify-content: center;
+  }
+
+  .hero-footnote {
+    font-size: .78rem;
+    color: #475569;
+    margin-top: -.5rem;
+  }
+
+  /* ── Strip ── */
+  .strip {
+    border-top: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.02);
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+  }
+
+  .strip-label {
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #334155;
+    margin-bottom: 1rem;
+  }
+
+  .strip-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .6rem;
+  }
+
+  .strip-item {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .4rem .9rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    font-size: .82rem;
+  }
+
+  .strip-name { font-weight: 600; color: #cbd5e1; }
+  .strip-sub { color: #475569; font-size: .75rem; }
+
+  /* ── Sections ── */
+  .section {
+    padding: 5rem 1.5rem;
+  }
+
+  .section-tinted {
+    background: rgba(99,102,241,.04);
+    border-top: 1px solid rgba(255,255,255,.05);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+
+  .section-accent {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+  }
+
+  .scroll-mt { scroll-margin-top: 4rem; }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .narrow { max-width: 600px; }
+
+  .section-head {
+    text-align: center;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .85rem;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: #f1f5f9;
+    line-height: 1.2;
+  }
+
+  .section-head p {
+    font-size: 1rem;
+    color: #64748b;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .section-head.light h2 { color: #fff; }
+  .section-head.light p { color: rgba(255,255,255,.65); }
+
+  /* ── Glass card ── */
+  .glass-card {
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+    padding: 1.75rem;
+    transition: box-shadow .3s, transform .3s;
+  }
+
+  .glass-card:hover {
+    box-shadow: 0 12px 48px rgba(0,0,0,.4), 0 0 0 1px rgba(99,102,241,.2);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(99,102,241,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .card-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #818cf8;
+  }
+
+  .glass-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: .5rem;
+  }
+
+  .glass-card p {
+    font-size: .875rem;
+    color: #64748b;
+    line-height: 1.65;
+  }
+
+  /* ── Card grids ── */
+  .card-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .four-col { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .three-col { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+  /* ── Power features ── */
+  .power-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .power-card-large {
+    grid-row: span 2;
+  }
+
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin-top: 1.25rem;
+  }
+
+  .action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    padding: .65rem .75rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.07);
+    font-size: .82rem;
+  }
+
+  .action-item svg { color: #818cf8; flex-shrink: 0; margin-top: 2px; }
+
+  .action-item strong {
+    display: block;
+    color: #e2e8f0;
+    font-weight: 600;
+    margin-bottom: .1rem;
+  }
+
+  .action-item span { color: #64748b; }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .3em .75em;
+    border-radius: 999px;
+    background: rgba(99,102,241,.12);
+    border: 1px solid rgba(99,102,241,.25);
+    color: #a5b4fc;
+  }
+
+  .code-snippet {
+    margin-top: 1rem;
+    font-size: .78rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: rgba(0,0,0,.3);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 8px;
+    padding: .6rem .9rem;
+    color: #94a3b8;
+  }
+
+  .c-attr { color: #818cf8; }
+  .c-val { color: #34d399; }
+  .c-arrow { color: #f59e0b; }
+
+  /* ── Steps ── */
+  .steps {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .step {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  .step-number {
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(99,102,241,.15);
+    letter-spacing: -.04em;
+    user-select: none;
+  }
+
+  .step h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .step p {
+    font-size: .875rem;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .cta-center {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .75rem;
+    margin-top: 3rem;
+  }
+
+  /* ── Checklist ── */
+  .checklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: .85rem;
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    font-size: .875rem;
+    color: rgba(255,255,255,.8);
+    line-height: 1.5;
+  }
+
+  .check-item svg { color: #a5b4fc; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── Payment cards ── */
+  .payment-card { text-align: left; }
+
+  .payment-badge {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .25em .7em;
+    border-radius: 999px;
+    border: 1px solid;
+    margin-bottom: .85rem;
+  }
+
+  .payment-icon {
+    width: 20px;
+    height: 20px;
+    color: #475569;
+    margin-bottom: .5rem;
+  }
+
+  .payment-num {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: .9rem;
+    color: #e2e8f0;
+    margin-bottom: .25rem;
+  }
+
+  .payment-sub { font-size: .78rem; color: #475569; }
+
+  /* ── Feedback ── */
+  .feedback-card { padding: 2rem; }
+
+  .feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+
+  .field label {
+    font-size: .78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: .65rem .9rem;
+    font-size: .9rem;
+    font-family: inherit;
+    color: #e2e8f0;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    outline: none;
+    resize: vertical;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder { color: #475569; }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: rgba(99,102,241,.6);
+    background: rgba(99,102,241,.08);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 1.75rem 1.5rem;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .82rem;
+    color: #334155;
+  }
+
+  .footer-brand em {
+    font-style: italic;
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-nav a {
+    font-size: .82rem;
+    color: #334155;
+    transition: color .2s;
+  }
+
+  .footer-nav a:hover { color: #94a3b8; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .header-nav a:not(.btn) { display: none; }
+    .hero { padding: 5rem 1.25rem 3.5rem; }
+    .field-row { grid-template-columns: 1fr; }
+    .power-card-large { grid-row: span 1; }
+  }
+</style>

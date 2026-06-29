@@ -48,10 +48,19 @@ export const DEFAULT_ACTIONS: Action[] = [
     group: 'FillMatic Demo',
     matcher: {
       type: 'startsWith',
-      value: isDev ? 'http://localhost:3000' : 'https://fillmatic.pages.dev/demo',
+      value: isDev ? 'http://localhost:3000/demo' : 'https://fillmatic.pages.dev/demo',
     },
-    active: isDev,
-    fields: [{ attribute: 'name', operator: 'exact', match: 'text', value: 'FillMatic Special Demo Data' }],
+    active: true,
+    fields: [
+      { attribute: 'name', operator: 'exact', match: 'text', value: 'FillMatic Special Demo Data' },
+      {
+        attribute: 'name',
+        operator: 'exact',
+        match: 'demo_note',
+        value:
+          'This textarea was filled by the FillMatic Demo action.\n\nYou can set custom values per field using Actions in Settings — great for things like test card numbers, specific addresses, or any fixed data you fill repeatedly.',
+      },
+    ],
   },
   {
     id: 'default-stripe-success',
@@ -138,7 +147,9 @@ const getAttributeValue = (elem: Element, attribute: AttributeType): string => {
     case 'id':
       return elem.id ?? ''
     case 'name':
-      return elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement
+      return elem instanceof HTMLInputElement ||
+        elem instanceof HTMLTextAreaElement ||
+        elem instanceof HTMLSelectElement
         ? elem.name
         : ''
     case 'placeholder':
