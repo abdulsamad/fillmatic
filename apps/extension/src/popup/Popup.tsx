@@ -109,7 +109,7 @@ export const Popup = () => {
   )
 
   return (
-    <div className="relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col">
+    <div className="animate-popup-in relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col">
       <TooltipProvider>
         <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
           <div className="flex items-center space-x-2">
