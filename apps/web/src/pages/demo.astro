@@ -1,635 +1,657 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title='Welcome to FillMatic.'>
-	<form id='form'>
-		<div>
-			<p class='text-lg text-center'>
-				👋 Hey there! <br />
-				<br /> This page is created to test <strong>FillMatic</strong> extension's
-				autofill functionality. Just click on extension icon and click "Fill All
-				Fields" to test. If you have not downloaded it, please visit <a
-					href='https://chromewebstore.google.com/detail/mpkjmebmnkhpfomlopbehcpmgmfndfje'
-					target='_blank'
-					rel='noopener'
-					>Chrome Web Store
-				</a>. <br />
-				<br /> Have a good one and please provide feedback <a
-					href='mailto:hello@abdulsamad.dev?subject=FillMatic&body=Hey%20Abdul%2C'
-					rel='noopener noreferrer'>here</a
-				>.
-			</p>
-		</div>
-		<div>
-			<p>
-				When you click on <strong>"Fill Form 1"</strong> from the extension popup,
-				every detail in the form will be automatically filled and submitted. Conversely,
-				clicking <strong>"Fill All Fields"</strong>
-				will populate all the input fields without performing any additional actions.
-				<em
-					>For a detailed view of the triggered events, feel free to check the
-					console logs on this page after autofilling the inputs :-)
-				</em>
-			</p>
-		</div>
+<Layout title="Demo — FillMatic">
+  <!-- Page background -->
+  <div class="page-bg">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">Interactive Demo</div>
+      <h1>Try it out</h1>
+      <p class="hero-sub">
+        Open FillMatic and hit <strong>Fill all fields</strong> to fill everything
+        at once or pick a specific form from the popup named forms show up as their
+        own buttons so you can fill and submit just that one.
+      </p>
+    </section>
 
-		<label>
-			Text:
-			<input
-				type='text'
-				name='text'
-				placeholder='Enter text'
-				onclick="console.log('text clicked')"
-				onfocus="console.log('text focused')"
-				onblur="console.log('text blurred')"
-				oninput="console.log('text input')"
-				onchange="console.log('text changed')"
-				onkeydown="console.log('text keydown')"
-				onkeyup="console.log('text keyup')"
-				minlength='1'
-				maxlength='100'
-			/>
-		</label>
-		<label>
-			Password:
-			<input
-				type='password'
-				name='password'
-				placeholder='Enter password'
-				onclick="console.log('password clicked')"
-				onfocus="console.log('password focused')"
-				onblur="console.log('password blurred')"
-				oninput="console.log('password input')"
-				onchange="console.log('password changed')"
-				onkeydown="console.log('password keydown')"
-				onkeyup="console.log('password keyup')"
-				minlength='8'
-				maxlength='64'
-			/>
-		</label>
-		<label>
-			Email:
-			<input
-				type='email'
-				name='email'
-				placeholder='Enter email'
-				onclick="console.log('email clicked')"
-				onfocus="console.log('email focused')"
-				onblur="console.log('email blurred')"
-				oninput="console.log('email input')"
-				onchange="console.log('email changed')"
-				onkeydown="console.log('email keydown')"
-				onkeyup="console.log('email keyup')"
-				minlength='5'
-				maxlength='254'
-			/>
-		</label>
-		<label>
-			Number:
-			<input
-				type='number'
-				name='number'
-				placeholder='Enter number'
-				onclick="console.log('number clicked')"
-				onfocus="console.log('number focused')"
-				onblur="console.log('number blurred')"
-				oninput="console.log('number input')"
-				onchange="console.log('number changed')"
-				onkeydown="console.log('number keydown')"
-				onkeyup="console.log('number keyup')"
-				min='0'
-				max='1000'
-			/>
-		</label>
-		<label>
-			Phone Number:
-			<input
-				type='tel'
-				name='tel'
-				placeholder='Enter phone number'
-				onclick="console.log('tel clicked')"
-				onfocus="console.log('tel focused')"
-				onblur="console.log('tel blurred')"
-				oninput="console.log('tel input')"
-				onchange="console.log('tel changed')"
-				onkeydown="console.log('tel keydown')"
-				onkeyup="console.log('tel keyup')"
-				minlength='7'
-				maxlength='15'
-			/>
-		</label>
-		<label>
-			URL:
-			<input
-				type='url'
-				name='url'
-				placeholder='Enter URL'
-				onclick="console.log('url clicked')"
-				onfocus="console.log('url focused')"
-				onblur="console.log('url blurred')"
-				oninput="console.log('url input')"
-				onchange="console.log('url changed')"
-				onkeydown="console.log('url keydown')"
-				onkeyup="console.log('url keyup')"
-				minlength='4'
-				maxlength='2048'
-			/>
-		</label>
-		<label>
-			Search:
-			<input
-				type='search'
-				name='search'
-				placeholder='Search'
-				onclick="console.log('search clicked')"
-				onfocus="console.log('search focused')"
-				onblur="console.log('search blurred')"
-				oninput="console.log('search input')"
-				onchange="console.log('search changed')"
-				onkeydown="console.log('search keydown')"
-				onkeyup="console.log('search keyup')"
-				minlength='1'
-				maxlength='100'
-			/>
-		</label>
-		<label>
-			Color:
-			<input
-				type='color'
-				name='color'
-				onclick="console.log('color clicked')"
-				onfocus="console.log('color focused')"
-				onblur="console.log('color blurred')"
-				oninput="console.log('color input')"
-				onchange="console.log('color changed')"
-				onkeydown="console.log('color keydown')"
-				onkeyup="console.log('color keyup')"
-			/>
-		</label>
-		<label>
-			Date:
-			<input
-				type='date'
-				name='date'
-				onclick="console.log('date clicked')"
-				onfocus="console.log('date focused')"
-				onblur="console.log('date blurred')"
-				oninput="console.log('date input')"
-				onchange="console.log('date changed')"
-				onkeydown="console.log('date keydown')"
-				onkeyup="console.log('date keyup')"
-				min='2000-01-01'
-				max='2030-12-31'
-			/>
-		</label>
-		<label>
-			Date and Time:
-			<input
-				type='datetime-local'
-				name='datetime'
-				onclick="console.log('datetime-local clicked')"
-				onfocus="console.log('datetime-local focused')"
-				onblur="console.log('datetime-local blurred')"
-				oninput="console.log('datetime-local input')"
-				onchange="console.log('datetime-local changed')"
-				onkeydown="console.log('datetime-local keydown')"
-				onkeyup="console.log('datetime-local keyup')"
-				min='2000-01-01T00:00'
-				max='2030-12-31T23:59'
-			/>
-		</label>
-		<label>
-			Month:
-			<input
-				type='month'
-				name='month'
-				onclick="console.log('month clicked')"
-				onfocus="console.log('month focused')"
-				onblur="console.log('month blurred')"
-				oninput="console.log('month input')"
-				onchange="console.log('month changed')"
-				onkeydown="console.log('month keydown')"
-				onkeyup="console.log('month keyup')"
-				min='2000-01'
-				max='2030-12'
-			/>
-		</label>
-		<label>
-			Week:
-			<input
-				type='week'
-				name='week'
-				onclick="console.log('week clicked')"
-				onfocus="console.log('week focused')"
-				onblur="console.log('week blurred')"
-				oninput="console.log('week input')"
-				onchange="console.log('week changed')"
-				onkeydown="console.log('week keydown')"
-				onkeyup="console.log('week keyup')"
-				min='2000-W01'
-				max='2030-W52'
-			/>
-		</label>
-		<label>
-			Time:
-			<input
-				type='time'
-				name='time'
-				onclick="console.log('time clicked')"
-				onfocus="console.log('time focused')"
-				onblur="console.log('time blurred')"
-				oninput="console.log('time input')"
-				onchange="console.log('time changed')"
-				onkeydown="console.log('time keydown')"
-				onkeyup="console.log('time keyup')"
-				min='00:00'
-				max='23:59'
-			/>
-		</label>
-		<!-- <label>
-			File:
-			<input
-				type='file'
-				name='file'
-				accept='image/png, image/jpeg, application/pdf, text/plain'
-				onclick="console.log('file clicked')"
-				onfocus="console.log('file focused')"
-				onblur="console.log('file blurred')"
-				onchange="console.log('file changed')"
-				onkeydown="console.log('file keydown')"
-				onkeyup="console.log('file keyup')"
-			/>
-		</label> -->
-		<div class='radio-group'>
-			<label>
-				Radio 1:
-				<input
-					type='radio'
-					name='group1'
-					value='radio1'
-					onclick="console.log('radio1 clicked')"
-					onfocus="console.log('radio1 focused')"
-					onblur="console.log('radio1 blurred')"
-					onchange="console.log('radio1 changed')"
-					onkeydown="console.log('radio1 keydown')"
-					onkeyup="console.log('radio1 keyup')"
-				/>
-			</label>
-			<label>
-				Radio 2:
-				<input
-					type='radio'
-					name='group1'
-					value='radio2'
-					onclick="console.log('radio2 clicked')"
-					onfocus="console.log('radio2 focused')"
-					onblur="console.log('radio2 blurred')"
-					onchange="console.log('radio2 changed')"
-					onkeydown="console.log('radio2 keydown')"
-					onkeyup="console.log('radio2 keyup')"
-				/>
-			</label>
-			<label>
-				Radio 3:
-				<input
-					type='radio'
-					name='group1'
-					value='radio3'
-					onclick="console.log('radio3 clicked')"
-					onfocus="console.log('radio3 focused')"
-					onblur="console.log('radio3 blurred')"
-					onchange="console.log('radio3 changed')"
-					onkeydown="console.log('radio3 keydown')"
-					onkeyup="console.log('radio3 keyup')"
-				/>
-			</label>
-		</div>
-		<label>
-			Checkbox:
-			<input
-				type='checkbox'
-				name='checkbox'
-				onclick="console.log('checkbox clicked')"
-				onfocus="console.log('checkbox focused')"
-				onblur="console.log('checkbox blurred')"
-				onchange="console.log('checkbox changed')"
-				onkeydown="console.log('checkbox keydown')"
-				onkeyup="console.log('checkbox keyup')"
-			/>
-		</label>
-		<label>
-			Range:
-			<input
-				type='range'
-				name='range'
-				min='0'
-				max='500'
-				onclick="console.log('range clicked')"
-				onfocus="console.log('range focused')"
-				onblur="console.log('range blurred')"
-				oninput="console.log('range input')"
-				onchange="console.log('range changed')"
-				onkeydown="console.log('range keydown')"
-				onkeyup="console.log('range keyup')"
-			/>
-		</label>
-		<label>
-			Reset:
-			<input
-				type='reset'
-				onclick="console.log('reset clicked')"
-				onfocus="console.log('reset focused')"
-				onblur="console.log('reset blurred')"
-				onkeydown="console.log('reset keydown')"
-				onkeyup="console.log('reset keyup')"
-			/>
-		</label>
+    <!-- Forms grid -->
+    <section class="forms-grid">
+      <!-- Form 1: Signup -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>Create account</h2>
+        </div>
+        <form name="Signup" id="signup-form" class="glass-form" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="signup-first">First name</label>
+              <input
+                type="text"
+                id="signup-first"
+                name="first_name"
+                placeholder="Jane"
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="field">
+              <label for="signup-last">Last name</label>
+              <input
+                type="text"
+                id="signup-last"
+                name="last_name"
+                placeholder="Smith"
+                autocomplete="family-name"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="signup-username">Username</label>
+            <input
+              type="text"
+              id="signup-username"
+              name="username"
+              placeholder="janesmith"
+              autocomplete="username"
+            />
+          </div>
+          <div class="field">
+            <label for="signup-email">Email address</label>
+            <input
+              type="email"
+              id="signup-email"
+              name="email"
+              placeholder="jane@example.com"
+              autocomplete="email"
+            />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="signup-password">Password</label>
+              <input
+                type="password"
+                id="signup-password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                minlength="8"
+              />
+            </div>
+            <div class="field">
+              <label for="signup-confirm">Confirm password</label>
+              <input
+                type="password"
+                id="signup-confirm"
+                name="confirm_password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                minlength="8"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="signup-phone">Phone number</label>
+            <input
+              type="tel"
+              id="signup-phone"
+              name="phone"
+              placeholder="+1 555 000 0000"
+              autocomplete="tel"
+            />
+          </div>
+          <div class="field">
+            <label for="signup-dob">Date of birth</label>
+            <input
+              type="date"
+              id="signup-dob"
+              name="date_of_birth"
+              autocomplete="bday"
+            />
+          </div>
+          <div class="field checkbox-field">
+            <input type="checkbox" id="signup-terms" name="terms" />
+            <label for="signup-terms"
+              >I agree to the <a href="#">Terms &amp; Conditions</a></label
+            >
+          </div>
+          <button type="submit" class="submit-btn">Create account</button>
+        </form>
+        <div class="form-success" id="signup-success" hidden>
+          <div class="success-icon">✓</div>
+          <h3>Account created!</h3>
+          <p>FillMatic filled and submitted this form instantly.</p>
+          <button
+            class="reset-btn"
+            data-target="signup-form"
+            data-success="signup-success">Try again</button
+          >
+        </div>
+      </div>
 
-		<label>
-			Submit:
-			<input
-				type='submit'
-				onclick="console.log('submit clicked')"
-				onfocus="console.log('submit focused')"
-				onblur="console.log('submit blurred')"
-				onkeydown="console.log('submit keydown')"
-				onkeyup="console.log('submit keyup')"
-			/>
-		</label>
-	</form>
-	<!-- <div class=''>
-		<div
-			class='w-1/2 overflow-hidden border border-amber-400 h-4 py-5'
-			oninput="console.log('contenteditable input')"
-			onbeforeinput="console.log('contenteditable beforeinput')"
-			onkeyup="console.log('contenteditable keyup')"
-			onkeydown="console.log('contenteditable keydown')"
-			onfocus="console.log('contenteditable focus')"
-			contenteditable='true'>
-		</div>
-	</div>
+      <!-- Form 2: Checkout -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>Complete purchase</h2>
+        </div>
+        <form name="Checkout" id="checkout-form" class="glass-form" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="checkout-first">First name</label>
+              <input
+                type="text"
+                id="checkout-first"
+                name="first_name"
+                placeholder="Jane"
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="field">
+              <label for="checkout-last">Last name</label>
+              <input
+                type="text"
+                id="checkout-last"
+                name="last_name"
+                placeholder="Smith"
+                autocomplete="family-name"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="checkout-email">Email</label>
+            <input
+              type="email"
+              id="checkout-email"
+              name="email"
+              placeholder="jane@example.com"
+              autocomplete="email"
+            />
+          </div>
+          <div class="field">
+            <label for="checkout-address">Street address</label>
+            <input
+              type="text"
+              id="checkout-address"
+              name="address"
+              placeholder="123 Main St"
+              autocomplete="street-address"
+            />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="checkout-city">City</label>
+              <input
+                type="text"
+                id="checkout-city"
+                name="city"
+                placeholder="San Francisco"
+                autocomplete="address-level2"
+              />
+            </div>
+            <div class="field">
+              <label for="checkout-zip">ZIP / Postal</label>
+              <input
+                type="text"
+                id="checkout-zip"
+                name="postal_code"
+                placeholder="94103"
+                autocomplete="postal-code"
+                maxlength="10"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="checkout-country">Country</label>
+            <select id="checkout-country" name="country" autocomplete="country">
+              <option value="">Select country…</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="CA">Canada</option>
+              <option value="AU">Australia</option>
+              <option value="DE">Germany</option>
+              <option value="FR">France</option>
+              <option value="IN">India</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="section-label">Payment details</div>
+          <div class="field">
+            <label for="checkout-card-name">Name on card</label>
+            <input
+              type="text"
+              id="checkout-card-name"
+              name="card_name"
+              placeholder="Jane Smith"
+              autocomplete="cc-name"
+            />
+          </div>
+          <div class="field">
+            <label for="checkout-card-number">Card number</label>
+            <input
+              type="text"
+              id="checkout-card-number"
+              name="card_number"
+              placeholder="4242 4242 4242 4242"
+              autocomplete="cc-number"
+              maxlength="19"
+            />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="checkout-expiry">Expiry (MM/YY)</label>
+              <input
+                type="text"
+                id="checkout-expiry"
+                name="cc_exp"
+                placeholder="MM/YY"
+                autocomplete="cc-exp"
+                maxlength="5"
+              />
+            </div>
+            <div class="field">
+              <label for="checkout-cvv">CVV</label>
+              <input
+                type="text"
+                id="checkout-cvv"
+                name="cvv"
+                placeholder="123"
+                autocomplete="cc-csc"
+                maxlength="4"
+              />
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">Pay now</button>
+        </form>
+        <div class="form-success" id="checkout-success" hidden>
+          <div class="success-icon">✓</div>
+          <h3>Order placed!</h3>
+          <p>FillMatic filled and submitted this form instantly.</p>
+          <button
+            class="reset-btn"
+            data-target="checkout-form"
+            data-success="checkout-success">Try again</button
+          >
+        </div>
+      </div>
+    </section>
 
-	<iframe
-		id='demoFrame'
-		srcdoc='
-		<!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Iframe Form</title>
-		</head>
-		<body>
-			<form id="iframeForm">
-				<label>
-					Iframe Text:
-					<input
-						type="text"
-						name="iframeText"
-						placeholder="Enter text"
-						onclick="console.log(&apos;iframe: text clicked&apos;)"
-						onfocus="console.log(&apos;iframe: text focused&apos;)"
-						onblur="console.log(&apos;iframe: text blurred&apos;)"
-						oninput="console.log(&apos;iframe: text input&apos;)"
-						onchange="console.log(&apos;iframe: text changed&apos;)"
-						onkeydown="console.log(&apos;iframe: text keydown&apos;)"
-						onkeyup="console.log(&apos;iframe: text keyup&apos;)"
-					/>
-				</label>
-				<br><br>
-				<label>
-					Iframe Email:
-					<input
-						type="email"
-						name="iframeEmail"
-						placeholder="Enter email"
-						onclick="console.log(&apos;iframe: email clicked&apos;)"
-						onfocus="console.log(&apos;iframe: email focused&apos;)"
-						onblur="console.log(&apos;iframe: email blurred&apos;)"
-						oninput="console.log(&apos;iframe: email input&apos;)"
-						onchange="console.log(&apos;iframe: email changed&apos;)"
-						onkeydown="console.log(&apos;iframe: email keydown&apos;)"
-						onkeyup="console.log(&apos;iframe: email keyup&apos;)"
-					/>
-				</label>
-				<br><br>
-				<label>
-					Iframe Checkbox:
-					<input
-						type="checkbox"
-						name="iframeCheckbox"
-						onclick="console.log(&apos;iframe: checkbox clicked&apos;)"
-						onfocus="console.log(&apos;iframe: checkbox focused&apos;)"
-						onblur="console.log(&apos;iframe: checkbox blurred&apos;)"
-						onchange="console.log(&apos;iframe: checkbox changed&apos;)"
-					/>
-				</label>
-				<br><br>
-				<input
-					type="submit"
-					value="Submit Iframe Form"
-					onclick="console.log(&apos;iframe: submit clicked&apos;)"
-					onfocus="console.log(&apos;iframe: submit focused&apos;)"
-					onblur="console.log(&apos;iframe: submit blurred&apos;)"
-				/>
-			</form>
-		</body>
-		</html>
-	'
-		width='100%'
-		height='300'
-		style='border: 1px solid #ccc;'></iframe> -->
+    <!-- Footer note -->
+    <footer class="demo-footer">
+      Nothing here is real — all values are dummy data. ·
+      <a href="mailto:hello@abdulsamad.dev?subject=FillMatic Feedback"
+        >Send feedback</a
+      >
+    </footer>
+  </div>
 </Layout>
 
 <script>
-	document.getElementById('form')!.addEventListener('submit', function (e) {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget as HTMLFormElement);
-		const formDetails = document.createElement('div');
-		formDetails.id = 'formDetails';
-		formDetails.className = 'form-details';
+  document.querySelectorAll<HTMLFormElement>(".glass-form").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const successId = form.id.replace("-form", "-success");
+      form.hidden = true;
+      const success = document.getElementById(successId);
+      if (success) success.hidden = false;
+    });
+  });
 
-		for (const [key, value] of formData) {
-			const detail = document.createElement('div');
-			detail.className = 'form-detail';
-			if (key === 'file' && value instanceof File) {
-				const fileTypes = [
-					'image/jpeg',
-					'image/png',
-					'application/pdf',
-					'text/csv',
-					'text/plain',
-				];
-				if (fileTypes.includes(value.type)) {
-					const reader = new FileReader();
-					reader.onload = function (event) {
-						const content = event.target?.result;
-						if (value.type === 'image/jpeg' || value.type === 'image/png') {
-							const img = document.createElement('img');
-							img.src = content as string;
-							img.style.maxWidth = '100%';
-							detail.appendChild(img);
-						} else if (value.type === 'application/pdf') {
-							const embed = document.createElement('embed');
-							embed.src = content as string;
-							embed.type = 'application/pdf';
-							embed.style.width = '100%';
-							embed.style.height = '500px';
-							embed.style.border = '1px solid #34495e';
-							embed.style.borderRadius = '8px';
-							detail.appendChild(embed);
-						} else if (
-							value.type === 'text/csv' ||
-							value.type === 'text/plain'
-						) {
-							const pre = document.createElement('pre');
-							pre.textContent = content as string;
-							detail.appendChild(pre);
-						}
-					};
-					reader.readAsDataURL(value);
-				}
-				detail.insertAdjacentHTML(
-					'afterbegin',
-					`<p class="detail-label">${key}:</p><p class="detail-value">${value.name} (${value.type}, ${(value.size / (1024 * 1024)).toFixed(2)} MB)</p>`,
-				);
-			} else {
-				detail.innerHTML = `<p class="detail-label">${key}:</p><p class="detail-value">${value}</p>`;
-			}
-			formDetails.appendChild(detail);
-		}
-
-		const form = document.getElementById('form');
-		form!.style.display = 'none';
-		form!.parentNode!.insertBefore(formDetails, form!.nextSibling);
-	});
+  document.querySelectorAll<HTMLButtonElement>(".reset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const formEl = document.getElementById(
+        btn.dataset.target!,
+      ) as HTMLFormElement;
+      const successEl = document.getElementById(btn.dataset.success!);
+      if (formEl) {
+        formEl.reset();
+        formEl.hidden = false;
+      }
+      if (successEl) successEl.hidden = true;
+    });
+  });
 </script>
 
 <style>
-	body {
-		max-width: 100vw;
-		padding: 3em 1rem;
-		border-radius: 1rem;
-		background: linear-gradient(
-			135deg,
-			#31363f,
-			#3a3d43
-		); /* Modern SaaS gradient background */
-		color: #eee;
-		font-family: 'Roboto', sans-serif; /* Material UI font */
-	}
+  /* ── Base ── */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-	form {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		box-sizing: border-box;
-		background: #222831;
-		color: #eeeeee;
-		padding: 2rem;
-		gap: 1.5rem;
-		margin: auto;
-		width: 50%;
-		max-width: 600px;
-		border-radius: 16px;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		border: none;
-		overflow: hidden;
-	}
+  .page-bg {
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        rgba(99, 102, 241, 0.18) 0%,
+        transparent 70%
+      ),
+      linear-gradient(160deg, #0f0f18 0%, #141420 45%, #0d1117 100%);
+    padding: 3rem 1.5rem 4rem;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    color: #e2e8f0;
+  }
 
-	form a,
-	form label {
-		color: #eee;
-	}
+  a {
+    color: #818cf8;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 
-	label {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.5rem;
-		color: #34495e;
-		font-weight: bold;
-	}
+  code {
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 0.8em;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    color: #a5b4fc;
+  }
 
-	input {
-		width: 100%;
-		padding: 0.75rem;
-		box-sizing: border-box;
-		border: 1px solid #dfe6e9;
-		border-radius: 8px;
-		background: #ecf0f1;
-		color: #2c3e50;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		transition:
-			background 0.3s ease,
-			border 0.3s ease;
-	}
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+  }
 
-	input[type='radio'],
-	input[type='checkbox'],
-	input[type='range'] {
-		display: inline-block;
-		margin-right: 1rem;
-		box-shadow: none;
-	}
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 999px;
+    padding: 0.3em 0.9em;
+    margin-bottom: 1.25rem;
+  }
 
-	input[type='color'] {
-		display: inline-block;
-		margin-right: 1rem;
-		width: 50px;
-		height: 50px;
-		padding: 2px;
-		border: 2px solid #34495e;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #ecf0f1, #34495e);
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
-		cursor: pointer;
-		text-align: center;
-		margin: auto;
-	}
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+    background: linear-gradient(135deg, #e2e8f0 30%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-	input[type='color']::-webkit-color-swatch {
-		border: none;
-		border-radius: 15px;
-		padding: 0;
-	}
+  .hero-sub {
+    font-size: 1.05rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    margin: 0 0 2rem;
+  }
 
-	.radio-group {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 1rem;
-	}
+  /* ── Forms grid ── */
+  .forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
 
-	input:focus {
-		background: #dfe6e9;
-		border: 1px solid #34495e;
-		outline: none;
-	}
+  /* ── Form card ── */
+  .form-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+  }
 
-	.form-details {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		justify-self: center;
-		gap: 1rem;
-		padding: 2rem;
-		margin: auto;
-		color: #eee !important;
-	}
+  .form-card:hover {
+    box-shadow:
+      0 12px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(99, 102, 241, 0.2),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    transform: translateY(-2px);
+  }
 
-	.detail-label {
-		font-weight: 600;
-		text-transform: capitalize;
-		font-size: 1.2rem;
-	}
+  .form-card-header {
+    padding: 1.75rem 2rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(
+      180deg,
+      rgba(99, 102, 241, 0.06) 0%,
+      transparent 100%
+    );
+  }
 
-	.detail-value {
-		font-size: 1rem;
-	}
+  .form-card-header h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #f1f5f9;
+  }
+
+  .form-card-header p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ── Glass form ── */
+  .glass-form {
+    padding: 1.75rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.2rem;
+    cursor: pointer;
+  }
+
+  .field select option {
+    background: #1e1b2e;
+    color: #e2e8f0;
+  }
+
+  .field input::placeholder {
+    color: #475569;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: rgba(99, 102, 241, 0.6);
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  .checkbox-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .checkbox-field input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    accent-color: #6366f1;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .checkbox-field label {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #94a3b8;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #4f46e5;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .submit-btn {
+    margin-top: 0.4rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
+    transition:
+      opacity 0.2s,
+      transform 0.15s,
+      box-shadow 0.2s;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(79, 70, 229, 0.45);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ── Success state ── */
+  .form-success {
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  }
+
+  .form-success h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+  }
+
+  .form-success p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .reset-btn {
+    margin-top: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .reset-btn:hover {
+    background: rgba(99, 102, 241, 0.18);
+  }
+
+  /* ── Footer ── */
+  .demo-footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.8rem;
+    color: #334155;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 520px) {
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+    .glass-form {
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+    .form-card-header {
+      padding: 1.25rem 1.25rem 1rem;
+    }
+  }
 </style>
