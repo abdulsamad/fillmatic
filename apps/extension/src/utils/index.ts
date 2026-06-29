@@ -167,39 +167,53 @@ export const triggerEvent = (element: HTMLElement, eventType: string) => {
   element.dispatchEvent(event)
 }
 
-export const matchElement = (element: HTMLElement, word: string): boolean => {
-  const label =
-    element instanceof HTMLInputElement && element.labels
-      ? Array.from(element.labels)
-          .map((label) => label.textContent?.toLowerCase())
-          .join(' ')
-      : ''
+// Compiled regexes are cached per `word` so the same patterns aren't rebuilt for
+// every element. `handleDefaultInputs` calls matchElement dozens of times per
+// field; without this each call recompiled two RegExp objects.
+const matchRegexCache = new Map<string, RegExp[]>()
 
-  const placeholder =
-    element instanceof HTMLInputElement
-      ? element.placeholder?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
-      : ''
-  const name =
-    element instanceof HTMLInputElement
-      ? element.name?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
-      : ''
-  const id = element.id?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
-  const className = element.className?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim()
+const getMatchRegexes = (word: string): RegExp[] => {
+  const cached = matchRegexCache.get(word)
+  if (cached) return cached
 
-  const words = word.toLowerCase().split(' ')
-  const joinedWord = words.join('')
+  const joinedWord = word.toLowerCase().split(' ').join('')
+  const regexes: RegExp[] = []
 
   for (const w of [word.toLowerCase(), joinedWord]) {
     if (!w) continue
     try {
       // Escape so a regex-special char in user config (e.g. "c++") can't throw and
       // break matching for every element.
-      const regex = new RegExp(`\\b${escapeRegExp(w)}\\b`)
-      if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
-        return true
-      }
+      regexes.push(new RegExp(`\\b${escapeRegExp(w)}\\b`))
     } catch {
-      // Ignore malformed patterns and continue.
+      // Ignore malformed patterns.
+    }
+  }
+
+  matchRegexCache.set(word, regexes)
+  return regexes
+}
+
+const normalizeAttr = (value: string | undefined | null): string =>
+  value?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim() ?? ''
+
+export const matchElement = (element: HTMLElement, word: string): boolean => {
+  const isInput = element instanceof HTMLInputElement
+
+  const label =
+    isInput && element.labels
+      ? Array.from(element.labels)
+          .map((label) => label.textContent?.toLowerCase())
+          .join(' ')
+      : ''
+  const placeholder = isInput ? normalizeAttr(element.placeholder) : ''
+  const name = isInput ? normalizeAttr(element.name) : ''
+  const id = normalizeAttr(element.id)
+  const className = normalizeAttr(element.className)
+
+  for (const regex of getMatchRegexes(word)) {
+    if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
+      return true
     }
   }
 
