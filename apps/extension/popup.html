@@ -5,6 +5,13 @@
     <link rel="icon" href="/icon/logo.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FillMatic</title>
+    <style>
+      /* Lock the popup to its final dimensions before React mounts so Chrome
+         renders the correct size immediately and avoids the layout-shift blip. */
+      html, body { margin: 0; padding: 0; }
+      body { width: 250px; height: 400px; background: hsl(0 0% 100%); }
+      #app  { width: 250px; height: 400px; }
+    </style>
   </head>
   <body>
     <div id="app"></div>
