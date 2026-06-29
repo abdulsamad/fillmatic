@@ -197,24 +197,81 @@ const getMatchRegexes = (word: string): RegExp[] => {
 const normalizeAttr = (value: string | undefined | null): string =>
   value?.toLowerCase().replaceAll('_', ' ').replaceAll('-', ' ').trim() ?? ''
 
-export const matchElement = (element: HTMLElement, word: string): boolean => {
-  const isInput = element instanceof HTMLInputElement
+const isFormField = (el: HTMLElement): el is SupportedInputsType =>
+  el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement
 
-  const label =
-    isInput && element.labels
-      ? Array.from(element.labels)
-          .map((label) => label.textContent?.toLowerCase())
-          .join(' ')
-      : ''
-  const placeholder = isInput ? normalizeAttr(element.placeholder) : ''
-  const name = isInput ? normalizeAttr(element.name) : ''
-  const id = normalizeAttr(element.id)
-  const className = normalizeAttr(element.className)
+/**
+ * Per-element searchable text is expensive to build (label/ARIA lookups), and
+ * `matchElement` is called many times per element. The result is cached and
+ * tagged with a generation number; bumping the generation (once per autofill run
+ * via `invalidateMatchCache`) recomputes it in case the page changed, while reuse
+ * within a run stays cheap. Elements are GC'd from the WeakMap when removed.
+ */
+let matchCacheGeneration = 0
+export const invalidateMatchCache = () => {
+  matchCacheGeneration += 1
+}
+
+const elementTextCache = new WeakMap<HTMLElement, { gen: number; text: string }>()
+
+const buildElementSearchText = (element: HTMLElement): string => {
+  const parts: string[] = []
+
+  // Associated <label> elements (works for input/textarea/select).
+  if (isFormField(element) && element.labels) {
+    for (const label of Array.from(element.labels)) {
+      if (label.textContent) parts.push(label.textContent)
+    }
+  }
+
+  // ARIA + title provide a label for fields that don't use a native <label> —
+  // common in modern component libraries.
+  const ariaLabel = element.getAttribute('aria-label')
+  if (ariaLabel) parts.push(ariaLabel)
+
+  const labelledBy = element.getAttribute('aria-labelledby')
+  if (labelledBy) {
+    for (const refId of labelledBy.split(/\s+/)) {
+      const ref = refId ? document.getElementById(refId) : null
+      if (ref?.textContent) parts.push(ref.textContent)
+    }
+  }
+
+  const title = element.getAttribute('title')
+  if (title) parts.push(title)
+
+  // Field identity attributes. name/placeholder now also cover textarea/select,
+  // not just <input>.
+  if (isFormField(element) && element.name) parts.push(element.name)
+  if ((element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) && element.placeholder) {
+    parts.push(element.placeholder)
+  }
+  if (element.id) parts.push(element.id)
+  if (element.className) parts.push(element.className)
+
+  // Join parts with newlines so a multi-word phrase (e.g. "first name") can't
+  // accidentally span two separate attributes, while single words still match.
+  return parts
+    .map(normalizeAttr)
+    .filter(Boolean)
+    .join('\n')
+}
+
+const getElementSearchText = (element: HTMLElement): string => {
+  const cached = elementTextCache.get(element)
+  if (cached && cached.gen === matchCacheGeneration) return cached.text
+
+  const text = buildElementSearchText(element)
+  elementTextCache.set(element, { gen: matchCacheGeneration, text })
+  return text
+}
+
+export const matchElement = (element: HTMLElement, word: string): boolean => {
+  const haystack = getElementSearchText(element)
+  if (!haystack) return false
 
   for (const regex of getMatchRegexes(word)) {
-    if (regex.test(label) || regex.test(placeholder) || regex.test(name) || regex.test(id) || regex.test(className)) {
-      return true
-    }
+    if (regex.test(haystack)) return true
   }
 
   return false
