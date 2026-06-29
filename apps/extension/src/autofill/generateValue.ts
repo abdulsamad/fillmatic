@@ -350,8 +350,17 @@ const textFieldRules: TextFieldRule[] = [
       return sliceToMax(lastName, elem)
     },
   },
+  { match: ['middle name', 'middle initial', 'additional name'], generate: () => faker.person.middleName() },
+  {
+    match: ['username', 'user name', 'user id', 'userid', 'login', 'handle'],
+    generate: () => {
+      const { firstName, lastName } = contentScriptStore.getState()
+      return faker.internet.username({ firstName, lastName })
+    },
+  },
   { match: ['email', 'e-mail', 'mail'], generate: () => generateEmail() },
   { match: ['phone', 'tel', 'mobile', 'cell'], generate: () => faker.phone.number() },
+  { match: ['fax'], generate: () => faker.phone.number() },
   { match: ['date'], generate: (elem) => generateTextDate(elem) },
   // Address group — order matters: more specific tokens before the bare `address` catch-all.
   { match: ['street'], generate: () => faker.location.streetAddress() },
@@ -361,7 +370,11 @@ const textFieldRules: TextFieldRule[] = [
   { match: ['state'], generate: () => faker.location.state() },
   { match: ['zip', 'postal', 'postalCode'], generate: () => faker.location.zipCode() },
   { match: ['district'], generate: () => faker.location.county() },
+  { match: ['country'], generate: () => faker.location.country() },
   { match: ['address'], generate: () => faker.location.streetAddress() },
+  { match: ['gender', 'sex'], generate: () => faker.person.sex() },
+  { match: ['age'], generate: () => faker.number.int({ min: 18, max: 90 }).toString() },
+  { match: ['website', 'web site', 'homepage'], generate: () => faker.internet.url() },
   {
     match: [
       'confirm password',
