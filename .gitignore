@@ -54,3 +54,6 @@ chrome-extension/public/manifest.json
 
 # AI
 CLAUDE.md
+
+# deploy
+deploy/*
