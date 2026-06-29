@@ -75,8 +75,28 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
   return handleDefaultInputs(type, elem)
 }
 
-const handleAutocompleteToken = (elem: HTMLInputElement) => {
+/**
+ * Generates an email, reusing any first/last name already produced earlier in the
+ * current fill run so the address stays consistent with name fields, then records
+ * the names it generated for later fields. Shared by every email entry point.
+ */
+const generateEmail = (): string => {
   const config = getEffectiveConfig()
+  const { firstName, lastName } = contentScriptStore.getState()
+
+  const newFirstName = faker.person.firstName()
+  const newLastName = faker.person.lastName()
+
+  contentScriptStore.setState({ firstName: newFirstName, lastName: newLastName })
+
+  return faker.internet.email({
+    firstName: firstName || newFirstName,
+    lastName: lastName || newLastName,
+    provider: config.tempEmailProvider,
+  })
+}
+
+const handleAutocompleteToken = (elem: HTMLInputElement) => {
   const contentScriptState = contentScriptStore.getState()
   const tokens = elem.autocomplete.toLowerCase()?.split(' ')
   const mainToken = tokens[tokens.length - 1] // Get the last token
@@ -94,16 +114,7 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
       return faker.phone.number()
     }
     case 'email': {
-      const firstName = faker.person.firstName()
-      const lastName = faker.person.lastName()
-
-      contentScriptStore.setState({ firstName, lastName })
-
-      return faker.internet.email({
-        firstName: contentScriptState.firstName || firstName,
-        lastName: contentScriptState.lastName || lastName,
-        provider: config.tempEmailProvider,
-      })
+      return generateEmail()
     }
     case 'impp': {
       return faker.internet.url()
@@ -245,16 +256,7 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
       return faker.person.fullName()
     }
     case 'recipient-email': {
-      const firstName = faker.person.firstName()
-      const lastName = faker.person.lastName()
-
-      contentScriptStore.setState({ firstName, lastName })
-
-      return faker.internet.email({
-        firstName: contentScriptState.firstName || firstName,
-        lastName: contentScriptState.lastName || lastName,
-        provider: config.tempEmailProvider,
-      })
+      return generateEmail()
     }
     case 'recipient-phone': {
       return faker.phone.number()
@@ -281,171 +283,135 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
   }
 }
 
+/** Caps a value to the element's maxLength when one is set. */
+const sliceToMax = (value: string, elem: HTMLInputElement): string =>
+  elem.maxLength > 0 ? value.slice(0, elem.maxLength) : value
+
+/** Builds a date string, honouring a `dd/mm/yyyy`-style placeholder when present. */
+const generateTextDate = (elem: HTMLInputElement): string => {
+  const isDateOfBirth = matchElement(elem, 'birth') || matchElement(elem, 'dob')
+  // Date of birth → someone over 18; otherwise a recent date.
+  const date = isDateOfBirth ? faker.date.birthdate() : faker.date.recent()
+
+  const format = elem.placeholder?.toLowerCase()
+  if (
+    format &&
+    format.includes('dd') &&
+    format.includes('mm') &&
+    (format.includes('yy') || format.includes('yyyy'))
+  ) {
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear().toString()
+    const shortYear = year.slice(-2)
+
+    let formattedDate = format.replace('dd', day).replace('mm', month)
+    formattedDate = format.includes('yyyy') ? formattedDate.replace('yyyy', year) : formattedDate.replace('yy', shortYear)
+
+    return formattedDate
+  }
+
+  return date.toISOString()?.split('T')[0]
+}
+
+/**
+ * Heuristic generators for `text` inputs, keyed off the field's identity
+ * (name/id/placeholder/label/class) via `matchElement`. Rules are evaluated in
+ * order and the first whose keywords match wins, so put more specific entries
+ * first. Add a new field type by appending one entry here.
+ */
+type TextFieldRule = {
+  match: string[]
+  generate: (elem: HTMLInputElement) => string | Promise<string>
+}
+
+const textFieldRules: TextFieldRule[] = [
+  {
+    match: ['full name'],
+    generate: (elem) => {
+      const fullName = faker.person.fullName()
+      contentScriptStore.setState({ firstName: fullName })
+      return sliceToMax(fullName, elem)
+    },
+  },
+  {
+    match: ['first name', 'given name'],
+    generate: (elem) => {
+      const firstName = faker.person.firstName()
+      contentScriptStore.setState({ firstName })
+      return sliceToMax(firstName, elem)
+    },
+  },
+  {
+    match: ['last name', 'surname', 'family name'],
+    generate: (elem) => {
+      const lastName = faker.person.lastName()
+      contentScriptStore.setState({ lastName })
+      return sliceToMax(lastName, elem)
+    },
+  },
+  { match: ['email', 'e-mail', 'mail'], generate: () => generateEmail() },
+  { match: ['phone', 'tel', 'mobile', 'cell'], generate: () => faker.phone.number() },
+  { match: ['date'], generate: (elem) => generateTextDate(elem) },
+  // Address group — order matters: more specific tokens before the bare `address` catch-all.
+  { match: ['street'], generate: () => faker.location.streetAddress() },
+  { match: ['city'], generate: () => faker.location.city() },
+  // Using a combination of city and state for a more suburb-like result.
+  { match: ['suburb'], generate: () => `${faker.location.city()} ${faker.location.state({ abbreviated: true })}` },
+  { match: ['state'], generate: () => faker.location.state() },
+  { match: ['zip', 'postal', 'postalCode'], generate: () => faker.location.zipCode() },
+  { match: ['district'], generate: () => faker.location.county() },
+  { match: ['address'], generate: () => faker.location.streetAddress() },
+  {
+    match: [
+      'confirm password',
+      'reenter password',
+      'reenter',
+      'confirm reenter',
+      'reenter PIN',
+      're-enter',
+      'confirm re-enter',
+      're-enter PIN',
+      'confirm',
+    ],
+    generate: (elem) => handlePasswordGeneration(elem, true),
+  },
+  { match: ['company', 'organization'], generate: () => faker.company.name() },
+  { match: ['job title', 'job'], generate: () => faker.person.jobTitle() },
+  { match: ['department'], generate: () => faker.commerce.department() },
+  { match: ['cardnumber'], generate: () => faker.finance.creditCardNumber({ issuer: 'visa' }) },
+  {
+    match: ['cardExpiry'],
+    generate: () => {
+      const futureDate = faker.date.future()
+      const month = (futureDate.getMonth() + 1).toString().padStart(2, '0')
+      const year = futureDate.getFullYear().toString().slice(-2)
+      return `${month}/${year}`
+    },
+  },
+  { match: ['cvv', 'cvc'], generate: () => faker.finance.creditCardCVV() },
+  { match: ['cardtype'], generate: () => faker.finance.creditCardIssuer() },
+  {
+    match: ['Day'],
+    generate: (elem) =>
+      elem.maxLength === 2
+        ? faker.date.birthdate().getDate().toString().padStart(2, '0')
+        : faker.date.birthdate().getDate().toString(),
+  },
+]
+
 const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', elem: SupportedInputsType | Element) => {
   const config = getEffectiveConfig()
-  const contentScriptState = contentScriptStore.getState()
 
   switch (type) {
     case 'text': {
       if (elem instanceof HTMLInputElement) {
-        switch (true) {
-          case matchElement(elem, 'full name') ||
-            matchElement(elem, 'first name') ||
-            matchElement(elem, 'given name') ||
-            matchElement(elem, 'last name') ||
-            matchElement(elem, 'surname') ||
-            matchElement(elem, 'family name') ||
-            matchElement(elem, 'name'): {
-            if (matchElement(elem, 'full name')) {
-              const fullName = faker.person.fullName()
-              contentScriptStore.setState({ firstName: fullName })
-              return elem.maxLength > 0 ? fullName.slice(0, elem.maxLength) : fullName
-            } else if (matchElement(elem, 'first name') || matchElement(elem, 'given name')) {
-              const firstName = faker.person.firstName()
-              contentScriptStore.setState({ firstName })
-              return elem.maxLength > 0 ? firstName.slice(0, elem.maxLength) : firstName
-            } else if (
-              matchElement(elem, 'last name') ||
-              matchElement(elem, 'surname') ||
-              matchElement(elem, 'family name')
-            ) {
-              const lastName = faker.person.lastName()
-              contentScriptStore.setState({ lastName })
-              return elem.maxLength > 0 ? lastName.slice(0, elem.maxLength) : lastName
-            }
-            break
-          }
-          case matchElement(elem, 'email') || matchElement(elem, 'e-mail') || matchElement(elem, 'mail'): {
-            const firstName = faker.person.firstName()
-            const lastName = faker.person.lastName()
-
-            contentScriptStore.setState({ firstName, lastName })
-
-            return faker.internet.email({
-              firstName: contentScriptState.firstName || firstName,
-              lastName: contentScriptState.lastName || lastName,
-              provider: config.tempEmailProvider,
-            })
-          }
-          case matchElement(elem, 'phone') ||
-            matchElement(elem, 'tel') ||
-            matchElement(elem, 'mobile') ||
-            matchElement(elem, 'cell'): {
-            return faker.phone.number()
-          }
-          case matchElement(elem, 'date'): {
-            const isDateOfBirth = matchElement(elem, 'birth') || matchElement(elem, 'dob')
-            let date: Date
-
-            if (isDateOfBirth) {
-              // Generate a date for someone over 18 years old
-              date = faker.date.birthdate()
-            } else {
-              date = faker.date.recent()
-            }
-
-            // Function to format date based on placeholder or default to ISO
-            const formatDate = (date: Date, format?: string) => {
-              if (
-                format &&
-                format.includes('dd') &&
-                format.includes('mm') &&
-                (format.includes('yy') || format.includes('yyyy'))
-              ) {
-                const day = date.getDate().toString().padStart(2, '0')
-                const month = (date.getMonth() + 1).toString().padStart(2, '0')
-                const year = date.getFullYear().toString()
-                const shortYear = year.slice(-2)
-
-                let formattedDate = format.replace('dd', day).replace('mm', month)
-
-                if (format.includes('yyyy')) {
-                  formattedDate = formattedDate.replace('yyyy', year)
-                } else {
-                  formattedDate = formattedDate.replace('yy', shortYear)
-                }
-
-                return formattedDate
-              } else {
-                return date.toISOString()?.split('T')[0]
-              }
-            }
-
-            return formatDate(date, elem.placeholder?.toLowerCase())
-          }
-          case matchElement(elem, 'address') ||
-            matchElement(elem, 'street') ||
-            matchElement(elem, 'city') ||
-            matchElement(elem, 'state') ||
-            matchElement(elem, 'zip') ||
-            matchElement(elem, 'postal') ||
-            matchElement(elem, 'suburb') ||
-            matchElement(elem, 'district'): {
-            if (matchElement(elem, 'street')) {
-              return faker.location.streetAddress()
-            } else if (matchElement(elem, 'city')) {
-              return faker.location.city()
-            } else if (matchElement(elem, 'suburb')) {
-              // Using a combination of city and state for a more suburb-like result
-              return `${faker.location.city()} ${faker.location.state({ abbreviated: true })}`
-            } else if (matchElement(elem, 'state')) {
-              return faker.location.state()
-            } else if (matchElement(elem, 'zip') || matchElement(elem, 'postal') || matchElement(elem, 'postalCode')) {
-              return faker.location.zipCode()
-            } else if (matchElement(elem, 'district')) {
-              return faker.location.county()
-            } else {
-              return faker.location.streetAddress()
-            }
-          }
-          case matchElement(elem, 'confirm password') ||
-            matchElement(elem, 'reenter password') ||
-            matchElement(elem, 'reenter') ||
-            matchElement(elem, 'confirm reenter') ||
-            matchElement(elem, 'reenter PIN') ||
-            matchElement(elem, 're-enter') ||
-            matchElement(elem, 'confirm re-enter') ||
-            matchElement(elem, 're-enter PIN') ||
-            matchElement(elem, 'confirm'): {
-            return handlePasswordGeneration(elem, true)
-          }
-          case matchElement(elem, 'company') || matchElement(elem, 'organization'): {
-            return faker.company.name()
-          }
-          case matchElement(elem, 'job title') || matchElement(elem, 'job'): {
-            return faker.person.jobTitle()
-          }
-          case matchElement(elem, 'department'): {
-            return faker.commerce.department()
-          }
-          case matchElement(elem, 'cardnumber'): {
-            return faker.finance.creditCardNumber({
-              issuer: 'visa',
-            })
-          }
-          case matchElement(elem, 'cardExpiry'): {
-            const futureDate = faker.date.future()
-            const month = (futureDate.getMonth() + 1).toString().padStart(2, '0')
-            const year = futureDate.getFullYear().toString().slice(-2)
-            return `${month}/${year}`
-          }
-          case matchElement(elem, 'cvv') || matchElement(elem, 'cvc'): {
-            return faker.finance.creditCardCVV()
-          }
-          case matchElement(elem, 'cardtype'): {
-            return faker.finance.creditCardIssuer()
-          }
-          case matchElement(elem, 'Day'): {
-            if (elem instanceof HTMLInputElement && elem.maxLength === 2) {
-              return faker.date.birthdate().getDate().toString().padStart(2, '0')
-            } else {
-              return faker.date.birthdate().getDate().toString()
-            }
-          }
-          default: {
-            return elem.maxLength > 0 ? faker.lorem.word().slice(0, elem.maxLength) : faker.lorem.word()
+        for (const rule of textFieldRules) {
+          if (rule.match.some((keyword) => matchElement(elem, keyword))) {
+            return rule.generate(elem)
           }
         }
+        return sliceToMax(faker.lorem.word(), elem)
       }
       return faker.lorem.word()
     }
@@ -462,16 +428,7 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
       return faker.internet.password({ length: 8 })
     }
     case 'email': {
-      const firstName = faker.person.firstName()
-      const lastName = faker.person.lastName()
-
-      contentScriptStore.setState({ firstName, lastName })
-
-      return faker.internet.email({
-        firstName: contentScriptState.firstName || firstName,
-        lastName: contentScriptState.lastName || lastName,
-        provider: config.tempEmailProvider,
-      })
+      return generateEmail()
     }
     case 'number': {
       if (elem instanceof HTMLInputElement) {
