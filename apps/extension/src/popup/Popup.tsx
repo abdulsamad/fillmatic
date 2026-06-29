@@ -125,19 +125,21 @@ export const Popup = () => {
           </Avatar> */}
           </div>
         </header>
-        <div className="px-3 py-1 border-b flex items-center gap-2">
-          <CircleUserRoundIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <Select value={activeProfileId} onValueChange={setActiveProfile}>
-            <SelectTrigger className="h-6 text-xs border-0 shadow-none p-0 focus:ring-0 flex-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {profiles.map((p) => (
-                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {profiles.length > 1 && (
+          <div className="px-3 py-1 border-b flex items-center gap-2">
+            <CircleUserRoundIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <Select value={activeProfileId} onValueChange={setActiveProfile}>
+              <SelectTrigger className="h-6 text-xs border-0 shadow-none p-0 focus:ring-0 flex-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {profiles.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <main className="p-4 space-y-6 h-full relative">
           <div className="space-y-4">
             <Tooltip>
