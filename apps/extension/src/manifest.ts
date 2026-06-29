@@ -58,7 +58,7 @@ export default defineManifest({
       },
     },
     AUTOFILL_CURRENT_INPUT: {
-      description: 'Fill currently input',
+      description: 'Fill focused input',
       suggested_key: {
         default: 'Ctrl+Shift+Period',
         mac: 'Command+Shift+Period',
