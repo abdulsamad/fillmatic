@@ -4,17 +4,19 @@ import Layout from '../layouts/Layout.astro';
 const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnkhpfomlopbehcpmgmfndfje';
 ---
 
-<Layout title='FillMatic — Autofill forms for developers'>
+<Layout title='FillMatic: Autofill forms for developers'>
 <div class="site">
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
       <a href="/" class="logo">
-        <img src="icon192.png" alt="FillMatic" width="26" />
-        <span>Fill<em>Matic</em></span>
+        <img src="icon192.png" alt="FillMatic" width="26" height="26" />
+        <span>Fill<span class="logo-em">Matic</span></span>
       </a>
-      <nav class="header-nav">
+      <nav class="header-nav" aria-label="Main">
         <a href="#features">Features</a>
         <a href="#how-it-works">How it works</a>
         <a href="#feedback">Feedback</a>
@@ -23,12 +25,12 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
 
     <!-- Hero -->
     <section class="hero">
       <div class="hero-inner">
-        <div class="badge">Chrome Extension — free forever</div>
+        <div class="badge">Chrome Extension, free forever</div>
         <h1>Stop filling test forms<br /><span class="gradient-text">by hand</span></h1>
         <p>
           FillMatic reads every field on a page and fills it with the right kind of data instantly.
@@ -36,12 +38,12 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
         </p>
         <div class="hero-actions">
           <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            Add to Chrome — it's free
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Add to Chrome, it's free
+            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
           <a href="/demo" class="btn btn-ghost btn-lg">Try the demo</a>
         </div>
-        <p class="hero-footnote">No account needed &nbsp;·&nbsp; Works on any form &nbsp;·&nbsp; Manifest V3</p>
+        <p class="hero-footnote">No account needed <span aria-hidden="true">&nbsp;·&nbsp;</span> Works on any form <span aria-hidden="true">&nbsp;·&nbsp;</span> Manifest V3</p>
       </div>
     </section>
 
@@ -71,29 +73,29 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
         <div class="section-head">
           <div class="badge">Core autofill</div>
           <h2>Fills the right data, every time</h2>
-          <p>It reads autocomplete attributes, name, id, placeholder, and label text. No random strings in email fields, no text where a number belongs.</p>
+          <p>It reads autocomplete attributes, name, id, placeholder, and label text to figure out what each field actually wants. No random strings in email fields, no text where a number belongs.</p>
         </div>
         <div class="card-grid four-col">
           {[
             {
-              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`,
+              icon: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`,
               title: 'Smart field detection',
               desc: 'Reads autocomplete attributes, aria labels, name, id, placeholder, and label text to figure out what each field expects.',
             },
             {
-              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+              icon: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
               title: 'Realistic fake data',
               desc: 'Generates proper names, emails, phone numbers, addresses, card numbers. Looks real enough to pass validation.',
             },
             {
-              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h8"/></svg>`,
+              icon: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h8"/></svg>`,
               title: 'Natural typing',
-              desc: 'Fires focus, beforeinput, input, change, and blur events at configurable speed. React, Vue, and Angular all respond correctly.',
+              desc: 'Fires the right sequence of events at configurable speed so React, Vue, and Angular all pick up the changes correctly.',
             },
             {
-              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+              icon: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
               title: 'Framework-safe',
-              desc: "Uses native prototype setters to bypass React and Vue value trackers so onChange always fires and the UI updates correctly.",
+              desc: "Works with controlled inputs. It sets values the way the framework expects, so your onChange handlers fire and the UI stays in sync.",
             },
           ].map(({ icon, title, desc }) => (
             <div class="glass-card">
@@ -112,14 +114,14 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
         <div class="section-head">
           <div class="badge">Power features</div>
           <h2>Built for serious form testing</h2>
-          <p>Profiles, Actions, and Field Rules let you control exactly what gets filled — down to individual fields on specific sites.</p>
+          <p>Profiles, Actions, and Field Rules let you control exactly what gets filled, down to individual fields on specific sites.</p>
         </div>
         <div class="power-grid">
 
           <!-- Actions big card -->
           <div class="glass-card power-card-large">
             <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
             <h3>Custom Actions</h3>
             <p>One-click buttons that show up in the popup on matching URLs. Each action runs a full autofill and overrides specific fields with values you set.</p>
@@ -131,7 +133,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
                 { name: 'Any site', desc: 'Any URL pattern you define' },
               ].map(({ name, desc }) => (
                 <div class="action-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
                   <div>
                     <strong>{name}</strong>
                     <span>{desc}</span>
@@ -144,7 +146,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
           <!-- Profiles -->
           <div class="glass-card">
             <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <h3>Identity Profiles</h3>
             <p>Switch between Work, Personal, and Staging profiles with one click. Each carries its own email domain, password, and field overrides.</p>
@@ -156,10 +158,10 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
           <!-- Field Rules -->
           <div class="glass-card">
             <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg>
             </div>
             <h3>Field Rules</h3>
-            <p>Match any field by id, name, placeholder, label, or autocomplete — using exact, contains, or regex. Whatever you pin always wins.</p>
+            <p>Match any field by id, name, placeholder, label, or autocomplete using exact, contains, or regex. Whatever you pin always wins.</p>
             <div class="code-snippet">
               <span class="c-attr">name</span> contains <span class="c-val">"coupon"</span> <span class="c-arrow">→</span> SAVE20
             </div>
@@ -168,10 +170,10 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
           <!-- Deep config -->
           <div class="glass-card">
             <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             </div>
-            <h3>Deep customisation</h3>
-            <p>Typing speed, temp email provider (Mailinator, YOPmail, mailsac), ignored fields, shared passwords, always-checked boxes — all per profile.</p>
+            <h3>Deep customization</h3>
+            <p>Typing speed, temp email provider (Mailinator, YOPmail, mailsac), ignored fields, shared passwords, always-checked boxes. All configurable per profile.</p>
           </div>
 
         </div>
@@ -192,7 +194,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
             { n: '03', title: 'Fill with one click', desc: 'Click the FillMatic icon or press the keyboard shortcut. Every visible field fills in milliseconds.' },
           ].map(({ n, title, desc }) => (
             <div class="step">
-              <span class="step-number">{n}</span>
+              <span class="step-number" aria-hidden="true">{n}</span>
               <h3>{title}</h3>
               <p>{desc}</p>
             </div>
@@ -201,7 +203,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
         <div class="cta-center">
           <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
             Get FillMatic free
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
       </div>
@@ -220,17 +222,17 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
             'Keyboard shortcut so you never have to touch the mouse',
             'Handles dynamic forms that mount new fields after page load',
             'Per-profile field rules and email addresses',
-            'No account required — works completely offline',
-            'Built by a developer for developers — feedback always welcome',
+            'No account required. Works completely offline.',
+            'Built by a developer for developers. Feedback is always welcome.',
           ].map(item => (
             <div class="check-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
               <span>{item}</span>
             </div>
           ))}
         </div>
         <div class="cta-center">
-          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome — free</a>
+          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome, free</a>
           <a href="/demo" class="btn btn-ghost-light btn-lg">See it in action</a>
         </div>
       </div>
@@ -241,8 +243,8 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
       <div class="section-inner">
         <div class="section-head">
           <div class="badge">Payment integrations</div>
-          <h2>Test payment flows without memorising test cards</h2>
-          <p>FillMatic ships with built-in Actions for the most common payment processors. Click once and the right card fills in — no copy-pasting from docs.</p>
+          <h2>Test payment flows without memorizing test cards</h2>
+          <p>FillMatic ships with built-in Actions for the most common payment processors. Click once and the right card fills in. No copy-pasting from docs.</p>
         </div>
         <div class="card-grid three-col">
           {[
@@ -252,7 +254,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
           ].map(({ name, card, color }) => (
             <div class="glass-card payment-card">
               <span class="payment-badge" style={`color: ${color}; border-color: ${color}33; background: ${color}11`}>{name}</span>
-              <svg class="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <svg aria-hidden="true" focusable="false" class="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
               <p class="payment-num">{card}</p>
               <p class="payment-sub">Filled automatically on checkout</p>
             </div>
@@ -273,11 +275,11 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
             <div class="field-row">
               <div class="field">
                 <label for="fb-name">Name</label>
-                <input type="text" id="fb-name" name="Name" placeholder="Your name" required />
+                <input type="text" id="fb-name" name="Name" placeholder="Your name" autocomplete="name" required />
               </div>
               <div class="field">
                 <label for="fb-email">Email</label>
-                <input type="email" id="fb-email" name="Email" placeholder="you@example.com" required />
+                <input type="email" id="fb-email" name="Email" placeholder="you@example.com" autocomplete="email" required />
               </div>
             </div>
             <div class="field">
@@ -296,10 +298,10 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <img src="icon192.png" alt="FillMatic" width="18" />
-        <span>© 2026 Fill<em>Matic</em>. All rights reserved.</span>
+        <img src="icon192.png" alt="FillMatic" width="18" height="18" />
+        <span>© 2026 Fill<span class="logo-em">Matic</span>. All rights reserved.</span>
       </div>
-      <nav class="footer-nav">
+      <nav class="footer-nav" aria-label="Footer">
         <a href="/demo">Demo</a>
         <a href="/privacy">Privacy</a>
         <a href={STORE_URL} target="_blank" rel="noopener">Chrome Web Store</a>
@@ -312,6 +314,37 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Skip link ── */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    padding: .6rem 1.2rem;
+    background: #4f46e5;
+    color: #fff;
+    font-size: .875rem;
+    font-weight: 600;
+    border-radius: 0 0 8px 8px;
+    text-decoration: none;
+    transition: top .15s;
+  }
+
+  .skip-link:focus { top: 0; }
+
+  /* ── Focus ring ── */
+  :focus-visible {
+    outline: 2px solid #818cf8;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid #818cf8;
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
 
   .site {
     min-height: 100vh;
@@ -354,7 +387,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
     color: #f1f5f9;
   }
 
-  .logo em {
+  .logo-em {
     font-style: italic;
     background: linear-gradient(135deg, #818cf8, #a78bfa);
     -webkit-background-clip: text;
@@ -488,7 +521,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
 
   .hero-footnote {
     font-size: .78rem;
-    color: #475569;
+    color: #64748b;
     margin-top: -.5rem;
   }
 
@@ -506,7 +539,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .1em;
-    color: #334155;
+    color: #64748b;
     margin-bottom: 1rem;
   }
 
@@ -529,7 +562,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
   }
 
   .strip-name { font-weight: 600; color: #cbd5e1; }
-  .strip-sub { color: #475569; font-size: .75rem; }
+  .strip-sub { color: #64748b; font-size: .75rem; }
 
   /* ── Sections ── */
   .section {
@@ -802,7 +835,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
     margin-bottom: .25rem;
   }
 
-  .payment-sub { font-size: .78rem; color: #475569; }
+  .payment-sub { font-size: .78rem; color: #64748b; }
 
   /* ── Feedback ── */
   .feedback-card { padding: 2rem; }
@@ -849,7 +882,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
   }
 
   .field input::placeholder,
-  .field textarea::placeholder { color: #475569; }
+  .field textarea::placeholder { color: #64748b; }
 
   .field input:focus,
   .field textarea:focus {
@@ -879,11 +912,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
     align-items: center;
     gap: .5rem;
     font-size: .82rem;
-    color: #334155;
-  }
-
-  .footer-brand em {
-    font-style: italic;
+    color: #64748b;
   }
 
   .footer-nav {
@@ -893,7 +922,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
 
   .footer-nav a {
     font-size: .82rem;
-    color: #334155;
+    color: #64748b;
     transition: color .2s;
   }
 
