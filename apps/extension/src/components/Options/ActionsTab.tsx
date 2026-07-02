@@ -56,13 +56,14 @@ const actionToForm = (a: Action): ActionFormValues => ({
   fields: a.fields.length ? a.fields : [{ ...EMPTY_FIELD_TARGET }],
 })
 
-const formToAction = (id: string, values: ActionFormValues): Action => ({
+const formToAction = (id: string, values: ActionFormValues, rootSelector?: string): Action => ({
   id,
   name: values.name,
   group: values.group?.trim() || undefined,
   matcher: { type: values.matcherType, value: values.matcherValue },
   active: values.active,
   matchInIframe: values.matchInIframe || undefined,
+  rootSelector,
   fields: values.fields,
 })
 
@@ -82,7 +83,7 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
 
   const onSubmit = (values: ActionFormValues) => {
     const id = initial?.id ?? crypto.randomUUID()
-    const action = formToAction(id, values)
+    const action = formToAction(id, values, initial?.rootSelector)
     if (initial) {
       updateAction(action)
     } else {
