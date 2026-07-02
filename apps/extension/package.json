@@ -1,6 +1,6 @@
 {
   "name": "extension",
-  "description": "chrome extension",
+  "description": "FillMatic autofills forms with dummy data in one click, saving developers time and making testing faster and easier.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,7 @@
     "postbuild": "pnpm -C ../.. run postbuild"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=24.11.0"
   },
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
@@ -66,7 +66,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "2.7.0",
+    "@crxjs/vite-plugin": "2.7.1",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.1",
     "@types/chrome": "^0.2.0",
