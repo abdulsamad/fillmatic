@@ -122,7 +122,10 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         default: {
           /* Handle action-specific message */
           if (isActionAutofill) {
-            await initiateAutofill({ rootElement: null })
+            const rootSelector = contentScriptStore.getState().activeAction?.rootSelector
+            const rootElement = rootSelector ? document.querySelector(rootSelector) : null
+
+            await initiateAutofill({ rootElement })
 
             sendResponse({ type: AUTOFILL_COMPLETE })
           }

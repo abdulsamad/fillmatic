@@ -36,6 +36,7 @@ export type Action = {
   matcher: { type: MatcherType; value: string }
   active: boolean
   matchInIframe?: boolean // preserved passthrough; no behavior change
+  rootSelector?: string // CSS selector scoping autofill to a single element (e.g. one form) instead of the whole page
   fields: FieldTarget[]
 }
 
@@ -44,13 +45,14 @@ export const STORAGE_KEY = 'actions'
 export const DEFAULT_ACTIONS: Action[] = [
   {
     id: 'default-demo',
-    name: 'Fill Demo Form',
+    name: 'Custom Action Demo',
     group: 'FillMatic Demo',
     matcher: {
       type: 'startsWith',
       value: isDev ? 'http://localhost:3000/demo' : 'https://fillmatic.pages.dev/demo',
     },
     active: true,
+    rootSelector: '#allinputs-form',
     fields: [
       { attribute: 'name', operator: 'exact', match: 'text', value: 'FillMatic Special Demo Data' },
       {
