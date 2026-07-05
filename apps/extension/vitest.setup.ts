@@ -74,7 +74,9 @@ if (typeof globalThis.DataTransfer === 'undefined') {
 // care about the response can override this per-call with vi.mocked(fetch).mockResolvedValueOnce(...).
 vi.stubGlobal(
   'fetch',
-  vi.fn(() => Promise.resolve(new Response(new Blob()))),
+  vi.fn(() => Promise.resolve(new Response(new Blob(), {
+    headers: { 'Content-Type': 'application/octet-stream' },
+  }))),
 )
 
 afterEach(() => {
