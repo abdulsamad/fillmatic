@@ -1,11 +1,20 @@
 import { Form, SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
-import { fillElement, gatherVisibleInputsInOrder, initiateAutofill } from '@/autofill'
+import { fillElement, gatherVisibleInputsInOrder, initiateAutofill, isInViewport } from '@/autofill'
 import { log } from '@/utils'
 import { getActionsFromStorage } from '@/utils/actions'
 import { MESSAGES } from '@/consts'
 
 const ACTION_AUTOFILL_PREFIX = 'ACTION_AUTOFILL_'
+
+/** Scrolls the element into view first when it isn't already visible, waiting briefly for the scroll to settle. */
+const scrollIntoViewIfNeeded = async (elem: Element) => {
+  if (isInViewport(elem)) return
+
+  elem.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+  await new Promise((resolve) => setTimeout(resolve, 400))
+}
 
 // Init Log
 log('CONTENT SCRIPT is running...')
@@ -86,6 +95,8 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
 
             const elem = document.querySelectorAll('form')[request.form.index]
 
+            await scrollIntoViewIfNeeded(elem)
+
             await initiateAutofill({ rootElement: elem })
 
             elem.requestSubmit()
@@ -124,6 +135,8 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
           if (isActionAutofill) {
             const rootSelector = contentScriptStore.getState().activeAction?.rootSelector
             const rootElement = rootSelector ? document.querySelector(rootSelector) : null
+
+            if (rootElement) await scrollIntoViewIfNeeded(rootElement)
 
             await initiateAutofill({ rootElement })
 
