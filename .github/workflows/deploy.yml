@@ -27,7 +27,7 @@ jobs:
         run: pnpm install
 
       - name: Run tests
-        run: pnpm run test
+        run: pnpm --filter extension run test
 
   build:
     runs-on: ubuntu-latest
