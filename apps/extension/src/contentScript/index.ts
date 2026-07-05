@@ -7,9 +7,13 @@ import { MESSAGES } from '@/consts'
 
 const ACTION_AUTOFILL_PREFIX = 'ACTION_AUTOFILL_'
 
-/** Scrolls the element into view first when it isn't already visible, waiting briefly for the scroll to settle. */
+// Keeps a form/action target clear of viewport edges (e.g. a sticky header) before treating
+// it as "already visible" — see isInViewport.
+const SCROLL_SAFE_MARGIN_PX = 24
+
+/** Scrolls the element into view first when it isn't already comfortably visible, waiting briefly for the scroll to settle. */
 const scrollIntoViewIfNeeded = async (elem: Element) => {
-  if (isInViewport(elem)) return
+  if (isInViewport(elem, SCROLL_SAFE_MARGIN_PX)) return
 
   elem.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
