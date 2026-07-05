@@ -15,6 +15,15 @@ export const isElementVisible = (element: Element): boolean => {
   )
 }
 
+/** Returns true if any part of the element overlaps the current viewport. */
+export const isInViewport = (elem: Element): boolean => {
+  const rect = elem.getBoundingClientRect()
+  const viewHeight = window.innerHeight || document.documentElement.clientHeight
+  const viewWidth = window.innerWidth || document.documentElement.clientWidth
+
+  return rect.top < viewHeight && rect.bottom > 0 && rect.left < viewWidth && rect.right > 0
+}
+
 export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): SupportedInputsType[] => {
   const allInputs = Array.from(
     (rootElement || document).querySelectorAll(
