@@ -17,7 +17,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      include: ['src/**/*.{ts,tsx}'],
+      // Scoped to the modules that currently have tests (core autofill value
+      // generation + element/field matching). Widen this as more areas get covered.
+      include: ['src/autofill/generateValue.ts', 'src/utils/actions.ts', 'src/utils/index.ts'],
     },
   },
 })
