@@ -37,6 +37,49 @@ vi.stubGlobal('chrome', {
   },
 })
 
+// jsdom doesn't implement these; stub them so components/scripts that call
+// them don't throw. Individual tests can spy/override as needed.
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = vi.fn()
+}
+if (!HTMLFormElement.prototype.requestSubmit) {
+  HTMLFormElement.prototype.requestSubmit = vi.fn()
+}
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe = vi.fn()
+      unobserve = vi.fn()
+      disconnect = vi.fn()
+    },
+  )
+}
+// jsdom doesn't implement DataTransfer; minimal polyfill for input.files assignment flows.
+if (typeof globalThis.DataTransfer === 'undefined') {
+  class FakeDataTransfer {
+    private _files: File[] = []
+    items = {
+      add: (file: File) => {
+        this._files.push(file)
+      },
+    }
+    get files() {
+      const files = this._files
+      return Object.assign([...files], { item: (i: number) => files[i] ?? null }) as unknown as FileList
+    }
+  }
+  vi.stubGlobal('DataTransfer', FakeDataTransfer)
+}
+
+// Always stub fetch, even though Node provides a native implementation: chrome.runtime.getURL
+// is stubbed to return relative paths, which the real fetch can't parse as a URL. Tests that
+// care about the response can override this per-call with vi.mocked(fetch).mockResolvedValueOnce(...).
+vi.stubGlobal(
+  'fetch',
+  vi.fn(() => Promise.resolve(new Response(new Blob()))),
+)
+
 afterEach(() => {
   cleanup()
 })

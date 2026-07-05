@@ -18,6 +18,24 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/**/*.{ts,tsx}'],
+      // Bootstrap/type-only files have no meaningful runtime logic to cover.
+      exclude: [
+        'src/autofill/index.ts',
+        'src/utils/user-profiles.ts',
+        'src/utils/user-rules.ts',
+        'src/types/index.ts',
+        'src/global.d.ts',
+        'src/options/index.tsx',
+        'src/popup/index.tsx',
+        'src/manifest.ts',
+      ],
+      // Ratchet this floor up as coverage improves; never lower it without cause.
+      thresholds: {
+        statements: 48,
+        branches: 38,
+        functions: 44,
+        lines: 47,
+      },
     },
   },
 })
