@@ -1,11 +1,13 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@fillmatic/ui";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const PrivacyPolicy = () => {

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster, TooltipProvider } from '@fillmatic/ui'
+
 import OptionsForm from '@/components/Options/Form'
 
 export const Options = () => {

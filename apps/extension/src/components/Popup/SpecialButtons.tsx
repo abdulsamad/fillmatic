@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
+import { Button } from '@fillmatic/ui'
+
 import { usePopupStore } from '@/store/popup'
 import { useActionsStore } from '@/store/actions'
 import { getMatchingActions, type Action } from '@/utils/actions'
-import { Button } from '@/components/ui/button'
 
 const SpecialButtons = () => {
   const actions = useActionsStore((state) => state.actions)

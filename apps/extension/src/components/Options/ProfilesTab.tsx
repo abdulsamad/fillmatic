@@ -4,14 +4,33 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { PlusIcon, PencilIcon, Trash2Icon, UserCircleIcon, LockIcon } from 'lucide-react'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Badge,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  Input,
+} from '@fillmatic/ui'
+
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { type Profile } from '@/utils/user-profiles'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
-import { Badge } from '@/components/ui/badge'
 
 const profileSchema = z.object({
   name: z.string().min(1, 'Profile name is required'),
