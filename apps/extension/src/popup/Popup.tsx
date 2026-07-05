@@ -2,16 +2,26 @@ import { useLayoutEffect, useEffect, useCallback } from 'react'
 import { Settings, MessageSquare, CircleUserRoundIcon, NotebookPenIcon, PencilLineIcon } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+  Toaster,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@fillmatic/ui'
+
 import { usePopupStore } from '@/store/popup'
 import { useProfileStore } from '@/store/profiles'
 import { Form } from '@/types'
 import { useTimeout } from '@/hooks/useTimeout'
-// import { Avatar } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Toaster } from '@/components/ui/sonner'
-import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+// import { Avatar } from '@fillmatic/ui'
 import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
 import { MESSAGES } from '@/consts'
 import SpecialButtons from '@/components/Popup/SpecialButtons'

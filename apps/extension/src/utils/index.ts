@@ -1,16 +1,10 @@
 import { HTMLInputTypeAttribute } from 'react'
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 
 import { useConfigStore as configStore } from '@/store/config'
 import { ExtensionCommands, SupportedInputsType } from '@/types'
 
 export * from './log'
 export * from './generateNames'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
 
 export const isDev = import.meta.env.DEV
 
