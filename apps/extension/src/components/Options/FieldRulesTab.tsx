@@ -4,14 +4,33 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { PlusIcon, Trash2Icon, GlobeIcon, UserCircleIcon } from 'lucide-react'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Badge,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Input,
+} from '@fillmatic/ui'
+
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { type UserRule } from '@/utils/user-rules'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Badge } from '@/components/ui/badge'
 import FieldTargetsEditor from './FieldTargetsEditor'
 import { fieldTargetsSchema, EMPTY_FIELD_TARGET } from './fieldTargets'
 

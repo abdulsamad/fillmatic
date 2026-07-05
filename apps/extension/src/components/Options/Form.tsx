@@ -5,17 +5,35 @@ import { InfoIcon, UserCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
+import {
+  Button,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Slider,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@fillmatic/ui'
+
 import { useConfigStore } from '@/store/config'
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { DEFAULT_CONFIG } from '@/consts'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Slider } from '@/components/ui/slider'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { formSchema, formSchemaType, TYPING_SPEED_MIN, TYPING_SPEED_MAX } from './formSchema'
 import ProfilesTab from './ProfilesTab'

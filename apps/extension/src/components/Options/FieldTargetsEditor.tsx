@@ -1,11 +1,21 @@
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { PlusIcon, XIcon } from 'lucide-react'
 
+import {
+  Button,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@fillmatic/ui'
+
 import { ATTRIBUTE_OPTIONS, OPERATOR_OPTIONS } from '@/utils/actions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 
 import { EMPTY_FIELD_TARGET } from './fieldTargets'
 
