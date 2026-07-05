@@ -16,7 +16,15 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "@types/chrome", "@types/node", "@types/react", "@types/react-dom"]
+    "types": [
+      "vite/client",
+      "@types/chrome",
+      "@types/node",
+      "@types/react",
+      "@types/react-dom",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ]
   },
   "include": ["src"],
   "exclude": ["src/manifest.ts"],
