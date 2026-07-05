@@ -60,7 +60,7 @@ export const DEFAULT_ACTIONS: Action[] = [
         operator: 'exact',
         match: 'demo_note',
         value:
-          'This textarea was filled by the FillMatic Demo action.\n\nYou can set custom values per field using Actions in Settings — great for things like test card numbers, specific addresses, or any fixed data you fill repeatedly.',
+          'This textarea was filled by the FillMatic Demo action.\n\nYou can set custom values per field using Actions in Settings. Great for things like test card numbers, specific addresses, or any fixed data you fill repeatedly.',
       },
     ],
   },
