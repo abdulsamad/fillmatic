@@ -37,10 +37,10 @@ export const useActionsStore = create(
             await chrome.storage.local.remove(name)
           },
         })),
-        version: 1,
+        version: 2,
         migrate: (persisted: unknown, version: number) => {
           const state = persisted as ActionsStore
-          if (version < 1) {
+          if (version < 2) {
             // Re-merge built-in action definitions so new fields (group, fields, matcher)
             // are always up-to-date. Only the user's `active` toggle is preserved.
             state.actions = state.actions.map((a) => {
