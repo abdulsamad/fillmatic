@@ -250,7 +250,7 @@ import Layout from "../layouts/Layout.astro";
           <div class="section-label">Choices</div>
           <div class="field-row">
             <div class="field">
-              <label>Subscription</label>
+              <span class="field-label">Subscription</span>
               <div class="radio-group">
                 <label class="radio-label">
                   <input type="radio" name="plan" value="free" /> Free
@@ -264,7 +264,7 @@ import Layout from "../layouts/Layout.astro";
               </div>
             </div>
             <div class="field">
-              <label>Notifications</label>
+              <span class="field-label">Notifications</span>
               <div class="checkbox-group">
                 <label class="radio-label">
                   <input type="checkbox" name="notify_email" /> Email
@@ -475,7 +475,8 @@ import Layout from "../layouts/Layout.astro";
     gap: .4rem;
   }
 
-  .field > label {
+  .field > label,
+  .field > .field-label {
     font-size: .78rem;
     font-weight: 600;
     color: #94a3b8;
@@ -483,7 +484,7 @@ import Layout from "../layouts/Layout.astro";
     text-transform: uppercase;
   }
 
-  .field input,
+  .field input:not([type="checkbox"]):not([type="radio"]),
   .field select,
   .field textarea {
     width: 100%;

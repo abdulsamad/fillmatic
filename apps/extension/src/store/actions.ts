@@ -10,8 +10,6 @@ interface ActionsStore {
   deleteAction: (id: string) => void
 }
 
-const defaultsById = new Map(DEFAULT_ACTIONS.map((a) => [a.id, a]))
-
 export const useActionsStore = create(
   devtools(
     persist<ActionsStore>(
@@ -37,19 +35,6 @@ export const useActionsStore = create(
             await chrome.storage.local.remove(name)
           },
         })),
-        version: 1,
-        migrate: (persisted: unknown, version: number) => {
-          const state = persisted as ActionsStore
-          if (version < 1) {
-            // Re-merge built-in action definitions so new fields (group, fields, matcher)
-            // are always up-to-date. Only the user's `active` toggle is preserved.
-            state.actions = state.actions.map((a) => {
-              const def = defaultsById.get(a.id)
-              return def ? { ...def, active: a.active } : a
-            })
-          }
-          return state
-        },
       },
     ),
   ),

@@ -283,6 +283,20 @@ const handleAutocompleteToken = (elem: HTMLInputElement) => {
   }
 }
 
+/** Parses an `<input type="week">` value (`YYYY-Www`) into the Monday of that ISO week. */
+const parseISOWeek = (value: string): Date => {
+  const [yearStr, weekStr] = value.split('-W')
+  const year = Number(yearStr)
+  const week = Number(weekStr)
+
+  // ISO 8601: week 1 is the week containing the year's first Thursday.
+  const jan4 = new Date(year, 0, 4)
+  const jan4Day = jan4.getDay() || 7 // Monday=1..Sunday=7
+  const week1Monday = new Date(year, 0, 4 - jan4Day + 1)
+
+  return new Date(week1Monday.getFullYear(), week1Monday.getMonth(), week1Monday.getDate() + (week - 1) * 7)
+}
+
 /** Caps a value to the element's maxLength when one is set. */
 const sliceToMax = (value: string, elem: HTMLInputElement): string =>
   elem.maxLength > 0 ? value.slice(0, elem.maxLength) : value
@@ -497,8 +511,8 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
     }
     case 'week': {
       if (elem instanceof HTMLInputElement) {
-        const min = elem.min ? new Date(elem.min.replace('W', '-')) : new Date('1970-01-01')
-        const max = elem.max ? new Date(elem.max.replace('W', '-')) : new Date()
+        const min = elem.min ? parseISOWeek(elem.min) : new Date('1970-01-01')
+        const max = elem.max ? parseISOWeek(elem.max) : new Date()
         const d = faker.date.between({ from: min, to: max })
         const onejan = new Date(d.getFullYear(), 0, 1)
         const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
