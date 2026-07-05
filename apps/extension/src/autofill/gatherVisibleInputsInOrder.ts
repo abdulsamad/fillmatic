@@ -15,13 +15,21 @@ export const isElementVisible = (element: Element): boolean => {
   )
 }
 
-/** Returns true if any part of the element overlaps the current viewport. */
-export const isInViewport = (elem: Element): boolean => {
+/**
+ * Returns true if the element overlaps the viewport, shrunk inward by `margin` on every
+ * side. A plain edge-to-edge overlap check would treat a sliver of an element peeking in
+ * at the very top/bottom (e.g. behind a sticky header) as "already visible" and skip the
+ * scroll — the margin keeps that sliver case from counting so the caller still scrolls it
+ * comfortably into view.
+ */
+export const isInViewport = (elem: Element, margin = 0): boolean => {
   const rect = elem.getBoundingClientRect()
   const viewHeight = window.innerHeight || document.documentElement.clientHeight
   const viewWidth = window.innerWidth || document.documentElement.clientWidth
 
-  return rect.top < viewHeight && rect.bottom > 0 && rect.left < viewWidth && rect.right > 0
+  return (
+    rect.top < viewHeight - margin && rect.bottom > margin && rect.left < viewWidth - margin && rect.right > margin
+  )
 }
 
 export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): SupportedInputsType[] => {
