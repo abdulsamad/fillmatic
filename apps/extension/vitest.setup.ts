@@ -37,14 +37,11 @@ vi.stubGlobal('chrome', {
   },
 })
 
-// jsdom doesn't implement these; stub them so components/scripts that call
-// them don't throw. Individual tests can spy/override as needed.
-if (!Element.prototype.scrollIntoView) {
-  Element.prototype.scrollIntoView = vi.fn()
-}
-if (!HTMLFormElement.prototype.requestSubmit) {
-  HTMLFormElement.prototype.requestSubmit = vi.fn()
-}
+// jsdom defines these as "not implemented" stubs that log a warning and no-op (so a truthy
+// check doesn't catch them); always replace with a plain vi.fn(). Individual tests can
+// spy/override as needed.
+Element.prototype.scrollIntoView = vi.fn()
+HTMLFormElement.prototype.requestSubmit = vi.fn()
 if (typeof globalThis.ResizeObserver === 'undefined') {
   vi.stubGlobal(
     'ResizeObserver',
