@@ -15,6 +15,9 @@
   <a href="https://github.com/abdulsamad/fillmatic/actions"/>
    <img src="https://github.com/abdulsamad/fillmatic/actions/workflows/deploy.yml/badge.svg" alt="FillMatic Builds">
   </a>
+  <a href="https://github.com/abdulsamad/fillmatic/actions/workflows/test.yml"/>
+   <img src="apps/extension/coverage-badge.svg" alt="Extension test coverage">
+  </a>
 </h2>
 
 ## Installation

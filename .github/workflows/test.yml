@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -31,3 +33,19 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm --filter extension run test:coverage
+
+      - name: Generate coverage badge
+        run: pnpm --filter extension run coverage:badge
+
+      - name: Commit updated coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet -- apps/extension/coverage-badge.svg; then
+            echo "Badge unchanged, nothing to commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add apps/extension/coverage-badge.svg
+            git commit -m "chore: update coverage badge [skip ci]"
+            git push
+          fi
