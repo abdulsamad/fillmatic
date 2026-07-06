@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -33,6 +34,12 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm --filter extension run test:coverage
+
+      - name: Report coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: apps/extension
 
       - name: Generate coverage badge
         run: pnpm --filter extension run coverage:badge
