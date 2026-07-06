@@ -14,9 +14,6 @@
     "test:coverage": "vitest run --coverage --passWithNoTests",
     "coverage:badge": "node scripts/generate-coverage-badge.mjs"
   },
-  "engines": {
-    "node": ">=24.11.0"
-  },
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
     "@fillmatic/config": "workspace:*",
