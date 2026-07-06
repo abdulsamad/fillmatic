@@ -37,6 +37,51 @@ vi.stubGlobal('chrome', {
   },
 })
 
+// jsdom defines these as "not implemented" stubs that log a warning and no-op (so a truthy
+// check doesn't catch them); always replace with a plain vi.fn(). Individual tests can
+// spy/override as needed.
+Element.prototype.scrollIntoView = vi.fn()
+HTMLFormElement.prototype.requestSubmit = vi.fn()
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe = vi.fn()
+      unobserve = vi.fn()
+      disconnect = vi.fn()
+    },
+  )
+}
+// jsdom doesn't implement DataTransfer; minimal polyfill for input.files assignment flows.
+if (typeof globalThis.DataTransfer === 'undefined') {
+  class FakeDataTransfer {
+    private _files: File[] = []
+    items = {
+      add: (file: File) => {
+        this._files.push(file)
+      },
+    }
+    get files() {
+      const files = this._files
+      return Object.assign([...files], { item: (i: number) => files[i] ?? null }) as unknown as FileList
+    }
+  }
+  vi.stubGlobal('DataTransfer', FakeDataTransfer)
+}
+
+// Always stub fetch, even though Node provides a native implementation: chrome.runtime.getURL
+// is stubbed to return relative paths, which the real fetch can't parse as a URL. The only
+// real caller (handleFileInput.ts) just calls `.blob()` on the result, so return a minimal
+// duck-typed object rather than a real Response — constructing `new Response(new Blob())`
+// is fragile across Node/undici versions since jsdom's global Blob doesn't always satisfy
+// undici's internal Blob check, causing a "object.stream is not a function" error in some
+// environments. Tests that care about the response can override this per-call with
+// vi.mocked(fetch).mockResolvedValueOnce(...).
+vi.stubGlobal(
+  'fetch',
+  vi.fn(() => Promise.resolve({ blob: () => Promise.resolve(new Blob()) })),
+)
+
 afterEach(() => {
   cleanup()
 })
