@@ -1,10 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { CHROME_WEB_STORE_URL, PRODUCT_NAME, SUPPORT_EMAIL } from '@fillmatic/config';
 
-const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnkhpfomlopbehcpmgmfndfje';
+const STORE_URL = CHROME_WEB_STORE_URL;
 ---
 
-<Layout title='FillMatic: Autofill forms for developers'>
+<Layout title={`${PRODUCT_NAME}: Autofill forms for developers`}>
 <div class="site">
 
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -271,7 +272,7 @@ const STORE_URL = 'https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnk
           <p>Got an idea or something that's not working? I read every message.</p>
         </div>
         <div class="glass-card feedback-card">
-          <form action="https://airform.io/hello@abdulsamad.dev" method="POST" class="feedback-form">
+          <form action={`https://airform.io/${SUPPORT_EMAIL}`} method="POST" class="feedback-form">
             <div class="field-row">
               <div class="field">
                 <label for="fb-name">Name</label>

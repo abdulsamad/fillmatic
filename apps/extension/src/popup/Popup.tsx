@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@fillmatic/ui'
+import { PRODUCT_NAME, SUPPORT_EMAIL } from '@fillmatic/config'
 
 import { usePopupStore } from '@/store/popup'
 import { useProfileStore } from '@/store/profiles'
@@ -124,7 +125,7 @@ export const Popup = () => {
         <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold">
-              <div>FillMatic</div>
+              <div>{PRODUCT_NAME}</div>
             </h1>
           </div>
           <div className="flex items-center space-x-2">
@@ -191,7 +192,7 @@ export const Popup = () => {
           {isDisabled && (
             <div className="absolute bottom-0 left-0 right-0 p-4">
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 relative rounded-lg" role="alert">
-                <span className="block sm:inline">FillMatic cannot be used on internal pages.</span>
+                <span className="block sm:inline">{PRODUCT_NAME} cannot be used on internal pages.</span>
               </div>
             </div>
           )}
@@ -208,7 +209,7 @@ export const Popup = () => {
                 aria-label="Provide feedback"
                 asChild
               >
-                <a href="mailto:hello@abdulsamad.dev" target="_blank">
+                <a href={`mailto:${SUPPORT_EMAIL}`} target="_blank">
                   <MessageSquare size={16} />
                 </a>
               </Button>

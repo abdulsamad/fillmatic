@@ -1,9 +1,10 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import PrivacyPolicy from '@/components/PrivacyPolicy';
+import { PRODUCT_NAME } from '@fillmatic/config';
 ---
 
-<Layout title='Privacy Policy - FillMatic'>
+<Layout title={`Privacy Policy - ${PRODUCT_NAME}`}>
 	<PrivacyPolicy client:load />
 </Layout>
 

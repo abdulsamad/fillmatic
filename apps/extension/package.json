@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
+    "@fillmatic/config": "workspace:*",
     "@fillmatic/ui": "workspace:*",
     "@hookform/resolvers": "^5.4.0",
     "date-fns": "^4.4.0",

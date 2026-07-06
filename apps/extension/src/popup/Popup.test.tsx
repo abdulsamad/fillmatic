@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { PRODUCT_NAME } from '@fillmatic/config'
+
 import Popup from '@/popup/Popup'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { usePopupStore } from '@/store/popup'
@@ -60,7 +62,7 @@ describe('Popup mount effects', () => {
     render(<Popup />)
 
     await waitFor(() => expect(screen.getByRole('button', { name: /Fill all fields/i })).toBeDisabled())
-    expect(screen.getByRole('alert')).toHaveTextContent('FillMatic cannot be used on internal pages.')
+    expect(screen.getByRole('alert')).toHaveTextContent(`${PRODUCT_NAME} cannot be used on internal pages.`)
   })
 
   it('does not fetch forms when the current tab has no id', async () => {

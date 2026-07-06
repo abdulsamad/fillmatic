@@ -1,3 +1,5 @@
+import { DEMO_URL, DEMO_URL_DEV, PRODUCT_NAME } from '@fillmatic/config'
+
 import { isDev, getStoreFromStorage } from '.'
 
 export type MatcherType = 'hostname' | 'startsWith' | 'endsWith' | 'regex'
@@ -46,21 +48,20 @@ export const DEFAULT_ACTIONS: Action[] = [
   {
     id: 'default-demo',
     name: 'Custom Action Demo',
-    group: 'FillMatic Demo',
+    group: `${PRODUCT_NAME} Demo`,
     matcher: {
       type: 'startsWith',
-      value: isDev ? 'http://localhost:3000/demo' : 'https://fillmatic.pages.dev/demo',
+      value: isDev ? DEMO_URL_DEV : DEMO_URL,
     },
     active: true,
     rootSelector: '#allinputs-form',
     fields: [
-      { attribute: 'name', operator: 'exact', match: 'text', value: 'FillMatic Special Demo Data' },
+      { attribute: 'name', operator: 'exact', match: 'text', value: `${PRODUCT_NAME} Special Demo Data` },
       {
         attribute: 'name',
         operator: 'exact',
         match: 'demo_note',
-        value:
-          'This textarea was filled by the FillMatic Demo action.\n\nYou can set custom values per field using Actions in Settings. Great for things like test card numbers, specific addresses, or any fixed data you fill repeatedly.',
+        value: `This textarea was filled by the ${PRODUCT_NAME} Demo action.\n\nYou can set custom values per field using Actions in Settings. Great for things like test card numbers, specific addresses, or any fixed data you fill repeatedly.`,
       },
     ],
   },
