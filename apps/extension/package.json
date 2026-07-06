@@ -11,7 +11,8 @@
     "postbuild": "pnpm -C ../.. run postbuild",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage --passWithNoTests"
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "coverage:badge": "node scripts/generate-coverage-badge.mjs"
   },
   "engines": {
     "node": ">=24.11.0"
