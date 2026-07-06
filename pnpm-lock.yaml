@@ -26,6 +26,9 @@ importers:
       '@faker-js/faker':
         specifier: ^10.5.0
         version: 10.5.0
+      '@fillmatic/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@fillmatic/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -156,6 +159,9 @@ importers:
       '@astrojs/react':
         specifier: ^6.0.0
         version: 6.0.0(@types/react-dom@19.2.3)(@types/react@19.2.17)(react-dom@19.2.7)(react@19.2.7)
+      '@fillmatic/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@fillmatic/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -244,6 +250,12 @@ importers:
       wrangler:
         specifier: ^4.105.0
         version: 4.107.0(@cloudflare/workers-types@4.20260702.1)
+
+  packages/config:
+    devDependencies:
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/ui:
     dependencies:

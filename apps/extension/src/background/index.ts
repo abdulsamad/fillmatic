@@ -1,3 +1,5 @@
+import { DEMO_URL } from '@fillmatic/config'
+
 import { log } from '@/utils'
 import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
@@ -11,7 +13,7 @@ if (import.meta.env.DEV) {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
-    chrome.tabs.create({ url: `https://fillmatic.pages.dev/demo/` })
+    chrome.tabs.create({ url: DEMO_URL })
   }
 })
 

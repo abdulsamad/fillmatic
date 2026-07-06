@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { DEMO_URL } from '@fillmatic/config'
+
 type InstalledListener = (details: chrome.runtime.InstalledDetails) => Promise<void> | void
 type CommandListener = (command: string, tab: chrome.tabs.Tab) => Promise<void> | void
 
@@ -34,7 +36,7 @@ describe('background/index (load-time side effects)', () => {
 
     await listener({ reason: 'install' } as chrome.runtime.InstalledDetails)
 
-    expect(chrome.tabs.create).toHaveBeenCalledWith({ url: 'https://fillmatic.pages.dev/demo/' })
+    expect(chrome.tabs.create).toHaveBeenCalledWith({ url: DEMO_URL })
   })
 
   it('does not open a tab for a non-install reason (e.g. update)', async () => {

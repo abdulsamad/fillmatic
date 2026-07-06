@@ -31,5 +31,5 @@
 ## Usage
 
 1. Navigate to any webpage with a form
-2. Click the Fillmatic icon in your Chrome toolbar
+2. Click the FillMatic icon in your Chrome toolbar
 3. Click "Fill Form" to populate all detected fields with random data

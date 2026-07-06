@@ -1,8 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 ---
 
-<Layout title="Demo — FillMatic">
+<Layout title={`Demo — ${PRODUCT_NAME}`}>
   <div class="page-bg">
 
     <!-- Hero -->
@@ -304,7 +305,7 @@ import Layout from "../layouts/Layout.astro";
 
     <footer class="demo-footer">
       Nothing here is real — all values are dummy data. ·
-      <a href="mailto:hello@abdulsamad.dev?subject=FillMatic Feedback">Send feedback</a>
+      <a href={`mailto:${SUPPORT_EMAIL}?subject=${PRODUCT_NAME} Feedback`}>Send feedback</a>
     </footer>
 
   </div>
