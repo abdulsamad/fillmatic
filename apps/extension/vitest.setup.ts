@@ -70,13 +70,16 @@ if (typeof globalThis.DataTransfer === 'undefined') {
 }
 
 // Always stub fetch, even though Node provides a native implementation: chrome.runtime.getURL
-// is stubbed to return relative paths, which the real fetch can't parse as a URL. Tests that
-// care about the response can override this per-call with vi.mocked(fetch).mockResolvedValueOnce(...).
+// is stubbed to return relative paths, which the real fetch can't parse as a URL. The only
+// real caller (handleFileInput.ts) just calls `.blob()` on the result, so return a minimal
+// duck-typed object rather than a real Response — constructing `new Response(new Blob())`
+// is fragile across Node/undici versions since jsdom's global Blob doesn't always satisfy
+// undici's internal Blob check, causing a "object.stream is not a function" error in some
+// environments. Tests that care about the response can override this per-call with
+// vi.mocked(fetch).mockResolvedValueOnce(...).
 vi.stubGlobal(
   'fetch',
-  vi.fn(() => Promise.resolve(new Response(new Blob(), {
-    headers: { 'Content-Type': 'application/octet-stream' },
-  }))),
+  vi.fn(() => Promise.resolve({ blob: () => Promise.resolve(new Blob()) })),
 )
 
 afterEach(() => {
