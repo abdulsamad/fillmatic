@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [Unreleased]
+
+#### Added
+- **feat:** `@fillmatic/config` shared package (`packages/config`) — single source of truth for product identity/copy (`PRODUCT_NAME`, `PRODUCT_DESCRIPTION`, `SEO_DESCRIPTION`, `SUPPORT_EMAIL`, `CHROME_WEB_STORE_URL`, `LANDING_URL`, `DEMO_URL`/`DEMO_URL_DEV`) consumed by both the extension (manifest, popup, options, Demo Action) and the marketing site. Product strings are no longer hardcoded per app.
+- **feat:** `@fillmatic/ui` shared package (`packages/ui`) — shared shadcn/ui component library (Radix + Tailwind v4) extracted from the apps and consumed by both as `workspace:*`, with a shared theme (`./styles.css`) and Tailwind preset (`./tailwind-preset`).
+- **test:** Vitest + Testing Library (`jsdom`) test setup across both apps, comprehensive unit tests for the autofill value generation and field/element matching, and overall extension coverage raised from ~25% to ~82% with enforced coverage thresholds.
+- **feat:** Self-generated coverage badge — `coverage:badge` renders `coverage-badge.svg` from the local coverage summary, no third-party badge service.
+
+#### Changed
+- **refactor:** Monorepo reorganised around shared internal packages (`packages/ui`, `packages/config`); duplicated shadcn components and product copy removed from the individual apps.
+- **refactor:** Dropped the Actions store migration path entirely in favour of the seeded editable `DEFAULT_ACTIONS`.
+- **chore:** Moved `typescript` to `devDependencies`.
+
+#### Fixed
+- **fix:** Added a safe margin to the pre-fill autoscroll so a target scrolled into view isn't left flush against the viewport edge before a form or scoped action is filled.
+- **fix:** Demo page checkboxes/radios that weren't toggling, plus unlabeled group captions on the demo form.
+- **fix:** Week (`<input type="week">`) `min`/`max` are now parsed correctly as ISO week dates.
+
+---
+
 ### [v0.0.9] - 2026-06-29
 
 #### Added
