@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@fillmatic/ui";
+import { SUPPORT_EMAIL } from "@fillmatic/config";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const PrivacyPolicy = () => {
@@ -184,7 +185,7 @@ const PrivacyPolicy = () => {
                 If you have any questions or concerns about this privacy policy,
                 please contact us at{" "}
                 <a
-                  href="mailto:hello@abdulsamad.dev"
+                  href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-blue-600 hover:underline"
                 >
                   hello[at]abdulsamad.dev

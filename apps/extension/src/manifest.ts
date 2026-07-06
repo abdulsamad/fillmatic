@@ -1,11 +1,12 @@
 import { defineManifest } from '@crxjs/vite-plugin'
-import { pascalCase } from 'es-toolkit'
+
+import { PRODUCT_DESCRIPTION, PRODUCT_NAME } from '@fillmatic/config'
 
 import packageData from '../../../package.json'
 
 export default defineManifest({
-  name: pascalCase(packageData.name),
-  description: packageData.description,
+  name: PRODUCT_NAME,
+  description: PRODUCT_DESCRIPTION,
   version: packageData.version,
   // author: { email: 'hello@abdulsamad.dev' },
   manifest_version: 3,
