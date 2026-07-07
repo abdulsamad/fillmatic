@@ -11,8 +11,20 @@ export const isDev = import.meta.env.DEV
 export const isSupportedInput = (elem: Element): elem is SupportedInputsType =>
   elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement
 
-export const isContentEditable = (elem: Element): boolean =>
-  elem instanceof HTMLElement && elem.contentEditable?.toLowerCase() === 'true' && !isSupportedInput(elem)
+export const isContentEditable = (elem: Element): boolean => {
+  if (!(elem instanceof HTMLElement) || isSupportedInput(elem)) return false
+
+  // contenteditable="" means true; 'plaintext-only' is editable too. The reflecting
+  // property is read as a fallback for environments where assigning it doesn't
+  // reach the attribute (jsdom).
+  const attr = elem.getAttribute('contenteditable')
+  const mode = (attr ?? (typeof elem.contentEditable === 'string' ? elem.contentEditable : '')).toLowerCase()
+  if ((attr !== null && mode === '') || mode === 'true' || mode === 'plaintext-only') return true
+
+  // Computed editability covers elements that inherit it (children of an editable
+  // host, designMode documents) without carrying the attribute themselves.
+  return elem.isContentEditable === true
+}
 
 export const isSupportedElement = (elem: Element): boolean => isSupportedInput(elem) || isContentEditable(elem)
 

@@ -379,6 +379,50 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
       </div>
     </section>
 
+    <!-- Contenteditable hosts — exercises FillMatic's editor-aware contenteditable strategy -->
+    <section class="forms-grid full-width-grid">
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>Rich text &amp; editable areas</h2>
+        </div>
+        <div class="glass-form kitchen-sink" id="editable-panel">
+          <p class="widgets-note">
+            Editable <code>div</code>s the way rich-text editors render them — a plain
+            <code>contenteditable</code> host, a <code>plaintext-only</code> host, and a fake ProseMirror-style
+            editor that only accepts text through <code>beforeinput</code>.
+          </p>
+
+          <div class="field-row">
+            <div class="field">
+              <span class="field-label" id="ce-notes-label">Notes (contenteditable)</span>
+              <div class="editable-host" contenteditable="true" role="textbox" aria-labelledby="ce-notes-label"></div>
+            </div>
+            <div class="field">
+              <span class="field-label" id="ce-plain-label">Comment (plaintext-only)</span>
+              <div
+                class="editable-host"
+                contenteditable="plaintext-only"
+                role="textbox"
+                aria-labelledby="ce-plain-label"
+              ></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label" id="ce-editor-label">Bio (model-backed editor)</span>
+            <div
+              class="editable-host editable-tall ProseMirror"
+              id="ce-editor"
+              contenteditable="true"
+              role="textbox"
+              aria-labelledby="ce-editor-label"
+            ></div>
+            <p class="widgets-note" id="ce-editor-state">Editor model: (empty)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="demo-footer">
       Nothing here is real — all values are dummy data. ·
       <a href={`mailto:${SUPPORT_EMAIL}?subject=${PRODUCT_NAME} Feedback`}>Send feedback</a>
@@ -479,6 +523,25 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
       radio.setAttribute("aria-checked", "true");
     });
   });
+
+  /* --- Model-backed editor: only accepts text through beforeinput (like ProseMirror/Lexical) --- */
+
+  const modelEditor = document.getElementById("ce-editor");
+  const modelState = document.getElementById("ce-editor-state");
+  if (modelEditor && modelState) {
+    let model = "";
+    const render = () => {
+      modelEditor.textContent = model;
+      modelState.textContent = `Editor model: ${model ? `"${model}"` : "(empty)"}`;
+    };
+    modelEditor.addEventListener("beforeinput", (e) => {
+      e.preventDefault(); // the editor owns all mutations
+      const ev = e as InputEvent;
+      if (ev.inputType === "insertText" && ev.data) model += ev.data;
+      if (ev.inputType === "deleteContentBackward") model = model.slice(0, -1);
+      render();
+    });
+  }
 </script>
 
 <style>
@@ -899,6 +962,23 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   .widget-radio:hover { border-color: #6366f1; }
   .widget-radio[aria-checked="true"] { background: rgba(99,102,241,.3); border-color: #6366f1; }
+
+  /* Contenteditable hosts */
+  .editable-host {
+    min-height: 2.6rem;
+    padding: .65rem .85rem;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: .9rem;
+    line-height: 1.5;
+    outline: none;
+  }
+
+  .editable-host:focus { border-color: #6366f1; }
+
+  .editable-tall { min-height: 4.5rem; }
 
   /* Footer */
   .demo-footer {

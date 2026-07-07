@@ -1,5 +1,5 @@
 import { SupportedInputsType } from '@/types'
-import { isWidgetElement } from '@/utils'
+import { isContentEditable, isWidgetElement } from '@/utils'
 
 /**
  * querySelectorAll that also pierces open shadow roots. Light-DOM matches of each
@@ -84,3 +84,19 @@ export const gatherWidgetElements = (rootElement: Element | null = null): HTMLEl
 
   return widgets
 }
+
+/**
+ * Gathers visible contenteditable *hosts* for the contenteditable fill strategy.
+ * Only the outermost editable element is returned — nested editable nodes (and
+ * `role="textbox"` children inside a host) belong to the host's document model
+ * and are written through it.
+ */
+export const gatherContenteditableHosts = (rootElement: Element | null = null): HTMLElement[] =>
+  queryDeepAll(rootElement || document, '[contenteditable], [role="textbox"]').filter(
+    (elem): elem is HTMLElement => {
+      if (!(elem instanceof HTMLElement) || !isContentEditable(elem) || !isElementVisible(elem)) return false
+
+      const parentHost = elem.parentElement?.closest('[contenteditable], [role="textbox"]')
+      return !(parentHost instanceof HTMLElement && isContentEditable(parentHost))
+    },
+  )

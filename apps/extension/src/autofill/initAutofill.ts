@@ -2,7 +2,7 @@ import { SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { invalidateMatchCache, log } from '@/utils'
 
-import { gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
+import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
 
 interface IinitiateAutofill {
   rootElement: Element | null
@@ -43,10 +43,14 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
     await fillElement({ elem })
   }
 
-  /* Contenteditable */
-  const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)
+  /* Contenteditable hosts (rich-text editors, editable divs) — scoped and visibility-filtered */
+  const contenteditableHosts = gatherContenteditableHosts(rootElement)
 
-  await autoFillContenteditableSequentially({ elems: contenteditableElements })
+  log(`Found ${contenteditableHosts.length} contenteditable hosts`)
+
+  for (const elem of contenteditableHosts) {
+    await fillElement({ elem })
+  }
 
   /* iframe */
   // const iframes = document.querySelectorAll('iframe')
@@ -72,15 +76,5 @@ interface IautoFillInputsSequentially {
 const autoFillInputsSequentially = async ({ inputs }: IautoFillInputsSequentially) => {
   for (const input of inputs) {
     await fillElement({ elem: input })
-  }
-}
-
-interface IautoFillContenteditableSequentially {
-  elems: NodeListOf<Element>
-}
-
-const autoFillContenteditableSequentially = async ({ elems }: IautoFillContenteditableSequentially) => {
-  for (const elem of elems) {
-    await fillElement({ elem })
   }
 }

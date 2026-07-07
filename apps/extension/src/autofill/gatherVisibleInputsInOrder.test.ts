@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
 import {
+  gatherContenteditableHosts,
   gatherVisibleInputsInOrder,
   gatherWidgetElements,
   isElementVisible,
@@ -236,5 +237,68 @@ describe('gatherWidgetElements', () => {
     document.body.append(root, outside)
 
     expect(gatherWidgetElements(root)).toEqual([inside])
+  })
+})
+
+describe('gatherContenteditableHosts', () => {
+  const makeEditable = (mode = 'true') => {
+    const host = document.createElement('div')
+    host.setAttribute('contenteditable', mode)
+    makeVisible(host)
+    return host
+  }
+
+  it('collects visible contenteditable hosts, including plaintext-only', () => {
+    const editable = makeEditable()
+    const plaintext = makeEditable('plaintext-only')
+    document.body.append(editable, plaintext)
+
+    expect(gatherContenteditableHosts()).toEqual([editable, plaintext])
+  })
+
+  it('skips invisible hosts and contenteditable="false"', () => {
+    const hidden = document.createElement('div')
+    hidden.setAttribute('contenteditable', 'true')
+
+    const off = makeEditable('false')
+    document.body.append(hidden, off)
+
+    expect(gatherContenteditableHosts()).toEqual([])
+  })
+
+  it('returns only the outermost host when editable elements nest', () => {
+    const host = makeEditable()
+    const nested = makeEditable()
+    host.appendChild(nested)
+
+    const nestedTextbox = document.createElement('div')
+    nestedTextbox.setAttribute('role', 'textbox')
+    nestedTextbox.setAttribute('contenteditable', 'true')
+    makeVisible(nestedTextbox)
+    host.appendChild(nestedTextbox)
+
+    document.body.appendChild(host)
+
+    expect(gatherContenteditableHosts()).toEqual([host])
+  })
+
+  it('ignores role="textbox" elements that are not actually editable', () => {
+    const textbox = document.createElement('div')
+    textbox.setAttribute('role', 'textbox')
+    makeVisible(textbox)
+    document.body.appendChild(textbox)
+
+    expect(gatherContenteditableHosts()).toEqual([])
+  })
+
+  it('scopes to the given root element', () => {
+    const inside = makeEditable()
+    const outside = makeEditable()
+
+    const root = document.createElement('div')
+    root.appendChild(inside)
+    document.body.append(root, outside)
+
+    expect(gatherContenteditableHosts(root)).toEqual([inside])
   })
 })

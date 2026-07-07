@@ -1,13 +1,21 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-const { gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } = vi.hoisted(() => ({
-  gatherVisibleInputsInOrder: vi.fn(),
-  gatherWidgetElements: vi.fn().mockReturnValue([]),
-  fillElement: vi.fn().mockResolvedValue(undefined),
-  waitForSettle: vi.fn().mockResolvedValue(undefined),
-}))
+const { gatherVisibleInputsInOrder, gatherWidgetElements, gatherContenteditableHosts, fillElement, waitForSettle } =
+  vi.hoisted(() => ({
+    gatherVisibleInputsInOrder: vi.fn(),
+    gatherWidgetElements: vi.fn().mockReturnValue([]),
+    gatherContenteditableHosts: vi.fn().mockReturnValue([]),
+    fillElement: vi.fn().mockResolvedValue(undefined),
+    waitForSettle: vi.fn().mockResolvedValue(undefined),
+  }))
 
-vi.mock('.', () => ({ gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle }))
+vi.mock('.', () => ({
+  gatherVisibleInputsInOrder,
+  gatherWidgetElements,
+  gatherContenteditableHosts,
+  fillElement,
+  waitForSettle,
+}))
 
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 
@@ -65,14 +73,17 @@ describe('initiateAutofill', () => {
     expect(fillElement).toHaveBeenCalledTimes(1)
   })
 
-  it('also fills contenteditable elements found on the page', async () => {
+  it('also fills gathered contenteditable hosts, scoped to the root element', async () => {
     gatherVisibleInputsInOrder.mockReturnValue([])
     const editable = document.createElement('div')
     editable.setAttribute('contenteditable', 'true')
     document.body.appendChild(editable)
+    gatherContenteditableHosts.mockReturnValueOnce([editable])
 
-    await initiateAutofill({ rootElement: null })
+    const root = document.createElement('form')
+    await initiateAutofill({ rootElement: root })
 
+    expect(gatherContenteditableHosts).toHaveBeenCalledWith(root)
     expect(fillElement).toHaveBeenCalledWith({ elem: editable })
   })
 })
