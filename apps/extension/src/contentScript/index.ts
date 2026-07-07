@@ -1,7 +1,7 @@
-import { Form, SupportedInputsType } from '@/types'
+import { Form } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
-import { fillElement, gatherVisibleInputsInOrder, initiateAutofill, isInViewport } from '@/autofill'
-import { log } from '@/utils'
+import { fillElement, gatherVisibleInputsInOrder, initiateAutofill, isInViewport, runActionSteps } from '@/autofill'
+import { isContentEditable, isSupportedInput, isWidgetElement, log } from '@/utils'
 import { getActionsFromStorage } from '@/utils/actions'
 import { MESSAGES } from '@/consts'
 
@@ -111,12 +111,13 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
 
         case INIT_AUTOFILL_INPUT:
           {
+            // Native inputs, contenteditable hosts and custom widgets all route
+            // through the fillElement strategy dispatcher.
             if (
-              activeElement instanceof HTMLInputElement ||
-              activeElement instanceof HTMLTextAreaElement ||
-              activeElement instanceof HTMLSelectElement
+              activeElement &&
+              (isSupportedInput(activeElement) || isContentEditable(activeElement) || isWidgetElement(activeElement))
             ) {
-              fillElement({ elem: activeElement as SupportedInputsType })
+              fillElement({ elem: activeElement })
             }
           }
           break
@@ -137,12 +138,19 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
         default: {
           /* Handle action-specific message */
           if (isActionAutofill) {
-            const rootSelector = contentScriptStore.getState().activeAction?.rootSelector
-            const rootElement = rootSelector ? document.querySelector(rootSelector) : null
+            const action = contentScriptStore.getState().activeAction
 
-            if (rootElement) await scrollIntoViewIfNeeded(rootElement)
+            // Declarative steps run first; a steps-only action (no fields) skips the fill.
+            if (action?.steps?.length) await runActionSteps(action.steps)
 
-            await initiateAutofill({ rootElement })
+            if (!action?.steps?.length || action.fields.length > 0) {
+              const rootSelector = action?.rootSelector
+              const rootElement = rootSelector ? document.querySelector(rootSelector) : null
+
+              if (rootElement) await scrollIntoViewIfNeeded(rootElement)
+
+              await initiateAutofill({ rootElement })
+            }
 
             sendResponse({ type: AUTOFILL_COMPLETE })
           }

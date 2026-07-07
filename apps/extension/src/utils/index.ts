@@ -16,6 +16,27 @@ export const isContentEditable = (elem: Element): boolean =>
 
 export const isSupportedElement = (elem: Element): boolean => isSupportedInput(elem) || isContentEditable(elem)
 
+export type WidgetKind = 'option-picker' | 'calendar' | 'switch' | 'slider' | 'spinbutton' | 'radiogroup'
+
+/** Classifies a widget element by its ARIA semantics; undefined = not a known widget. */
+export const getWidgetKind = (elem: Element): WidgetKind | undefined => {
+  const role = elem.getAttribute('role')
+  const haspopup = elem.getAttribute('aria-haspopup')
+
+  if (role === 'switch') return 'switch'
+  if (role === 'slider') return 'slider'
+  if (role === 'spinbutton') return 'spinbutton'
+  if (role === 'radiogroup') return 'radiogroup'
+  if (haspopup === 'dialog') return 'calendar'
+  if (role === 'combobox' || role === 'listbox' || haspopup === 'listbox') return 'option-picker'
+
+  return undefined
+}
+
+/** True for non-native elements the widget fill strategy knows how to drive. */
+export const isWidgetElement = (elem: Element): boolean =>
+  elem instanceof HTMLElement && !isSupportedInput(elem) && getWidgetKind(elem) !== undefined
+
 /**
  * Native value/checked setters captured from the prototype. Frameworks like React patch the
  * element instance's own setter and keep an internal value tracker; assigning `el.value` directly

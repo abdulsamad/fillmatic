@@ -1,11 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-const { gatherVisibleInputsInOrder, fillElement } = vi.hoisted(() => ({
+const { gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } = vi.hoisted(() => ({
   gatherVisibleInputsInOrder: vi.fn(),
+  gatherWidgetElements: vi.fn().mockReturnValue([]),
   fillElement: vi.fn().mockResolvedValue(undefined),
+  waitForSettle: vi.fn().mockResolvedValue(undefined),
 }))
 
-vi.mock('.', () => ({ gatherVisibleInputsInOrder, fillElement }))
+vi.mock('.', () => ({ gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle }))
 
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 

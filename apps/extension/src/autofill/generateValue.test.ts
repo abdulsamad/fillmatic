@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { generateValue } from '@/autofill/generateValue'
+import { generateValue, resolveFieldTargetValue } from '@/autofill/generateValue'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { type Action } from '@/utils/actions'
@@ -63,6 +63,23 @@ describe('generateValue', () => {
     })
 
     expect(await generateValue({ type: 'text', elem: input })).toBe('SAVE10')
+  })
+
+  it('matches an action field target against a widget element via its ARIA label', async () => {
+    const widget = document.createElement('button')
+    widget.setAttribute('role', 'combobox')
+    widget.setAttribute('aria-label', 'Country')
+
+    const action: Action = {
+      id: 'demo',
+      name: 'Demo',
+      matcher: { type: 'startsWith', value: 'https://example.com' },
+      active: true,
+      fields: [{ attribute: 'label', operator: 'contains', match: 'country', value: 'Canada' }],
+    }
+    contentScriptStore.setState({ activeAction: action })
+
+    expect(await generateValue({ type: 'select', elem: widget })).toBe('Canada')
   })
 
   it('generates a value from a recognized autocomplete token', async () => {
@@ -219,5 +236,93 @@ describe('generateValue', () => {
 
     const value = (await generateValue({ type: 'password', elem: input })) as string
     expect(value).toMatch(/^\d{6}$/)
+  })
+})
+
+describe('resolveFieldTargetValue', () => {
+  const target = (overrides = {}) => ({
+    attribute: 'id' as const,
+    operator: 'exact' as const,
+    match: 'field',
+    value: 'literal',
+    ...overrides,
+  })
+
+  it('returns the literal value when the strategy is absent (pre-existing targets)', () => {
+    expect(resolveFieldTargetValue(target(), document.createElement('input'))).toBe('literal')
+  })
+
+  it('returns the literal value for the exact strategy', () => {
+    expect(resolveFieldTargetValue(target({ valueStrategy: 'exact' }), document.createElement('input'))).toBe(
+      'literal',
+    )
+  })
+
+  it('generates a fresh email for random/email', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'email', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value).toContain('@')
+  })
+
+  it('respects a number input min/max for random/number', () => {
+    const input = document.createElement('input')
+    input.type = 'number'
+    input.min = '5'
+    input.max = '7'
+
+    const value = resolveFieldTargetValue(target({ valueStrategy: 'random', valueType: 'number', value: '' }), input)
+    expect(Number(value)).toBeGreaterThanOrEqual(5)
+    expect(Number(value)).toBeLessThanOrEqual(7)
+  })
+
+  it('generates an ISO date for random/date', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'date', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  it('records the generated full name for later fields (email consistency)', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'fullName', value: '' }),
+      document.createElement('input'),
+    )
+    expect(contentScriptStore.getState().firstName).toBe(value)
+  })
+
+  it('falls back to a word for random with no valueType', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value.length).toBeGreaterThan(0)
+  })
+
+  it('is applied when an action field target uses the random strategy', async () => {
+    const input = document.createElement('input')
+    input.id = 'contact_email'
+
+    const action: Action = {
+      id: 'demo',
+      name: 'Demo',
+      matcher: { type: 'startsWith', value: 'https://example.com' },
+      active: true,
+      fields: [
+        {
+          attribute: 'id',
+          operator: 'exact',
+          match: 'contact_email',
+          value: '',
+          valueStrategy: 'random',
+          valueType: 'email',
+        },
+      ],
+    }
+    contentScriptStore.setState({ activeAction: action })
+
+    expect((await generateValue({ type: 'text', elem: input })) as string).toContain('@')
   })
 })

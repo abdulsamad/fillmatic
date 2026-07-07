@@ -5,6 +5,8 @@ import { isDev, getStoreFromStorage } from '.'
 export type MatcherType = 'hostname' | 'startsWith' | 'endsWith' | 'regex'
 export type AttributeType = 'id' | 'name' | 'placeholder' | 'label' | 'autocomplete'
 export type OperatorType = 'exact' | 'contains' | 'regex'
+export type ValueStrategyType = 'exact' | 'random'
+export type ValueTypeType = 'string' | 'number' | 'date' | 'email' | 'phone' | 'fullName' | 'url'
 
 export const ATTRIBUTE_OPTIONS: { value: AttributeType; label: string }[] = [
   { value: 'id', label: 'id' },
@@ -20,8 +22,28 @@ export const OPERATOR_OPTIONS: { value: OperatorType; label: string }[] = [
   { value: 'regex', label: 'regex' },
 ]
 
+export const VALUE_STRATEGY_OPTIONS: { value: ValueStrategyType; label: string }[] = [
+  { value: 'exact', label: 'exact value' },
+  { value: 'random', label: 'random' },
+]
+
+export const VALUE_TYPE_OPTIONS: { value: ValueTypeType; label: string }[] = [
+  { value: 'string', label: 'string' },
+  { value: 'number', label: 'number' },
+  { value: 'date', label: 'date' },
+  { value: 'email', label: 'email' },
+  { value: 'phone', label: 'phone' },
+  { value: 'fullName', label: 'full name' },
+  { value: 'url', label: 'url' },
+]
+
 export const ATTRIBUTE_VALUES = ATTRIBUTE_OPTIONS.map((o) => o.value) as [AttributeType, ...AttributeType[]]
 export const OPERATOR_VALUES = OPERATOR_OPTIONS.map((o) => o.value) as [OperatorType, ...OperatorType[]]
+export const VALUE_STRATEGY_VALUES = VALUE_STRATEGY_OPTIONS.map((o) => o.value) as [
+  ValueStrategyType,
+  ...ValueStrategyType[],
+]
+export const VALUE_TYPE_VALUES = VALUE_TYPE_OPTIONS.map((o) => o.value) as [ValueTypeType, ...ValueTypeType[]]
 
 /** A single field match → fill instruction. Shared by Actions and per-profile Field Rules. */
 export type FieldTarget = {
@@ -29,7 +51,31 @@ export type FieldTarget = {
   operator: OperatorType
   match: string
   value: string
+  /** How to produce the fill value. Absent = 'exact' (the literal `value`, pre-existing behavior). */
+  valueStrategy?: ValueStrategyType
+  /** What kind of random value to generate when `valueStrategy` is 'random'. */
+  valueType?: ValueTypeType
 }
+
+/**
+ * A declarative automation step an Action runs before its field fill — the no-eval,
+ * CWS-safe escape hatch for widgets the built-in adapters can't drive. `type` values
+ * support `{{faker.*}}` tokens resolved against a whitelist at run time.
+ */
+export type ActionStep =
+  | { kind: 'click'; selector: string }
+  | { kind: 'waitFor'; selector: string; timeoutMs?: number }
+  | { kind: 'type'; selector: string; value: string }
+  | { kind: 'selectOption'; selector: string; option: string }
+  | { kind: 'press'; selector: string; key: string }
+
+export const STEP_KIND_OPTIONS: { value: ActionStep['kind']; label: string }[] = [
+  { value: 'click', label: 'Click' },
+  { value: 'waitFor', label: 'Wait for' },
+  { value: 'type', label: 'Type' },
+  { value: 'selectOption', label: 'Select option' },
+  { value: 'press', label: 'Press key' },
+]
 
 export type Action = {
   id: string // also used as the message id
@@ -39,6 +85,7 @@ export type Action = {
   active: boolean
   matchInIframe?: boolean // preserved passthrough; no behavior change
   rootSelector?: string // CSS selector scoping autofill to a single element (e.g. one form) instead of the whole page
+  steps?: ActionStep[] // declarative steps run before the field fill; a steps-only action (fields: []) skips the fill
   fields: FieldTarget[]
 }
 
@@ -154,17 +201,35 @@ const getAttributeValue = (elem: Element, attribute: AttributeType): string => {
         elem instanceof HTMLTextAreaElement ||
         elem instanceof HTMLSelectElement
         ? elem.name
-        : ''
+        : (elem.getAttribute('name') ?? '')
     case 'placeholder':
-      return elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement ? elem.placeholder : ''
+      return elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement
+        ? elem.placeholder
+        : (elem.getAttribute('placeholder') ?? '')
     case 'autocomplete':
-      return elem instanceof HTMLInputElement ? elem.autocomplete : ''
-    case 'label':
-      return elem instanceof HTMLInputElement && elem.labels
-        ? Array.from(elem.labels)
-            .map((label) => label.textContent ?? '')
-            .join(' ')
-        : ''
+      return elem instanceof HTMLInputElement ? elem.autocomplete : (elem.getAttribute('autocomplete') ?? '')
+    case 'label': {
+      if (elem instanceof HTMLInputElement && elem.labels) {
+        return Array.from(elem.labels)
+          .map((label) => label.textContent ?? '')
+          .join(' ')
+      }
+
+      // Custom widgets label themselves via ARIA instead of <label>.
+      const ariaLabel = elem.getAttribute('aria-label')
+      if (ariaLabel) return ariaLabel
+
+      const labelledBy = elem.getAttribute('aria-labelledby')
+      if (labelledBy) {
+        return labelledBy
+          .split(/\s+/)
+          .map((refId) => document.getElementById(refId)?.textContent ?? '')
+          .join(' ')
+          .trim()
+      }
+
+      return ''
+    }
     default:
       return ''
   }

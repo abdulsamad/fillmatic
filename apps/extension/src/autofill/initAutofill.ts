@@ -2,7 +2,7 @@ import { SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { invalidateMatchCache, log } from '@/utils'
 
-import { gatherVisibleInputsInOrder, fillElement } from '.'
+import { gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
 
 interface IinitiateAutofill {
   rootElement: Element | null
@@ -26,11 +26,22 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
 
   await autoFillInputsSequentially({ inputs })
 
-  // Check for any inputs that have mounted after focus (for eg: Stripe checkout form)
+  // Check for any inputs that have mounted after focus (for eg: Stripe checkout form) —
+  // give late renders a moment to settle before re-gathering.
+  await waitForSettle(rootElement ?? document.body, { timeoutMs: 800 })
   const finalInputs = gatherVisibleInputsInOrder(rootElement)
   const newInputs = finalInputs.filter((input) => !inputs.includes(input))
 
   if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs })
+
+  /* Custom widgets (ARIA comboboxes, date pickers, switches…) */
+  const widgets = gatherWidgetElements(rootElement)
+
+  log(`Found ${widgets.length} widget elements`)
+
+  for (const elem of widgets) {
+    await fillElement({ elem })
+  }
 
   /* Contenteditable */
   const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)

@@ -4,15 +4,15 @@ import { faker } from '@faker-js/faker'
 import { getEffectiveConfig, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { SupportedInputsType } from '@/types'
-import { clientLog, isSupportedElement, isSupportedInput, matchElement } from '@/utils'
-import { matchFieldTarget } from '@/utils/actions'
+import { clientLog, isSupportedElement, isWidgetElement, matchElement } from '@/utils'
+import { matchFieldTarget, type FieldTarget } from '@/utils/actions'
 
 interface GenerateValueParams {
   type: HTMLInputTypeAttribute | 'contenteditable'
   elem: SupportedInputsType | Element
 }
 
-const getActiveUserRuleValue = (elem: Element): string | undefined => {
+const getActiveUserRuleTarget = (elem: Element): FieldTarget | undefined => {
   const { profiles, activeProfileId } = useProfileStore.getState()
   const profile = profiles.find((p) => p.id === activeProfileId)
   const rules = profile?.rules ?? []
@@ -21,32 +21,69 @@ const getActiveUserRuleValue = (elem: Element): string | undefined => {
   for (const rule of rules) {
     if (url.includes(rule.siteMatcher)) {
       for (const field of rule.rules) {
-        if (matchFieldTarget(elem, field)) return field.value
+        if (matchFieldTarget(elem, field)) return field
       }
     }
   }
   return undefined
 }
 
+/**
+ * Resolves a matched field target into a fill value. 'exact' (and absent, the
+ * pre-existing shape) returns the literal `value`; 'random' generates a fresh value
+ * of the target's `valueType` on every fill, reusing the same generators as the
+ * autocomplete/heuristic paths so e.g. emails stay consistent with generated names.
+ */
+export const resolveFieldTargetValue = (field: FieldTarget, elem: Element): string => {
+  if ((field.valueStrategy ?? 'exact') === 'exact') return field.value
+
+  switch (field.valueType) {
+    case 'number': {
+      if (elem instanceof HTMLInputElement && elem.type === 'number') {
+        const min = elem.min ? parseInt(elem.min, 10) : 1
+        const max = elem.max ? parseInt(elem.max, 10) : 100
+        return faker.number.int({ min, max }).toString()
+      }
+      return faker.number.int({ min: 1, max: 100 }).toString()
+    }
+    case 'date':
+      return faker.date.recent().toISOString().split('T')[0]
+    case 'email':
+      return generateEmail()
+    case 'phone':
+      return faker.phone.number()
+    case 'fullName': {
+      const fullName = faker.person.fullName()
+      contentScriptStore.setState({ firstName: fullName })
+      return fullName
+    }
+    case 'url':
+      return faker.internet.url()
+    case 'string':
+    default:
+      return faker.lorem.word()
+  }
+}
+
 export const generateValue = async ({ type, elem }: GenerateValueParams): Promise<string | boolean | undefined> => {
-  if (!isSupportedElement(elem)) return ''
+  // Widgets (ARIA comboboxes, switches…) are fillable via the widget strategy even
+  // though they are not native inputs or contenteditable hosts.
+  if (!isSupportedElement(elem) && !isWidgetElement(elem)) return ''
 
   const activeAction = contentScriptStore.getState().activeAction
 
-  if (!isSupportedElement(elem)) return ''
-
   /* Check for the active action's field targets first */
-  if (activeAction && isSupportedInput(elem)) {
+  if (activeAction) {
     const matchingField = activeAction.fields.find((field) => matchFieldTarget(elem, field))
 
     if (matchingField) {
-      return matchingField.value
+      return resolveFieldTargetValue(matchingField, elem)
     }
   }
 
   /* Check user-defined field rules */
-  const userRuleValue = getActiveUserRuleValue(elem)
-  if (userRuleValue !== undefined) return userRuleValue
+  const userRuleTarget = getActiveUserRuleTarget(elem)
+  if (userRuleTarget) return resolveFieldTargetValue(userRuleTarget, elem)
 
   /* Generate based on AutoComplete */
   const autoCompleteTokensToSkip = [
