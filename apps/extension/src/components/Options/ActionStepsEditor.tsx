@@ -24,6 +24,7 @@ const GRID_COLS = 'grid-cols-[130px_1fr_1fr_auto]'
 /** Placeholder/config for the kind-specific third column. */
 const EXTRA_FIELD: Record<ActionStep['kind'], { name: string; placeholder: string } | null> = {
   click: null,
+  clickRandom: null,
   waitFor: { name: 'timeoutMs', placeholder: 'timeout ms (default 5000)' },
   type: { name: 'value', placeholder: 'text or {{faker.internet.email}}' },
   selectOption: { name: 'option', placeholder: 'option label' },

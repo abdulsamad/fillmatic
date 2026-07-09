@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { RadarIcon, SparklesIcon, Trash2Icon, WandSparklesIcon, XIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { DownloadIcon, RadarIcon, SparklesIcon, Trash2Icon, UploadIcon, WandSparklesIcon, XIcon } from 'lucide-react'
 
 import {
   Button,
@@ -17,6 +17,7 @@ import { MESSAGES } from '@/consts'
 import { useAiMappingsStore } from '@/store/ai-mappings'
 import { getCurrentTab } from '@/utils'
 import { can } from '@/utils/entitlements'
+import { downloadJson, readJsonFile } from '@/utils/json-io'
 import { snapshotsForUrl, type MappingSnapshot } from '@/utils/ai-mappings'
 import {
   ATTRIBUTE_OPTIONS,
@@ -171,6 +172,7 @@ export const SidePanel = () => {
   const snapshots = useAiMappingsStore((s) => s.snapshots)
   const addSnapshot = useAiMappingsStore((s) => s.addSnapshot)
   const deleteSnapshot = useAiMappingsStore((s) => s.deleteSnapshot)
+  const importInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     getLocalModelAvailability().then(setAiStatus)
@@ -234,6 +236,24 @@ export const SidePanel = () => {
 
   const loadSnapshot = (snapshot: MappingSnapshot) => setFields(fieldsFromSnapshot(snapshot.fields))
 
+  const importSnapshots = async (file: File | undefined) => {
+    if (!file) return
+    try {
+      const data = await readJsonFile(file)
+      const imported = (Array.isArray(data) ? data : []).filter(
+        (s): s is MappingSnapshot =>
+          typeof (s as MappingSnapshot)?.id === 'string' &&
+          typeof (s as MappingSnapshot)?.siteMatcher === 'string' &&
+          Array.isArray((s as MappingSnapshot)?.fields),
+      )
+      imported.filter((s) => !snapshots.some((existing) => existing.id === s.id)).forEach(addSnapshot)
+    } catch {
+      // Invalid file — leave the store untouched.
+    } finally {
+      if (importInputRef.current) importInputRef.current.value = ''
+    }
+  }
+
   const siteSnapshots = pageUrl ? snapshotsForUrl(snapshots, pageUrl) : snapshots
   const fillableCount = toFieldTargets(fields).length
 
@@ -287,9 +307,32 @@ export const SidePanel = () => {
         </>
       )}
 
+      <Separator />
+      <div className="flex items-center gap-1">
+        <input
+          ref={importInputRef}
+          type="file"
+          accept="application/json,.json"
+          className="hidden"
+          aria-label="Import snapshots file"
+          onChange={(e) => importSnapshots(e.target.files?.[0])}
+        />
+        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => importInputRef.current?.click()}>
+          <UploadIcon className="h-3 w-3 mr-1" /> Import
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+          disabled={snapshots.length === 0}
+          onClick={() => downloadJson('fillmatic-snapshots.json', snapshots)}
+        >
+          <DownloadIcon className="h-3 w-3 mr-1" /> Export
+        </Button>
+      </div>
+
       {siteSnapshots.length > 0 && (
         <>
-          <Separator />
           <section className="space-y-2">
             <h2 className="text-xs font-medium text-muted-foreground">Saved snapshots</h2>
             {siteSnapshots.map((snapshot) => (

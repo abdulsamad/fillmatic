@@ -64,6 +64,7 @@ export type FieldTarget = {
  */
 export type ActionStep =
   | { kind: 'click'; selector: string }
+  | { kind: 'clickRandom'; selector: string }
   | { kind: 'waitFor'; selector: string; timeoutMs?: number }
   | { kind: 'type'; selector: string; value: string }
   | { kind: 'selectOption'; selector: string; option: string }
@@ -71,6 +72,7 @@ export type ActionStep =
 
 export const STEP_KIND_OPTIONS: { value: ActionStep['kind']; label: string }[] = [
   { value: 'click', label: 'Click' },
+  { value: 'clickRandom', label: 'Click random' },
   { value: 'waitFor', label: 'Wait for' },
   { value: 'type', label: 'Type' },
   { value: 'selectOption', label: 'Select option' },

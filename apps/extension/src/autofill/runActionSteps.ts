@@ -46,12 +46,24 @@ export const resolveTemplateTokens = (value: string): string =>
 
 const DEFAULT_WAIT_FOR_TIMEOUT_MS = 5000
 
+/**
+ * Context for one steps run. `self` is the element a recipe matched — steps can
+ * target it with the special selector `@self` (useful when the widget has no
+ * stable id/class of its own).
+ */
+export interface StepContext {
+  self?: HTMLElement
+}
+
+const resolveStepElement = (selector: string, context: StepContext): Element | null =>
+  selector.trim() === '@self' ? (context.self ?? null) : document.querySelector(selector)
+
 /** Polls (mutation-paced) until the selector matches a visible element or the timeout passes. */
-const waitForSelector = async (selector: string, timeoutMs: number): Promise<Element | null> => {
+const waitForSelector = async (selector: string, timeoutMs: number, context: StepContext): Promise<Element | null> => {
   const deadline = Date.now() + timeoutMs
 
   for (;;) {
-    const elem = document.querySelector(selector)
+    const elem = resolveStepElement(selector, context)
     if (elem && isElementVisible(elem)) return elem
 
     const remaining = deadline - Date.now()
@@ -94,34 +106,49 @@ const selectWidgetOption = async (trigger: HTMLElement, optionText: string): Pro
   return true
 }
 
-const runStep = async (step: ActionStep): Promise<boolean> => {
+const runStep = async (step: ActionStep, context: StepContext): Promise<boolean> => {
   switch (step.kind) {
     case 'waitFor':
-      return (await waitForSelector(step.selector, step.timeoutMs ?? DEFAULT_WAIT_FOR_TIMEOUT_MS)) !== null
+      return (await waitForSelector(step.selector, step.timeoutMs ?? DEFAULT_WAIT_FOR_TIMEOUT_MS, context)) !== null
 
     case 'click': {
-      const elem = document.querySelector(step.selector)
+      const elem = resolveStepElement(step.selector, context)
       if (!(elem instanceof HTMLElement)) return false
       clickLikeUser(elem)
       return true
     }
 
+    case 'clickRandom': {
+      // "Click any one of" — e.g. a random enabled day cell in a custom calendar.
+      const candidates = Array.from(document.querySelectorAll(step.selector)).filter(
+        (elem): elem is HTMLElement =>
+          elem instanceof HTMLElement &&
+          isElementVisible(elem) &&
+          elem.getAttribute('aria-disabled') !== 'true' &&
+          !elem.hasAttribute('disabled'),
+      )
+      if (candidates.length === 0) return false
+
+      clickLikeUser(faker.helpers.arrayElement(candidates))
+      return true
+    }
+
     case 'type': {
-      const elem = document.querySelector(step.selector)
+      const elem = resolveStepElement(step.selector, context)
       if (!(elem instanceof HTMLElement) || !(isSupportedInput(elem) || isContentEditable(elem))) return false
       await typeWithEffect(resolveTemplateTokens(step.value), elem, true)
       return true
     }
 
     case 'selectOption': {
-      const elem = document.querySelector(step.selector)
+      const elem = resolveStepElement(step.selector, context)
       if (!(elem instanceof HTMLElement)) return false
       if (elem instanceof HTMLSelectElement) return selectNativeOption(elem, step.option)
       return selectWidgetOption(elem, step.option)
     }
 
     case 'press': {
-      const elem = document.querySelector(step.selector)
+      const elem = resolveStepElement(step.selector, context)
       if (!(elem instanceof HTMLElement)) return false
       pressKey(elem, step.key)
       return true
@@ -133,15 +160,15 @@ const runStep = async (step: ActionStep): Promise<boolean> => {
 }
 
 /**
- * Runs an Action's declarative steps in order. A failed step aborts the remaining
- * steps (a half-run recipe is worse than an aborted one) but never throws — the
- * surrounding message handler continues either way.
+ * Runs an Action's or Recipe's declarative steps in order. A failed step aborts
+ * the remaining steps (a half-run recipe is worse than an aborted one) but never
+ * throws — the surrounding caller continues either way.
  */
-export const runActionSteps = async (steps: ActionStep[]): Promise<boolean> => {
+export const runActionSteps = async (steps: ActionStep[], context: StepContext = {}): Promise<boolean> => {
   for (const [index, step] of steps.entries()) {
     let ok = false
     try {
-      ok = await runStep(step)
+      ok = await runStep(step, context)
     } catch (err) {
       log(`Action step ${index + 1} (${step.kind}) threw: ${err}`)
     }

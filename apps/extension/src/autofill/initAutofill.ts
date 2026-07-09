@@ -3,6 +3,7 @@ import { useContentScriptStore as contentScriptStore } from '@/store/content-scr
 import { invalidateMatchCache, log } from '@/utils'
 
 import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
+import { resetRecipeRun, runRecipesPass } from './recipes'
 
 interface IinitiateAutofill {
   rootElement: Element | null
@@ -33,6 +34,11 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
   const newInputs = finalInputs.filter((input) => !inputs.includes(input))
 
   if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs })
+
+  /* User-defined recipes — taught interactions outrank built-in widget adapters
+     and can drive fully custom elements no adapter recognizes. */
+  resetRecipeRun()
+  await runRecipesPass(rootElement)
 
   /* Custom widgets (ARIA comboboxes, date pickers, switches…) */
   const widgets = gatherWidgetElements(rootElement)

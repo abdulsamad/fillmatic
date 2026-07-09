@@ -9,6 +9,7 @@ import type { ActionStep } from '@/utils/actions'
  */
 export const actionStepFormSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('click'), selector: z.string().min(1, 'Required') }),
+  z.object({ kind: z.literal('clickRandom'), selector: z.string().min(1, 'Required') }),
   z.object({
     kind: z.literal('waitFor'),
     selector: z.string().min(1, 'Required'),

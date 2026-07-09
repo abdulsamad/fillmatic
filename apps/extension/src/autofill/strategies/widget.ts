@@ -1,5 +1,6 @@
 import { isWidgetElement, log } from '@/utils'
 
+import { findRecipeFor, runRecipeForElement, wasRecipeHandled } from '../recipes'
 import { widgetAdapters } from './adapters'
 import type { FillStrategy } from './types'
 
@@ -15,10 +16,23 @@ export const widgetStrategy: FillStrategy = {
   canHandle: (elem) => isWidgetElement(elem),
 
   fill: async (elem) => {
-    const adapter = widgetAdapters.find((a) => a.detect(elem as HTMLElement))
+    const host = elem as HTMLElement
+
+    // A recipe pass may already have driven this element in the current run.
+    if (wasRecipeHandled(host)) return true
+
+    // User recipes outrank built-in adapters (single-element fills have no
+    // recipe pass, so the lookup happens here too).
+    const recipe = findRecipeFor(host)
+    if (recipe) {
+      await runRecipeForElement(host, recipe)
+      return true
+    }
+
+    const adapter = widgetAdapters.find((a) => a.detect(host))
     if (!adapter) return false
 
-    const filled = await adapter.fill(elem as HTMLElement)
+    const filled = await adapter.fill(host)
     if (!filled) log(`Widget adapter '${adapter.name}' could not fill element, skipping`)
 
     // Handled either way: a failed widget interaction should be skipped, not

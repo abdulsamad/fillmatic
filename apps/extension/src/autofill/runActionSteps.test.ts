@@ -151,6 +151,43 @@ describe('runActionSteps', () => {
     expect(clicked).toEqual(['Large'])
   })
 
+  it('clickRandom clicks one of the visible enabled matches', async () => {
+    const clicked: string[] = []
+    for (const [i, disabled] of [false, false, true].entries()) {
+      const cell = document.createElement('button')
+      cell.className = 'day'
+      cell.textContent = String(i)
+      if (disabled) cell.setAttribute('aria-disabled', 'true')
+      makeVisible(cell)
+      cell.addEventListener('click', () => clicked.push(cell.textContent!))
+      document.body.appendChild(cell)
+    }
+
+    await expect(runActionSteps([{ kind: 'clickRandom', selector: '.day' }])).resolves.toBe(true)
+
+    expect(clicked).toHaveLength(1)
+    expect(['0', '1']).toContain(clicked[0]) // never the disabled cell
+  })
+
+  it('clickRandom fails when nothing visible matches', async () => {
+    await expect(runActionSteps([{ kind: 'clickRandom', selector: '.missing' }])).resolves.toBe(false)
+  })
+
+  it('resolves the @self selector to the context element', async () => {
+    const widget = document.createElement('button')
+    makeVisible(widget)
+    document.body.appendChild(widget)
+
+    let clicks = 0
+    widget.addEventListener('click', () => clicks++)
+
+    await expect(runActionSteps([{ kind: 'click', selector: '@self' }], { self: widget })).resolves.toBe(true)
+    expect(clicks).toBe(1)
+
+    // Without a context element @self resolves to nothing and the step fails.
+    await expect(runActionSteps([{ kind: 'click', selector: '@self' }])).resolves.toBe(false)
+  })
+
   it('presses a key on the target element', async () => {
     const input = document.createElement('input')
     input.id = 'search'
