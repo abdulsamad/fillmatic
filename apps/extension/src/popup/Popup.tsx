@@ -24,6 +24,7 @@ import { Form } from '@/types'
 import { useTimeout } from '@/hooks/useTimeout'
 // import { Avatar } from '@fillmatic/ui'
 import { getAllCommands, getCurrentTab, isInternalPage } from '@/utils'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 import { MESSAGES } from '@/consts'
 import SpecialButtons from '@/components/Popup/SpecialButtons'
 
@@ -219,29 +220,31 @@ export const Popup = () => {
             </TooltipContent>
           </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                aria-label="Open field mapper"
-                disabled={isDisabled}
-                onClick={() => {
-                  if (currentTab?.id) {
-                    // Must run synchronously in the click handler to keep the user gesture.
-                    chrome.sidePanel?.open({ tabId: currentTab.id })
-                    window.close()
-                  }
-                }}
-              >
-                <RadarIcon size={16} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Field mapper</p>
-            </TooltipContent>
-          </Tooltip>
+          {isFeatureEnabled('aiMapping') && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  aria-label="Open field mapper"
+                  disabled={isDisabled}
+                  onClick={() => {
+                    if (currentTab?.id) {
+                      // Must run synchronously in the click handler to keep the user gesture.
+                      chrome.sidePanel?.open({ tabId: currentTab.id })
+                      window.close()
+                    }
+                  }}
+                >
+                  <RadarIcon size={16} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Field mapper</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           <Tooltip>
             <TooltipTrigger asChild>

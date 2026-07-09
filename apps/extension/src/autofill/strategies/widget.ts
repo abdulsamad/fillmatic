@@ -1,4 +1,5 @@
 import { isWidgetElement, log } from '@/utils'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 
 import { findRecipeFor, runRecipeForElement, wasRecipeHandled } from '../recipes'
 import { widgetAdapters } from './adapters'
@@ -18,15 +19,17 @@ export const widgetStrategy: FillStrategy = {
   fill: async (elem) => {
     const host = elem as HTMLElement
 
-    // A recipe pass may already have driven this element in the current run.
-    if (wasRecipeHandled(host)) return true
+    if (isFeatureEnabled('recipes')) {
+      // A recipe pass may already have driven this element in the current run.
+      if (wasRecipeHandled(host)) return true
 
-    // User recipes outrank built-in adapters (single-element fills have no
-    // recipe pass, so the lookup happens here too).
-    const recipe = findRecipeFor(host)
-    if (recipe) {
-      await runRecipeForElement(host, recipe)
-      return true
+      // User recipes outrank built-in adapters (single-element fills have no
+      // recipe pass, so the lookup happens here too).
+      const recipe = findRecipeFor(host)
+      if (recipe) {
+        await runRecipeForElement(host, recipe)
+        return true
+      }
     }
 
     const adapter = widgetAdapters.find((a) => a.detect(host))

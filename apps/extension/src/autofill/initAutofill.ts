@@ -1,6 +1,7 @@
 import { SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { invalidateMatchCache, log } from '@/utils'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 
 import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
 import { resetRecipeRun, runRecipesPass } from './recipes'
@@ -38,7 +39,7 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
   /* User-defined recipes — taught interactions outrank built-in widget adapters
      and can drive fully custom elements no adapter recognizes. */
   resetRecipeRun()
-  await runRecipesPass(rootElement)
+  if (isFeatureEnabled('recipes')) await runRecipesPass(rootElement)
 
   /* Custom widgets (ARIA comboboxes, date pickers, switches…) */
   const widgets = gatherWidgetElements(rootElement)

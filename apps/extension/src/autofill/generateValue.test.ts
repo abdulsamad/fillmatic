@@ -1,6 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
+
 import { generateValue, resolveFieldTargetValue } from '@/autofill/generateValue'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
@@ -19,6 +22,7 @@ const resetStores = () => {
 }
 
 beforeEach(() => {
+  isFeatureEnabled.mockReturnValue(true)
   resetStores()
 })
 
@@ -121,6 +125,27 @@ describe('generateValue', () => {
       },
     })
     expect(await generateValue({ type: 'text', elem: input })).toBe('Override Corp')
+  })
+
+  it('ignores saved mapper snapshots entirely when the aiMapping feature flag is off', async () => {
+    isFeatureEnabled.mockReturnValue(false)
+
+    const input = document.createElement('input')
+    input.id = 'company'
+
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+
+    expect(await generateValue({ type: 'text', elem: input })).not.toBe('Acme Inc')
   })
 
   it('matches an action field target against a widget element via its ARIA label', async () => {

@@ -8,6 +8,9 @@ const { getLocalModelAvailability, inferFieldMap } = vi.hoisted(() => ({
 }))
 vi.mock('@/utils/localModel', () => ({ getLocalModelAvailability, inferFieldMap }))
 
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
+
 import { MESSAGES } from '@/consts'
 import { useAiMappingsStore } from '@/store/ai-mappings'
 import { SidePanel } from '@/sidepanel/SidePanel'
@@ -47,7 +50,18 @@ beforeEach(() => {
   vi.mocked(chrome.tabs.sendMessage).mockReset()
   getLocalModelAvailability.mockReset().mockResolvedValue('unavailable')
   inferFieldMap.mockReset().mockResolvedValue([])
+  isFeatureEnabled.mockReturnValue(true)
   useAiMappingsStore.setState({ snapshots: [] })
+})
+
+describe('SidePanel feature flag', () => {
+  it('shows a disabled message and never scans the page when aiMapping is off', async () => {
+    isFeatureEnabled.mockReturnValue(false)
+    render(<SidePanel />)
+
+    expect(await screen.findByText(/field mapping is currently disabled/i)).toBeInTheDocument()
+    expect(chrome.tabs.sendMessage).not.toHaveBeenCalled()
+  })
 })
 
 describe('SidePanel', () => {

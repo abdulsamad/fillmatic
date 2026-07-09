@@ -1,4 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
 
 import { findRecipeFor, resetRecipeRun, runRecipesPass, wasRecipeHandled } from '@/autofill/recipes'
 import { widgetStrategy } from '@/autofill/strategies/widget'
@@ -50,6 +53,7 @@ const buildCustomCalendar = () => {
 }
 
 beforeEach(() => {
+  isFeatureEnabled.mockReturnValue(true)
   useConfigStore.setState({ typingEffect: false })
   useRecipesStore.setState({ recipes: [calendarRecipe()] })
   resetRecipeRun()
@@ -139,5 +143,26 @@ describe('widgetStrategy recipe priority', () => {
     // A second fill in the same run skips the element entirely.
     await expect(widgetStrategy.fill(toggle)).resolves.toBe(true)
     expect(clicks).toEqual(['recipe-click'])
+  })
+
+  it('never invokes the recipe when the recipes feature flag is off, falling through to the built-in adapter', async () => {
+    isFeatureEnabled.mockReturnValue(false)
+
+    const toggle = document.createElement('button')
+    toggle.setAttribute('role', 'switch')
+    toggle.setAttribute('aria-checked', 'false')
+    toggle.className = 'cal-trigger' // matches the recipe selector, but the flag is off
+    makeVisible(toggle)
+    document.body.appendChild(toggle)
+
+    useRecipesStore.setState({
+      recipes: [calendarRecipe({ steps: [{ kind: 'click', selector: '@self' }] })],
+    })
+
+    // wasRecipeHandled is only ever set inside the recipe path, so it staying false
+    // is the deterministic proof the recipe never ran — unlike asserting on clicks,
+    // which the fallback ARIA adapter may legitimately also produce on this element.
+    await expect(widgetStrategy.fill(toggle)).resolves.toBe(true)
+    expect(wasRecipeHandled(toggle)).toBe(false)
   })
 })

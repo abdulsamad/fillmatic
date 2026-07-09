@@ -4,6 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { PRODUCT_NAME } from '@fillmatic/config'
 
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
+
 import Popup from '@/popup/Popup'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { usePopupStore } from '@/store/popup'
@@ -21,6 +24,7 @@ const fillData = vi.fn().mockResolvedValue(undefined)
 
 beforeEach(() => {
   vi.clearAllMocks()
+  isFeatureEnabled.mockReturnValue(true)
   usePopupStore.setState({
     isAutofilling: false,
     isDisabled: false,
@@ -133,6 +137,28 @@ describe('Popup actions', () => {
     await user.click(await screen.findByRole('button', { name: 'Settings' }))
 
     expect(chrome.runtime.openOptionsPage).toHaveBeenCalled()
+  })
+})
+
+describe('Popup field mapper button (feature-flagged)', () => {
+  it('opens the side panel and closes the popup when clicked', async () => {
+    chrome.sidePanel = { open: vi.fn() } as unknown as typeof chrome.sidePanel
+    const closeSpy = vi.spyOn(window, 'close').mockImplementation(() => {})
+    const user = userEvent.setup()
+    render(<Popup />)
+
+    await user.click(await screen.findByRole('button', { name: 'Open field mapper' }))
+
+    expect(chrome.sidePanel.open).toHaveBeenCalledWith({ tabId: baseTab.id })
+    expect(closeSpy).toHaveBeenCalled()
+  })
+
+  it('is hidden entirely when the aiMapping feature flag is off', async () => {
+    isFeatureEnabled.mockReturnValue(false)
+    render(<Popup />)
+
+    await screen.findByRole('button', { name: 'Settings' })
+    expect(screen.queryByRole('button', { name: 'Open field mapper' })).not.toBeInTheDocument()
   })
 })
 

@@ -17,6 +17,7 @@ import { MESSAGES } from '@/consts'
 import { useAiMappingsStore } from '@/store/ai-mappings'
 import { getCurrentTab } from '@/utils'
 import { can } from '@/utils/entitlements'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 import { downloadJson, readJsonFile } from '@/utils/json-io'
 import { snapshotsForUrl, type MappingSnapshot } from '@/utils/ai-mappings'
 import {
@@ -177,6 +178,10 @@ export const SidePanel = () => {
   useEffect(() => {
     getLocalModelAvailability().then(setAiStatus)
   }, [])
+
+  if (!isFeatureEnabled('aiMapping')) {
+    return <main className="p-4 text-sm text-muted-foreground">Field mapping is currently disabled.</main>
+  }
 
   if (!can('aiMapping')) {
     return <main className="p-4 text-sm text-muted-foreground">Field mapping is not part of your current plan.</main>

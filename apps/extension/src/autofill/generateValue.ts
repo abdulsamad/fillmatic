@@ -8,6 +8,7 @@ import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isWidgetElement, matchElement } from '@/utils'
 import { snapshotsForUrl } from '@/utils/ai-mappings'
 import { matchFieldTarget, type FieldTarget } from '@/utils/actions'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 
 interface GenerateValueParams {
   type: HTMLInputTypeAttribute | 'contenteditable'
@@ -16,7 +17,7 @@ interface GenerateValueParams {
 
 /** Saved mapper snapshots matching the current URL — fill-time is model-free by design. */
 const getActiveSnapshotTarget = (elem: Element): FieldTarget | undefined => {
-  if (!(elem instanceof HTMLElement)) return undefined
+  if (!isFeatureEnabled('aiMapping') || !(elem instanceof HTMLElement)) return undefined
 
   const { snapshots } = useAiMappingsStore.getState()
   for (const snapshot of snapshotsForUrl(snapshots, window.location.href)) {
