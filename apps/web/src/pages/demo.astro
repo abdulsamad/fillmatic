@@ -303,6 +303,126 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
       </div>
     </section>
 
+    <!-- Custom ARIA widgets (no native inputs) — exercises FillMatic's widget fill strategy -->
+    <section class="forms-grid full-width-grid">
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>Custom widgets</h2>
+        </div>
+        <div class="glass-form kitchen-sink" id="widgets-panel">
+          <p class="widgets-note">
+            These controls are built from plain <code>div</code>s and <code>button</code>s with ARIA roles — the way
+            component libraries like Radix, MUI or Headless UI render them. No native inputs involved.
+          </p>
+
+          <div class="field-row">
+            <div class="field">
+              <span class="field-label" id="w-fruit-label">Favorite fruit</span>
+              <button
+                type="button"
+                class="widget-trigger"
+                id="w-fruit"
+                role="combobox"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="w-fruit-listbox"
+                aria-labelledby="w-fruit-label"
+                data-placeholder="Select a fruit…"
+              >Select a fruit…</button>
+              <div class="widget-listbox" id="w-fruit-listbox" role="listbox" aria-labelledby="w-fruit-label" hidden>
+                <div class="widget-option" role="option" aria-selected="false">Apple</div>
+                <div class="widget-option" role="option" aria-selected="false">Banana</div>
+                <div class="widget-option" role="option" aria-selected="false">Cherry</div>
+                <div class="widget-option" role="option" aria-selected="false">Dragonfruit</div>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-label" id="w-date-label">Delivery date</span>
+              <button
+                type="button"
+                class="widget-trigger"
+                id="w-date"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="w-date-dialog"
+                aria-labelledby="w-date-label"
+                data-placeholder="Pick a date…"
+              >Pick a date…</button>
+              <div class="widget-dialog" id="w-date-dialog" role="dialog" aria-label="Choose date" hidden>
+                <div class="widget-grid" role="grid" aria-label="Days"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <span class="field-label" id="w-news-label">Newsletter</span>
+              <button
+                type="button"
+                class="widget-switch"
+                id="w-newsletter"
+                role="switch"
+                aria-checked="false"
+                aria-labelledby="w-news-label"
+              ><span class="widget-switch-thumb"></span></button>
+            </div>
+            <div class="field">
+              <span class="field-label" id="w-size-label">T-shirt size</span>
+              <div class="widget-radiogroup" role="radiogroup" aria-labelledby="w-size-label" id="w-size">
+                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Small</div>
+                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Medium</div>
+                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Large</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contenteditable hosts — exercises FillMatic's editor-aware contenteditable strategy -->
+    <section class="forms-grid full-width-grid">
+      <div class="form-card">
+        <div class="form-card-header">
+          <h2>Rich text &amp; editable areas</h2>
+        </div>
+        <div class="glass-form kitchen-sink" id="editable-panel">
+          <p class="widgets-note">
+            Editable <code>div</code>s the way rich-text editors render them — a plain
+            <code>contenteditable</code> host, a <code>plaintext-only</code> host, and a fake ProseMirror-style
+            editor that only accepts text through <code>beforeinput</code>.
+          </p>
+
+          <div class="field-row">
+            <div class="field">
+              <span class="field-label" id="ce-notes-label">Notes (contenteditable)</span>
+              <div class="editable-host" contenteditable="true" role="textbox" aria-labelledby="ce-notes-label"></div>
+            </div>
+            <div class="field">
+              <span class="field-label" id="ce-plain-label">Comment (plaintext-only)</span>
+              <div
+                class="editable-host"
+                contenteditable="plaintext-only"
+                role="textbox"
+                aria-labelledby="ce-plain-label"
+              ></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label" id="ce-editor-label">Bio (model-backed editor)</span>
+            <div
+              class="editable-host editable-tall ProseMirror"
+              id="ce-editor"
+              contenteditable="true"
+              role="textbox"
+              aria-labelledby="ce-editor-label"
+            ></div>
+            <p class="widgets-note" id="ce-editor-state">Editor model: (empty)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="demo-footer">
       Nothing here is real — all values are dummy data. ·
       <a href={`mailto:${SUPPORT_EMAIL}?subject=${PRODUCT_NAME} Feedback`}>Send feedback</a>
@@ -335,6 +455,92 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   const rangeVal = document.getElementById("range-val");
   if (rangeEl && rangeVal) {
     rangeEl.addEventListener("input", () => { rangeVal.textContent = rangeEl.value; });
+  }
+
+  /* --- Custom ARIA widgets (combobox, date dialog, switch, radiogroup) --- */
+
+  const setupPopoverTrigger = (trigger: HTMLButtonElement, popover: HTMLElement) => {
+    const close = () => {
+      popover.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+    };
+    trigger.addEventListener("click", () => {
+      const opening = popover.hidden;
+      popover.hidden = !opening;
+      trigger.setAttribute("aria-expanded", String(opening));
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    return close;
+  };
+
+  const fruitTrigger = document.getElementById("w-fruit") as HTMLButtonElement;
+  const fruitListbox = document.getElementById("w-fruit-listbox")!;
+  if (fruitTrigger && fruitListbox) {
+    const close = setupPopoverTrigger(fruitTrigger, fruitListbox);
+    fruitListbox.querySelectorAll<HTMLElement>('[role="option"]').forEach((option) => {
+      option.addEventListener("click", () => {
+        fruitListbox.querySelectorAll('[role="option"]').forEach((o) => o.setAttribute("aria-selected", "false"));
+        option.setAttribute("aria-selected", "true");
+        fruitTrigger.textContent = option.textContent;
+        close();
+      });
+    });
+  }
+
+  const dateTrigger = document.getElementById("w-date") as HTMLButtonElement;
+  const dateDialog = document.getElementById("w-date-dialog")!;
+  const dateGrid = dateDialog?.querySelector('[role="grid"]');
+  if (dateTrigger && dateDialog && dateGrid) {
+    const close = setupPopoverTrigger(dateTrigger, dateDialog);
+    const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.setAttribute("role", "gridcell");
+      cell.className = "widget-day";
+      cell.textContent = String(day);
+      cell.addEventListener("click", () => {
+        const picked = new Date(now.getFullYear(), now.getMonth(), day);
+        dateTrigger.textContent = picked.toLocaleDateString();
+        close();
+      });
+      dateGrid.appendChild(cell);
+    }
+  }
+
+  const newsletterSwitch = document.getElementById("w-newsletter");
+  newsletterSwitch?.addEventListener("click", () => {
+    const checked = newsletterSwitch.getAttribute("aria-checked") === "true";
+    newsletterSwitch.setAttribute("aria-checked", String(!checked));
+  });
+
+  document.querySelectorAll<HTMLElement>("#w-size [role='radio']").forEach((radio) => {
+    radio.addEventListener("click", () => {
+      radio.closest("[role='radiogroup']")
+        ?.querySelectorAll("[role='radio']")
+        .forEach((r) => r.setAttribute("aria-checked", "false"));
+      radio.setAttribute("aria-checked", "true");
+    });
+  });
+
+  /* --- Model-backed editor: only accepts text through beforeinput (like ProseMirror/Lexical) --- */
+
+  const modelEditor = document.getElementById("ce-editor");
+  const modelState = document.getElementById("ce-editor-state");
+  if (modelEditor && modelState) {
+    let model = "";
+    const render = () => {
+      modelEditor.textContent = model;
+      modelState.textContent = `Editor model: ${model ? `"${model}"` : "(empty)"}`;
+    };
+    modelEditor.addEventListener("beforeinput", (e) => {
+      e.preventDefault(); // the editor owns all mutations
+      const ev = e as InputEvent;
+      if (ev.inputType === "insertText" && ev.data) model += ev.data;
+      if (ev.inputType === "deleteContentBackward") model = model.slice(0, -1);
+      render();
+    });
   }
 </script>
 
@@ -659,6 +865,120 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   }
 
   .reset-btn:hover { background: rgba(99,102,241,.18); }
+
+  /* Custom ARIA widgets */
+  .widgets-note {
+    font-size: .85rem;
+    color: #94a3b8;
+    margin: 0 0 1.25rem;
+    line-height: 1.5;
+  }
+
+  .widget-trigger {
+    width: 100%;
+    padding: .65rem .85rem;
+    text-align: left;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+
+  .widget-trigger[aria-expanded="true"],
+  .widget-trigger:hover { border-color: #6366f1; }
+
+  .widget-listbox,
+  .widget-dialog {
+    margin-top: .4rem;
+    padding: .35rem;
+    background: #1a1a2a;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 8px;
+  }
+
+  .widget-option {
+    padding: .5rem .7rem;
+    border-radius: 6px;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+
+  .widget-option:hover { background: rgba(99,102,241,.18); }
+  .widget-option[aria-selected="true"] { background: rgba(99,102,241,.3); }
+
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: .2rem;
+  }
+
+  .widget-day {
+    padding: .4rem 0;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: .8rem;
+    cursor: pointer;
+  }
+
+  .widget-day:hover { background: rgba(99,102,241,.25); }
+
+  .widget-switch {
+    width: 46px;
+    height: 26px;
+    padding: 2px;
+    background: rgba(255,255,255,.12);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    display: block;
+  }
+
+  .widget-switch-thumb {
+    display: block;
+    width: 22px;
+    height: 22px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    transition: transform .15s;
+  }
+
+  .widget-switch[aria-checked="true"] { background: #6366f1; }
+  .widget-switch[aria-checked="true"] .widget-switch-thumb { transform: translateX(20px); }
+
+  .widget-radiogroup { display: flex; gap: .5rem; }
+
+  .widget-radio {
+    padding: .45rem .9rem;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 8px;
+    font-size: .85rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .widget-radio:hover { border-color: #6366f1; }
+  .widget-radio[aria-checked="true"] { background: rgba(99,102,241,.3); border-color: #6366f1; }
+
+  /* Contenteditable hosts */
+  .editable-host {
+    min-height: 2.6rem;
+    padding: .65rem .85rem;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: .9rem;
+    line-height: 1.5;
+    outline: none;
+  }
+
+  .editable-host:focus { border-color: #6366f1; }
+
+  .editable-tall { min-height: 4.5rem; }
 
   /* Footer */
   .demo-footer {

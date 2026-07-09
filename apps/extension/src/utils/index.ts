@@ -11,10 +11,43 @@ export const isDev = import.meta.env.DEV
 export const isSupportedInput = (elem: Element): elem is SupportedInputsType =>
   elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement
 
-export const isContentEditable = (elem: Element): boolean =>
-  elem instanceof HTMLElement && elem.contentEditable?.toLowerCase() === 'true' && !isSupportedInput(elem)
+export const isContentEditable = (elem: Element): boolean => {
+  if (!(elem instanceof HTMLElement) || isSupportedInput(elem)) return false
+
+  // contenteditable="" means true; 'plaintext-only' is editable too. The reflecting
+  // property is read as a fallback for environments where assigning it doesn't
+  // reach the attribute (jsdom).
+  const attr = elem.getAttribute('contenteditable')
+  const mode = (attr ?? (typeof elem.contentEditable === 'string' ? elem.contentEditable : '')).toLowerCase()
+  if ((attr !== null && mode === '') || mode === 'true' || mode === 'plaintext-only') return true
+
+  // Computed editability covers elements that inherit it (children of an editable
+  // host, designMode documents) without carrying the attribute themselves.
+  return elem.isContentEditable === true
+}
 
 export const isSupportedElement = (elem: Element): boolean => isSupportedInput(elem) || isContentEditable(elem)
+
+export type WidgetKind = 'option-picker' | 'calendar' | 'switch' | 'slider' | 'spinbutton' | 'radiogroup'
+
+/** Classifies a widget element by its ARIA semantics; undefined = not a known widget. */
+export const getWidgetKind = (elem: Element): WidgetKind | undefined => {
+  const role = elem.getAttribute('role')
+  const haspopup = elem.getAttribute('aria-haspopup')
+
+  if (role === 'switch') return 'switch'
+  if (role === 'slider') return 'slider'
+  if (role === 'spinbutton') return 'spinbutton'
+  if (role === 'radiogroup') return 'radiogroup'
+  if (haspopup === 'dialog') return 'calendar'
+  if (role === 'combobox' || role === 'listbox' || haspopup === 'listbox') return 'option-picker'
+
+  return undefined
+}
+
+/** True for non-native elements the widget fill strategy knows how to drive. */
+export const isWidgetElement = (elem: Element): boolean =>
+  elem instanceof HTMLElement && !isSupportedInput(elem) && getWidgetKind(elem) !== undefined
 
 /**
  * Native value/checked setters captured from the prototype. Frameworks like React patch the

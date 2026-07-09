@@ -21,6 +21,9 @@ export default defineManifest({
     default_icon: 'icons/icon192.png',
   },
   options_page: 'options.html',
+  side_panel: {
+    default_path: 'sidepanel.html',
+  },
   background: {
     service_worker: 'src/background/index.ts',
     type: 'module',
@@ -38,7 +41,7 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['storage', 'activeTab'],
+  permissions: ['storage', 'activeTab', 'sidePanel'],
   commands: {
     AUTOFILL_ALL: {
       description: 'Fill all inputs on page',

@@ -1,9 +1,13 @@
 import { faker } from '@faker-js/faker'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { generateValue } from '@/autofill/generateValue'
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
+
+import { generateValue, resolveFieldTargetValue } from '@/autofill/generateValue'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
+import { useAiMappingsStore } from '@/store/ai-mappings'
 import { type Action } from '@/utils/actions'
 
 const resetStores = () => {
@@ -14,9 +18,11 @@ const resetStores = () => {
     activeAction: undefined,
   })
   useProfileStore.setState({ profiles: [DEFAULT_PROFILE], activeProfileId: DEFAULT_PROFILE_ID })
+  useAiMappingsStore.setState({ snapshots: [] })
 }
 
 beforeEach(() => {
+  isFeatureEnabled.mockReturnValue(true)
   resetStores()
 })
 
@@ -63,6 +69,100 @@ describe('generateValue', () => {
     })
 
     expect(await generateValue({ type: 'text', elem: input })).toBe('SAVE10')
+  })
+
+  it('uses a saved mapper snapshot for the site, but the active action still wins', async () => {
+    const input = document.createElement('input')
+    input.id = 'company'
+
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+
+    expect(await generateValue({ type: 'text', elem: input })).toBe('Acme Inc')
+
+    // Snapshot for another site does not apply.
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-2',
+          name: 'Elsewhere',
+          siteMatcher: 'not-this-site.example',
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+    expect(await generateValue({ type: 'text', elem: input })).not.toBe('Acme Inc')
+
+    // An active action outranks the snapshot tier.
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+    contentScriptStore.setState({
+      activeAction: {
+        id: 'demo',
+        name: 'Demo',
+        matcher: { type: 'startsWith', value: 'x' },
+        active: true,
+        fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Override Corp' }],
+      },
+    })
+    expect(await generateValue({ type: 'text', elem: input })).toBe('Override Corp')
+  })
+
+  it('ignores saved mapper snapshots entirely when the aiMapping feature flag is off', async () => {
+    isFeatureEnabled.mockReturnValue(false)
+
+    const input = document.createElement('input')
+    input.id = 'company'
+
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+
+    expect(await generateValue({ type: 'text', elem: input })).not.toBe('Acme Inc')
+  })
+
+  it('matches an action field target against a widget element via its ARIA label', async () => {
+    const widget = document.createElement('button')
+    widget.setAttribute('role', 'combobox')
+    widget.setAttribute('aria-label', 'Country')
+
+    const action: Action = {
+      id: 'demo',
+      name: 'Demo',
+      matcher: { type: 'startsWith', value: 'https://example.com' },
+      active: true,
+      fields: [{ attribute: 'label', operator: 'contains', match: 'country', value: 'Canada' }],
+    }
+    contentScriptStore.setState({ activeAction: action })
+
+    expect(await generateValue({ type: 'select', elem: widget })).toBe('Canada')
   })
 
   it('generates a value from a recognized autocomplete token', async () => {
@@ -219,5 +319,93 @@ describe('generateValue', () => {
 
     const value = (await generateValue({ type: 'password', elem: input })) as string
     expect(value).toMatch(/^\d{6}$/)
+  })
+})
+
+describe('resolveFieldTargetValue', () => {
+  const target = (overrides = {}) => ({
+    attribute: 'id' as const,
+    operator: 'exact' as const,
+    match: 'field',
+    value: 'literal',
+    ...overrides,
+  })
+
+  it('returns the literal value when the strategy is absent (pre-existing targets)', () => {
+    expect(resolveFieldTargetValue(target(), document.createElement('input'))).toBe('literal')
+  })
+
+  it('returns the literal value for the exact strategy', () => {
+    expect(resolveFieldTargetValue(target({ valueStrategy: 'exact' }), document.createElement('input'))).toBe(
+      'literal',
+    )
+  })
+
+  it('generates a fresh email for random/email', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'email', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value).toContain('@')
+  })
+
+  it('respects a number input min/max for random/number', () => {
+    const input = document.createElement('input')
+    input.type = 'number'
+    input.min = '5'
+    input.max = '7'
+
+    const value = resolveFieldTargetValue(target({ valueStrategy: 'random', valueType: 'number', value: '' }), input)
+    expect(Number(value)).toBeGreaterThanOrEqual(5)
+    expect(Number(value)).toBeLessThanOrEqual(7)
+  })
+
+  it('generates an ISO date for random/date', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'date', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  it('records the generated full name for later fields (email consistency)', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', valueType: 'fullName', value: '' }),
+      document.createElement('input'),
+    )
+    expect(contentScriptStore.getState().firstName).toBe(value)
+  })
+
+  it('falls back to a word for random with no valueType', () => {
+    const value = resolveFieldTargetValue(
+      target({ valueStrategy: 'random', value: '' }),
+      document.createElement('input'),
+    )
+    expect(value.length).toBeGreaterThan(0)
+  })
+
+  it('is applied when an action field target uses the random strategy', async () => {
+    const input = document.createElement('input')
+    input.id = 'contact_email'
+
+    const action: Action = {
+      id: 'demo',
+      name: 'Demo',
+      matcher: { type: 'startsWith', value: 'https://example.com' },
+      active: true,
+      fields: [
+        {
+          attribute: 'id',
+          operator: 'exact',
+          match: 'contact_email',
+          value: '',
+          valueStrategy: 'random',
+          valueType: 'email',
+        },
+      ],
+    }
+    contentScriptStore.setState({ activeAction: action })
+
+    expect((await generateValue({ type: 'text', elem: input })) as string).toContain('@')
   })
 })

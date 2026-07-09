@@ -40,7 +40,9 @@ import {
 import { useActionsStore } from '@/store/actions'
 import { type Action } from '@/utils/actions'
 import FieldTargetsEditor from './FieldTargetsEditor'
-import { fieldTargetsSchema, EMPTY_FIELD_TARGET } from './fieldTargets'
+import ActionStepsEditor from './ActionStepsEditor'
+import { relaxedFieldTargetSchema, isEmptyFieldTarget, EMPTY_FIELD_TARGET } from './fieldTargets'
+import { actionStepsFormSchema, actionStepsToForm, formStepsToActionSteps } from './actionSteps'
 
 const MATCHER_TYPES = [
   { value: 'startsWith', label: 'URL starts with' },
@@ -49,15 +51,33 @@ const MATCHER_TYPES = [
   { value: 'regex', label: 'URL matches regex' },
 ] as const
 
-const actionSchema = z.object({
-  name: z.string().min(1, 'Button label is required'),
-  group: z.string().optional(),
-  matcherType: z.enum(['startsWith', 'hostname', 'endsWith', 'regex']),
-  matcherValue: z.string().min(1, 'Matcher value is required'),
-  active: z.boolean(),
-  matchInIframe: z.boolean(),
-  fields: fieldTargetsSchema,
-})
+const actionSchema = z
+  .object({
+    name: z.string().min(1, 'Button label is required'),
+    group: z.string().optional(),
+    matcherType: z.enum(['startsWith', 'hostname', 'endsWith', 'regex']),
+    matcherValue: z.string().min(1, 'Matcher value is required'),
+    active: z.boolean(),
+    matchInIframe: z.boolean(),
+    rootSelector: z.string().optional(),
+    steps: actionStepsFormSchema,
+    fields: z.array(relaxedFieldTargetSchema),
+  })
+  .superRefine((values, ctx) => {
+    // Untouched empty rows are allowed (dropped on save) so a steps-only action can
+    // keep the default blank field row; partially-filled rows get per-field errors.
+    values.fields.forEach((field, i) => {
+      if (isEmptyFieldTarget(field)) return
+      if (!field.match) ctx.addIssue({ code: 'custom', message: 'Required', path: ['fields', i, 'match'] })
+      if ((field.valueStrategy ?? 'exact') === 'exact' && !field.value) {
+        ctx.addIssue({ code: 'custom', message: 'Required', path: ['fields', i, 'value'] })
+      }
+    })
+
+    if (values.fields.every(isEmptyFieldTarget) && values.steps.length === 0) {
+      ctx.addIssue({ code: 'custom', path: ['fields'], message: 'Add at least one field to fill (or a step)' })
+    }
+  })
 
 type ActionFormValues = z.infer<typeof actionSchema>
 
@@ -68,6 +88,8 @@ const EMPTY_FORM: ActionFormValues = {
   matcherValue: '',
   active: true,
   matchInIframe: false,
+  rootSelector: '',
+  steps: [],
   fields: [{ ...EMPTY_FIELD_TARGET }],
 }
 
@@ -78,18 +100,21 @@ const actionToForm = (a: Action): ActionFormValues => ({
   matcherValue: a.matcher.value,
   active: a.active,
   matchInIframe: a.matchInIframe ?? false,
+  rootSelector: a.rootSelector ?? '',
+  steps: actionStepsToForm(a.steps),
   fields: a.fields.length ? a.fields : [{ ...EMPTY_FIELD_TARGET }],
 })
 
-const formToAction = (id: string, values: ActionFormValues, rootSelector?: string): Action => ({
+const formToAction = (id: string, values: ActionFormValues): Action => ({
   id,
   name: values.name,
   group: values.group?.trim() || undefined,
   matcher: { type: values.matcherType, value: values.matcherValue },
   active: values.active,
   matchInIframe: values.matchInIframe || undefined,
-  rootSelector,
-  fields: values.fields,
+  rootSelector: values.rootSelector?.trim() || undefined,
+  steps: values.steps.length ? formStepsToActionSteps(values.steps) : undefined,
+  fields: values.fields.filter((field) => !isEmptyFieldTarget(field)),
 })
 
 interface ActionDialogProps {
@@ -108,7 +133,7 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
 
   const onSubmit = (values: ActionFormValues) => {
     const id = initial?.id ?? crypto.randomUUID()
-    const action = formToAction(id, values, initial?.rootSelector)
+    const action = formToAction(id, values)
     if (initial) {
       updateAction(action)
     } else {
@@ -197,6 +222,20 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
               />
             </div>
 
+            <FormField
+              control={form.control}
+              name="rootSelector"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Scope to CSS selector</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. #checkout-form (optional)" {...field} />
+                  </FormControl>
+                  <FormDescription>When set, the action only fills inside the first matching element.</FormDescription>
+                </FormItem>
+              )}
+            />
+
             <div className="flex items-center gap-6">
               <FormField
                 control={form.control}
@@ -225,6 +264,8 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
             </div>
 
             <FieldTargetsEditor name="fields" />
+
+            <ActionStepsEditor name="steps" />
 
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>

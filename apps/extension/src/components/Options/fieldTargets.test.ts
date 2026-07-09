@@ -23,6 +23,22 @@ describe('fieldTargetSchema', () => {
     expect(fieldTargetSchema.safeParse({ ...valid, match: '' }).success).toBe(false)
     expect(fieldTargetSchema.safeParse({ ...valid, value: '' }).success).toBe(false)
   })
+
+  it('allows an empty value when the strategy is random', () => {
+    expect(fieldTargetSchema.safeParse({ ...valid, value: '', valueStrategy: 'random' }).success).toBe(true)
+    expect(
+      fieldTargetSchema.safeParse({ ...valid, value: '', valueStrategy: 'random', valueType: 'email' }).success,
+    ).toBe(true)
+  })
+
+  it('still requires a value for the explicit exact strategy', () => {
+    expect(fieldTargetSchema.safeParse({ ...valid, value: '', valueStrategy: 'exact' }).success).toBe(false)
+  })
+
+  it('rejects an unknown strategy or value type', () => {
+    expect(fieldTargetSchema.safeParse({ ...valid, valueStrategy: 'nope' }).success).toBe(false)
+    expect(fieldTargetSchema.safeParse({ ...valid, valueStrategy: 'random', valueType: 'nope' }).success).toBe(false)
+  })
 })
 
 describe('fieldTargetsSchema', () => {

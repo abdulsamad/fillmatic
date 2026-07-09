@@ -1,4 +1,6 @@
 export * from './handleFileInput'
+export * from './waitForSettle'
+export * from './runActionSteps'
 export * from './gatherVisibleInputsInOrder'
 export * from './fillElement'
 export * from './initAutofill'

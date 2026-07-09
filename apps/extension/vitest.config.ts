@@ -27,6 +27,7 @@ export default defineConfig({
         'src/global.d.ts',
         'src/options/index.tsx',
         'src/popup/index.tsx',
+        'src/sidepanel/index.tsx',
         'src/manifest.ts',
       ],
       // Ratchet this floor up as coverage improves; never lower it without cause.

@@ -66,6 +66,7 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
       break
 
     default: {
+      log(`Unhandled background command: ${command}`)
       return
     }
   }

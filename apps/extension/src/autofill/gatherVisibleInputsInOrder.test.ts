@@ -1,9 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
 import {
+  gatherContenteditableHosts,
   gatherVisibleInputsInOrder,
+  gatherWidgetElements,
   isElementVisible,
   isInViewport,
+  queryDeepAll,
 } from '@/autofill/gatherVisibleInputsInOrder'
 
 const makeVisible = (elem: HTMLElement) => {
@@ -119,5 +122,183 @@ describe('gatherVisibleInputsInOrder', () => {
     document.body.appendChild(visible)
 
     expect(gatherVisibleInputsInOrder()).toContain(visible)
+  })
+
+  it('finds inputs inside open shadow roots', () => {
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    const shadow = host.attachShadow({ mode: 'open' })
+
+    const input = document.createElement('input')
+    makeVisible(input)
+    shadow.appendChild(input)
+
+    expect(gatherVisibleInputsInOrder()).toContain(input)
+  })
+})
+
+describe('queryDeepAll', () => {
+  it('matches elements in the light DOM and in nested open shadow roots', () => {
+    const light = document.createElement('button')
+    light.setAttribute('role', 'switch')
+    document.body.appendChild(light)
+
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    const shadow = host.attachShadow({ mode: 'open' })
+
+    const innerHost = document.createElement('div')
+    shadow.appendChild(innerHost)
+    const innerShadow = innerHost.attachShadow({ mode: 'open' })
+
+    const deep = document.createElement('button')
+    deep.setAttribute('role', 'switch')
+    innerShadow.appendChild(deep)
+
+    const results = queryDeepAll(document, '[role="switch"]')
+    expect(results).toContain(light)
+    expect(results).toContain(deep)
+  })
+})
+
+describe('gatherWidgetElements', () => {
+  it('collects visible ARIA widgets', () => {
+    const combobox = document.createElement('button')
+    combobox.setAttribute('role', 'combobox')
+    makeVisible(combobox)
+
+    const toggle = document.createElement('div')
+    toggle.setAttribute('role', 'switch')
+    makeVisible(toggle)
+
+    document.body.append(combobox, toggle)
+
+    expect(gatherWidgetElements()).toEqual([combobox, toggle])
+  })
+
+  it('leaves native inputs carrying widget roles to the native path', () => {
+    const input = document.createElement('input')
+    input.setAttribute('role', 'combobox')
+    makeVisible(input)
+    document.body.appendChild(input)
+
+    expect(gatherWidgetElements()).toEqual([])
+  })
+
+  it('skips widgets wrapping a visible native input, keeps widgets syncing to a hidden one', () => {
+    const wrappingVisible = document.createElement('div')
+    wrappingVisible.setAttribute('role', 'combobox')
+    makeVisible(wrappingVisible)
+    const visibleInput = document.createElement('input')
+    makeVisible(visibleInput)
+    wrappingVisible.appendChild(visibleInput)
+
+    const wrappingHidden = document.createElement('div')
+    wrappingHidden.setAttribute('role', 'combobox')
+    makeVisible(wrappingHidden)
+    const hiddenInput = document.createElement('input')
+    hiddenInput.type = 'hidden'
+    wrappingHidden.appendChild(hiddenInput)
+
+    document.body.append(wrappingVisible, wrappingHidden)
+
+    expect(gatherWidgetElements()).toEqual([wrappingHidden])
+  })
+
+  it('skips disabled widgets and elements nested inside an already-collected widget', () => {
+    const disabled = document.createElement('button')
+    disabled.setAttribute('role', 'combobox')
+    disabled.setAttribute('aria-disabled', 'true')
+    makeVisible(disabled)
+
+    const group = document.createElement('div')
+    group.setAttribute('role', 'radiogroup')
+    makeVisible(group)
+    const nested = document.createElement('div')
+    nested.setAttribute('role', 'switch')
+    makeVisible(nested)
+    group.appendChild(nested)
+
+    document.body.append(disabled, group)
+
+    expect(gatherWidgetElements()).toEqual([group])
+  })
+
+  it('scopes to the given root element', () => {
+    const inside = document.createElement('button')
+    inside.setAttribute('role', 'switch')
+    makeVisible(inside)
+    const outside = document.createElement('button')
+    outside.setAttribute('role', 'switch')
+    makeVisible(outside)
+
+    const root = document.createElement('div')
+    root.appendChild(inside)
+    document.body.append(root, outside)
+
+    expect(gatherWidgetElements(root)).toEqual([inside])
+  })
+})
+
+describe('gatherContenteditableHosts', () => {
+  const makeEditable = (mode = 'true') => {
+    const host = document.createElement('div')
+    host.setAttribute('contenteditable', mode)
+    makeVisible(host)
+    return host
+  }
+
+  it('collects visible contenteditable hosts, including plaintext-only', () => {
+    const editable = makeEditable()
+    const plaintext = makeEditable('plaintext-only')
+    document.body.append(editable, plaintext)
+
+    expect(gatherContenteditableHosts()).toEqual([editable, plaintext])
+  })
+
+  it('skips invisible hosts and contenteditable="false"', () => {
+    const hidden = document.createElement('div')
+    hidden.setAttribute('contenteditable', 'true')
+
+    const off = makeEditable('false')
+    document.body.append(hidden, off)
+
+    expect(gatherContenteditableHosts()).toEqual([])
+  })
+
+  it('returns only the outermost host when editable elements nest', () => {
+    const host = makeEditable()
+    const nested = makeEditable()
+    host.appendChild(nested)
+
+    const nestedTextbox = document.createElement('div')
+    nestedTextbox.setAttribute('role', 'textbox')
+    nestedTextbox.setAttribute('contenteditable', 'true')
+    makeVisible(nestedTextbox)
+    host.appendChild(nestedTextbox)
+
+    document.body.appendChild(host)
+
+    expect(gatherContenteditableHosts()).toEqual([host])
+  })
+
+  it('ignores role="textbox" elements that are not actually editable', () => {
+    const textbox = document.createElement('div')
+    textbox.setAttribute('role', 'textbox')
+    makeVisible(textbox)
+    document.body.appendChild(textbox)
+
+    expect(gatherContenteditableHosts()).toEqual([])
+  })
+
+  it('scopes to the given root element', () => {
+    const inside = makeEditable()
+    const outside = makeEditable()
+
+    const root = document.createElement('div')
+    root.appendChild(inside)
+    document.body.append(root, outside)
+
+    expect(gatherContenteditableHosts(root)).toEqual([inside])
   })
 })
