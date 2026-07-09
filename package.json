@@ -15,11 +15,11 @@
   },
   "devDependencies": {
     "bestzip": "^3.0.1",
-    "prettier": "^3.8.4",
-    "turbo": "^2.10.0",
-    "typescript": "^6.0.3"
+    "prettier": "^3.9.4",
+    "turbo": "^2.10.4",
+    "typescript": "catalog:"
   },
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=22"
   }
