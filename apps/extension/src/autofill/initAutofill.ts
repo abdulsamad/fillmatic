@@ -1,8 +1,10 @@
 import { SupportedInputsType } from '@/types'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { invalidateMatchCache, log } from '@/utils'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 
-import { gatherVisibleInputsInOrder, fillElement } from '.'
+import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
+import { resetRecipeRun, runRecipesPass } from './recipes'
 
 interface IinitiateAutofill {
   rootElement: Element | null
@@ -26,16 +28,36 @@ export const initiateAutofill = async ({ rootElement }: IinitiateAutofill) => {
 
   await autoFillInputsSequentially({ inputs })
 
-  // Check for any inputs that have mounted after focus (for eg: Stripe checkout form)
+  // Check for any inputs that have mounted after focus (for eg: Stripe checkout form) —
+  // give late renders a moment to settle before re-gathering.
+  await waitForSettle(rootElement ?? document.body, { timeoutMs: 800 })
   const finalInputs = gatherVisibleInputsInOrder(rootElement)
   const newInputs = finalInputs.filter((input) => !inputs.includes(input))
 
   if (newInputs.length > 0) await autoFillInputsSequentially({ inputs: newInputs })
 
-  /* Contenteditable */
-  const contenteditableElements = document.querySelectorAll(`[contenteditable='true']`)
+  /* User-defined recipes — taught interactions outrank built-in widget adapters
+     and can drive fully custom elements no adapter recognizes. */
+  resetRecipeRun()
+  if (isFeatureEnabled('recipes')) await runRecipesPass(rootElement)
 
-  await autoFillContenteditableSequentially({ elems: contenteditableElements })
+  /* Custom widgets (ARIA comboboxes, date pickers, switches…) */
+  const widgets = gatherWidgetElements(rootElement)
+
+  log(`Found ${widgets.length} widget elements`)
+
+  for (const elem of widgets) {
+    await fillElement({ elem })
+  }
+
+  /* Contenteditable hosts (rich-text editors, editable divs) — scoped and visibility-filtered */
+  const contenteditableHosts = gatherContenteditableHosts(rootElement)
+
+  log(`Found ${contenteditableHosts.length} contenteditable hosts`)
+
+  for (const elem of contenteditableHosts) {
+    await fillElement({ elem })
+  }
 
   /* iframe */
   // const iframes = document.querySelectorAll('iframe')
@@ -61,15 +83,5 @@ interface IautoFillInputsSequentially {
 const autoFillInputsSequentially = async ({ inputs }: IautoFillInputsSequentially) => {
   for (const input of inputs) {
     await fillElement({ elem: input })
-  }
-}
-
-interface IautoFillContenteditableSequentially {
-  elems: NodeListOf<Element>
-}
-
-const autoFillContenteditableSequentially = async ({ elems }: IautoFillContenteditableSequentially) => {
-  for (const elem of elems) {
-    await fillElement({ elem })
   }
 }

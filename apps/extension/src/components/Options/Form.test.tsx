@@ -7,6 +7,10 @@ vi.mock('sonner', () => ({ toast: { success: toastSuccess } }))
 vi.mock('@/components/Options/ProfilesTab', () => ({ default: () => <div data-testid="profiles-tab" /> }))
 vi.mock('@/components/Options/FieldRulesTab', () => ({ default: () => <div data-testid="field-rules-tab" /> }))
 vi.mock('@/components/Options/ActionsTab', () => ({ default: () => <div data-testid="actions-tab" /> }))
+vi.mock('@/components/Options/RecipesTab', () => ({ default: () => <div data-testid="recipes-tab" /> }))
+
+const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
 
 import { TooltipProvider } from '@fillmatic/ui'
 
@@ -19,8 +23,24 @@ const renderForm = () => render(<OptionsForm />, { wrapper: TooltipProvider })
 
 beforeEach(() => {
   toastSuccess.mockClear()
+  isFeatureEnabled.mockReturnValue(true)
   useConfigStore.setState({ ...DEFAULT_CONFIG }, false)
   useProfileStore.setState({ profiles: [DEFAULT_PROFILE], activeProfileId: DEFAULT_PROFILE_ID })
+})
+
+describe('OptionsForm (Recipes tab, feature-flagged)', () => {
+  it('shows the Recipes tab by default', () => {
+    renderForm()
+
+    expect(screen.getByRole('tab', { name: 'Recipes' })).toBeInTheDocument()
+  })
+
+  it('hides the Recipes tab entirely when the recipes feature flag is off', () => {
+    isFeatureEnabled.mockReturnValue(false)
+    renderForm()
+
+    expect(screen.queryByRole('tab', { name: 'Recipes' })).not.toBeInTheDocument()
+  })
 })
 
 describe('OptionsForm (General tab)', () => {

@@ -15,7 +15,12 @@ const { fillElement, gatherVisibleInputsInOrder, initiateAutofill, isInViewport,
 )
 
 vi.mock('@/autofill', () => ({ fillElement, gatherVisibleInputsInOrder, initiateAutofill, isInViewport }))
-vi.mock('@/utils/actions', () => ({ getActionsFromStorage }))
+// Keep the real module (matchFieldTarget, getAttributeValue… are used by the unmocked
+// pageFields scan) and only stub the storage read.
+vi.mock('@/utils/actions', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/actions')>()),
+  getActionsFromStorage,
+}))
 
 // The module registers its onMessage listener as an import-time side effect; import it once
 // and reuse the captured listener across tests instead of resetting modules per test (which
@@ -23,7 +28,7 @@ vi.mock('@/utils/actions', () => ({ getActionsFromStorage }))
 await import('@/contentScript/index')
 
 type Listener = (
-  request: { type: string; tab?: unknown; form?: { index: number } },
+  request: { type: string; tab?: unknown; form?: { index: number }; ref?: number; fields?: unknown },
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: unknown) => void,
 ) => boolean
@@ -207,6 +212,73 @@ describe('contentScript action-autofill messages (default case)', () => {
 
     expect(initiateAutofill).not.toHaveBeenCalled()
     expect(sendResponse).not.toHaveBeenCalled()
+  })
+})
+
+describe('contentScript page-field mapping messages', () => {
+  const makeVisible = (elem: HTMLElement) => {
+    Object.defineProperty(elem, 'offsetWidth', { value: 100, configurable: true })
+    Object.defineProperty(elem, 'offsetHeight', { value: 20, configurable: true })
+    elem.getClientRects = () => [{}] as unknown as DOMRectList
+  }
+
+  const scanPage = async () => {
+    const sendResponse = vi.fn()
+    listener({ type: MESSAGES.GET_PAGE_FIELDS }, {} as chrome.runtime.MessageSender, sendResponse)
+    await flush()
+    return sendResponse
+  }
+
+  it('GET_PAGE_FIELDS responds with field descriptors and the page URL', async () => {
+    const input = document.createElement('input')
+    input.id = 'user_email'
+    input.type = 'email'
+    makeVisible(input)
+    document.body.appendChild(input)
+
+    const sendResponse = await scanPage()
+
+    expect(sendResponse).toHaveBeenCalledWith({
+      type: MESSAGES.GET_PAGE_FIELDS,
+      url: window.location.href,
+      fields: [
+        expect.objectContaining({ ref: 0, kind: 'input:email', attribute: 'id', match: 'user_email' }),
+      ],
+    })
+  })
+
+  it('HIGHLIGHT_FIELD outlines the scanned element and ref -1 clears it', async () => {
+    const input = document.createElement('input')
+    input.id = 'user_email'
+    makeVisible(input)
+    document.body.appendChild(input)
+    await scanPage()
+
+    listener({ type: MESSAGES.HIGHLIGHT_FIELD, ref: 0 }, {} as chrome.runtime.MessageSender, vi.fn())
+    await flush()
+    expect(input.style.outline).toContain('solid')
+
+    listener({ type: MESSAGES.HIGHLIGHT_FIELD, ref: -1 }, {} as chrome.runtime.MessageSender, vi.fn())
+    await flush()
+    expect(input.style.outline).toBe('')
+  })
+
+  it('APPLY_MAPPING fills with the mapped fields as the active action, then clears it', async () => {
+    const fields = [{ attribute: 'id', operator: 'exact', match: 'email', value: 'a@b.c' }]
+
+    let actionDuringFill: unknown
+    initiateAutofill.mockImplementation(async () => {
+      actionDuringFill = contentScriptStore.getState().activeAction
+    })
+
+    const sendResponse = vi.fn()
+    listener({ type: MESSAGES.APPLY_MAPPING, fields }, {} as chrome.runtime.MessageSender, sendResponse)
+    await flush()
+
+    expect(initiateAutofill).toHaveBeenCalledWith({ rootElement: null })
+    expect(actionDuringFill).toMatchObject({ id: 'ai-mapping', fields })
+    expect(contentScriptStore.getState().activeAction).toBeUndefined()
+    expect(sendResponse).toHaveBeenCalledWith({ type: MESSAGES.AUTOFILL_COMPLETE })
   })
 })
 

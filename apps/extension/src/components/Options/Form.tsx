@@ -34,11 +34,13 @@ import {
 import { useConfigStore } from '@/store/config'
 import { useProfileStore, DEFAULT_PROFILE_ID } from '@/store/profiles'
 import { DEFAULT_CONFIG } from '@/consts'
+import { isFeatureEnabled } from '@/utils/featureFlags'
 
 import { formSchema, formSchemaType, TYPING_SPEED_MIN, TYPING_SPEED_MAX } from './formSchema'
 import ProfilesTab from './ProfilesTab'
 import FieldRulesTab from './FieldRulesTab'
 import ActionsTab from './ActionsTab'
+import RecipesTab from './RecipesTab'
 
 const ProfileBanner = ({ profileName, isDefault }: { profileName: string; isDefault: boolean }) =>
   isDefault ? (
@@ -141,6 +143,7 @@ const OptionsForm = () => {
         <TabsTrigger value="profiles">Profiles</TabsTrigger>
         <TabsTrigger value="field-rules">Field Rules</TabsTrigger>
         <TabsTrigger value="actions">Actions</TabsTrigger>
+        {isFeatureEnabled('recipes') && <TabsTrigger value="recipes">Recipes</TabsTrigger>}
       </TabsList>
 
       <TabsContent value="general" className="space-y-10">
@@ -357,6 +360,12 @@ const OptionsForm = () => {
       <TabsContent value="actions">
         <ActionsTab />
       </TabsContent>
+
+      {isFeatureEnabled('recipes') && (
+        <TabsContent value="recipes">
+          <RecipesTab />
+        </TabsContent>
+      )}
     </Tabs>
   )
 }

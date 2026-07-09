@@ -24,6 +24,22 @@ describe('isContentEditable', () => {
     input.contentEditable = 'true'
     expect(isContentEditable(input)).toBe(false)
   })
+
+  it('recognizes the empty-attribute and plaintext-only forms', () => {
+    const bare = document.createElement('div')
+    bare.setAttribute('contenteditable', '')
+    expect(isContentEditable(bare)).toBe(true)
+
+    const plaintext = document.createElement('div')
+    plaintext.setAttribute('contenteditable', 'plaintext-only')
+    expect(isContentEditable(plaintext)).toBe(true)
+  })
+
+  it('rejects contenteditable="false"', () => {
+    const div = document.createElement('div')
+    div.setAttribute('contenteditable', 'false')
+    expect(isContentEditable(div)).toBe(false)
+  })
 })
 
 describe('isSupportedElement', () => {
