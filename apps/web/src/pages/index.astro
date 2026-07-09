@@ -19,6 +19,8 @@ const STORE_URL = CHROME_WEB_STORE_URL;
       </a>
       <nav class="header-nav" aria-label="Main">
         <a href="#features">Features</a>
+        <a href="#any-input">Any input</a>
+        <a href="#ai-mapping">AI mapping</a>
         <a href="#how-it-works">How it works</a>
         <a href="#feedback">Feedback</a>
         <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-sm">Add to Chrome</a>
@@ -39,12 +41,12 @@ const STORE_URL = CHROME_WEB_STORE_URL;
         </p>
         <div class="hero-actions">
           <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            Add to Chrome, it's free
+            Add to Chrome
             <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
           <a href="/demo" class="btn btn-ghost btn-lg">Try the demo</a>
         </div>
-        <p class="hero-footnote">No account needed <span aria-hidden="true">&nbsp;·&nbsp;</span> Works on any form <span aria-hidden="true">&nbsp;·&nbsp;</span> Manifest V3</p>
+        <p class="hero-footnote">No account needed <span aria-hidden="true">&nbsp;·&nbsp;</span> Works on any input, any framework <span aria-hidden="true">&nbsp;·&nbsp;</span> Manifest V3</p>
       </div>
     </section>
 
@@ -59,6 +61,8 @@ const STORE_URL = CHROME_WEB_STORE_URL;
           { name: 'React', sub: 'controlled inputs' },
           { name: 'Vue', sub: 'v-model fields' },
           { name: 'Angular', sub: 'reactive forms' },
+          { name: 'Radix / shadcn', sub: 'custom widgets' },
+          { name: 'Rich text editors', sub: 'Lexical, ProseMirror, Quill' },
         ].map(({ name, sub }) => (
           <div class="strip-item">
             <span class="strip-name">{name}</span>
@@ -109,8 +113,60 @@ const STORE_URL = CHROME_WEB_STORE_URL;
       </div>
     </section>
 
+    <!-- Any input, any framework -->
+    <section id="any-input" class="section section-tinted scroll-mt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">Framework-agnostic</div>
+          <h2>If a person can click it, FillMatic can fill it</h2>
+          <p>Comboboxes, date pickers, toggles, and custom dropdowns built with Radix, MUI, or your own code fill correctly out of the box. Anything left over, you teach once — no code required.</p>
+        </div>
+        <div class="any-input-grid">
+
+          <div class="glass-card">
+            <div class="card-icon">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </div>
+            <h3>Works without any setup</h3>
+            <p>Built-in support for the interaction patterns every component library follows, no matter which one your app uses.</p>
+            <div class="feature-list">
+              {[
+                'Dropdowns, comboboxes & autocomplete',
+                'Date and time pickers',
+                'Toggles, switches & radio groups',
+                'Sliders and steppers',
+                'Rich text editors — Notion-style, Lexical, ProseMirror, Quill',
+              ].map(item => (
+                <div class="feature-check-item">
+                  <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-icon">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+            </div>
+            <h3>Teach it the one that isn't</h3>
+            <p>Click <strong>Teach</strong> in the side panel, then click the widget on the page. FillMatic captures a selector and a starting recipe you can refine — it fires on every fill from then on, and always wins over the built-in support.</p>
+            <div class="recipe-flow" aria-hidden="true">
+              <span class="recipe-step">click trigger</span>
+              <span class="recipe-arrow">→</span>
+              <span class="recipe-step">wait for popover</span>
+              <span class="recipe-arrow">→</span>
+              <span class="recipe-step">click random day</span>
+            </div>
+            <p class="hint-text">A recipe is just a CSS selector and a few steps — save it, export it, share it with your team.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Power Features -->
-    <section class="section section-tinted">
+    <section class="section">
       <div class="section-inner">
         <div class="section-head">
           <div class="badge">Power features</div>
@@ -125,7 +181,7 @@ const STORE_URL = CHROME_WEB_STORE_URL;
               <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
             <h3>Custom Actions</h3>
-            <p>One-click buttons that show up in the popup on matching URLs. Each action runs a full autofill and overrides specific fields with values you set.</p>
+            <p>One-click buttons that show up in the popup on matching URLs. Each action runs a full autofill and overrides specific fields with values you set, or a sequence of steps you define.</p>
             <div class="action-list">
               {[
                 { name: 'Stripe', desc: 'Fill test card 4242 4242 4242 4242' },
@@ -181,6 +237,65 @@ const STORE_URL = CHROME_WEB_STORE_URL;
       </div>
     </section>
 
+    <!-- AI field mapping -->
+    <section id="ai-mapping" class="section section-tinted scroll-mt">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="badge">New · On-device AI</div>
+          <h2>Point it at a form. It figures out the rest.</h2>
+          <p>Open the side panel and scan any page. FillMatic reads every field and prefills a map with its own heuristics — then, on machines that support Chrome's built-in model, refines it further. Either way, nothing about the page ever leaves your computer.</p>
+        </div>
+        <div class="ai-mapping-grid">
+
+          <div class="ai-mapping-copy">
+            <h3>Why it's different</h3>
+            <div class="feature-list">
+              {[
+                "Runs Chrome's on-device model locally — no API key, no server, no data leaves your machine",
+                'Works identically without it: heuristics alone prefill every field',
+                'Edit any field — pin an exact value, or randomize it by type',
+                'Save the finished map as a snapshot and it fills instantly next time, no re-scanning',
+              ].map(item => (
+                <div class="feature-check-item">
+                  <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="device-mock">
+            <div class="device-mock-bar">
+              <span class="device-dot red"></span>
+              <span class="device-dot yellow"></span>
+              <span class="device-dot green"></span>
+              <span class="device-mock-url">checkout.example.com</span>
+            </div>
+            <div class="device-mock-body">
+              <div class="ai-status">
+                <span class="ai-status-dot"></span>
+                On-device AI ready
+              </div>
+              <div class="map-field">
+                <span class="map-field-label">Email address</span>
+                <span class="map-pill random">email · random</span>
+              </div>
+              <div class="map-field">
+                <span class="map-field-label">Coupon code</span>
+                <span class="map-pill exact">exact · SAVE20</span>
+              </div>
+              <div class="map-field">
+                <span class="map-field-label">Country</span>
+                <span class="map-pill random">select · random</span>
+              </div>
+              <div class="map-summary">Filled 3 fields · 0 skipped</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- How it works -->
     <section id="how-it-works" class="section scroll-mt">
       <div class="section-inner">
@@ -203,7 +318,7 @@ const STORE_URL = CHROME_WEB_STORE_URL;
         </div>
         <div class="cta-center">
           <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            Get FillMatic free
+            Get FillMatic
             <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -219,12 +334,16 @@ const STORE_URL = CHROME_WEB_STORE_URL;
         </div>
         <div class="checklist">
           {[
-            'Fills text, email, password, select, checkbox, radio, date and every other input type',
+            'Fills every native input type: text, email, password, select, checkbox, radio, date, and more',
+            'Custom widgets from Radix, MUI, and other component libraries work with zero setup',
+            'Rich text editors — Notion-style, Lexical, ProseMirror, Quill — fill correctly, not just plain text',
+            "Teach it any input it doesn't recognize with a point-and-click recipe, no code required",
+            "On-device AI field mapping via Chrome's built-in model, nothing leaves your machine",
+            'Works identically without AI — heuristics prefill every field on their own',
             'Keyboard shortcut so you never have to touch the mouse',
             'Handles dynamic forms that mount new fields after page load',
-            'Per-profile field rules and email addresses',
+            'Export recipes and field maps as JSON to share with your team',
             'No account required. Works completely offline.',
-            'Built by a developer for developers. Feedback is always welcome.',
           ].map(item => (
             <div class="check-item">
               <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
@@ -233,7 +352,7 @@ const STORE_URL = CHROME_WEB_STORE_URL;
           ))}
         </div>
         <div class="cta-center">
-          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome, free</a>
+          <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome</a>
           <a href="/demo" class="btn btn-ghost-light btn-lg">See it in action</a>
         </div>
       </div>
@@ -399,14 +518,15 @@ const STORE_URL = CHROME_WEB_STORE_URL;
   .header-nav {
     display: flex;
     align-items: center;
-    gap: 1.75rem;
+    gap: 1.5rem;
   }
 
   .header-nav a {
-    font-size: .875rem;
+    font-size: .85rem;
     font-weight: 500;
     color: #64748b;
     transition: color .2s;
+    white-space: nowrap;
   }
 
   .header-nav a:hover { color: #e2e8f0; }
@@ -743,6 +863,165 @@ const STORE_URL = CHROME_WEB_STORE_URL;
   .c-val { color: #34d399; }
   .c-arrow { color: #f59e0b; }
 
+  /* ── Any input / recipes ── */
+  .any-input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+    margin-top: 1.1rem;
+  }
+
+  .feature-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+    font-size: .85rem;
+    color: #94a3b8;
+    line-height: 1.55;
+  }
+
+  .feature-check-item svg { color: #818cf8; flex-shrink: 0; margin-top: 3px; }
+
+  .recipe-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 1.25rem;
+  }
+
+  .recipe-step {
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .5em .85em;
+    border-radius: 10px;
+    background: rgba(99,102,241,.1);
+    border: 1px solid rgba(99,102,241,.25);
+    color: #c7d2fe;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .recipe-arrow { color: #475569; font-size: .9rem; }
+
+  .hint-text {
+    font-size: .78rem;
+    color: #64748b;
+    margin-top: .9rem;
+    line-height: 1.6;
+  }
+
+  /* ── AI mapping ── */
+  .ai-mapping-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .ai-mapping-copy h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: .5rem;
+  }
+
+  .device-mock {
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+
+  .device-mock-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem .85rem;
+    background: rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+
+  .device-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .device-dot.red { background: #ef4444; }
+  .device-dot.yellow { background: #f59e0b; }
+  .device-dot.green { background: #22c55e; }
+
+  .device-mock-url {
+    margin-left: .5rem;
+    font-size: .72rem;
+    color: #64748b;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .device-mock-body { padding: 1.15rem; }
+
+  .ai-status {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    font-size: .78rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .ai-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,.2);
+  }
+
+  .map-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .6rem .75rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    font-size: .8rem;
+    margin-bottom: .5rem;
+  }
+
+  .map-field-label { color: #e2e8f0; font-weight: 500; }
+
+  .map-pill {
+    font-size: .66rem;
+    font-weight: 700;
+    padding: .3em .65em;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    white-space: nowrap;
+  }
+
+  .map-pill.random {
+    background: rgba(99,102,241,.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,.3);
+  }
+
+  .map-pill.exact {
+    background: rgba(34,197,94,.12);
+    color: #86efac;
+    border: 1px solid rgba(34,197,94,.3);
+  }
+
+  .map-summary {
+    margin-top: .85rem;
+    padding-top: .85rem;
+    border-top: 1px dashed rgba(255,255,255,.1);
+    font-size: .75rem;
+    color: #64748b;
+  }
+
   /* ── Steps ── */
   .steps {
     display: grid;
@@ -930,8 +1209,12 @@ const STORE_URL = CHROME_WEB_STORE_URL;
   .footer-nav a:hover { color: #94a3b8; }
 
   /* ── Responsive ── */
-  @media (max-width: 640px) {
+  @media (max-width: 900px) {
+    .header-nav { gap: 1rem; }
     .header-nav a:not(.btn) { display: none; }
+  }
+
+  @media (max-width: 640px) {
     .hero { padding: 5rem 1.25rem 3.5rem; }
     .field-row { grid-template-columns: 1fr; }
     .power-card-large { grid-row: span 1; }
