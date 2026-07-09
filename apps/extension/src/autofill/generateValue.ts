@@ -3,13 +3,27 @@ import { faker } from '@faker-js/faker'
 
 import { getEffectiveConfig, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
+import { useAiMappingsStore } from '@/store/ai-mappings'
 import { SupportedInputsType } from '@/types'
 import { clientLog, isSupportedElement, isWidgetElement, matchElement } from '@/utils'
+import { snapshotsForUrl } from '@/utils/ai-mappings'
 import { matchFieldTarget, type FieldTarget } from '@/utils/actions'
 
 interface GenerateValueParams {
   type: HTMLInputTypeAttribute | 'contenteditable'
   elem: SupportedInputsType | Element
+}
+
+/** Saved mapper snapshots matching the current URL — fill-time is model-free by design. */
+const getActiveSnapshotTarget = (elem: Element): FieldTarget | undefined => {
+  if (!(elem instanceof HTMLElement)) return undefined
+
+  const { snapshots } = useAiMappingsStore.getState()
+  for (const snapshot of snapshotsForUrl(snapshots, window.location.href)) {
+    const field = snapshot.fields.find((f) => matchFieldTarget(elem, f))
+    if (field) return field
+  }
+  return undefined
 }
 
 const getActiveUserRuleTarget = (elem: Element): FieldTarget | undefined => {
@@ -80,6 +94,10 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
       return resolveFieldTargetValue(matchingField, elem)
     }
   }
+
+  /* Check saved mapper snapshots for this site */
+  const snapshotTarget = getActiveSnapshotTarget(elem)
+  if (snapshotTarget) return resolveFieldTargetValue(snapshotTarget, elem)
 
   /* Check user-defined field rules */
   const userRuleTarget = getActiveUserRuleTarget(elem)

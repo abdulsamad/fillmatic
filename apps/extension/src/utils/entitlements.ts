@@ -8,10 +8,10 @@
  */
 
 /** Gateable feature keys. Add a key here when a feature should be plan-gated. */
-export type Feature = 'profiles' | 'fieldRules' | 'actions'
+export type Feature = 'profiles' | 'fieldRules' | 'actions' | 'aiMapping'
 
 /** Resources that can have a per-plan count cap. */
-export type LimitKey = 'profiles' | 'fieldRules' | 'actions'
+export type LimitKey = 'profiles' | 'fieldRules' | 'actions' | 'aiMapping'
 
 export type Plan = {
   id: string

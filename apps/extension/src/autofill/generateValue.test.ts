@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { generateValue, resolveFieldTargetValue } from '@/autofill/generateValue'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
+import { useAiMappingsStore } from '@/store/ai-mappings'
 import { type Action } from '@/utils/actions'
 
 const resetStores = () => {
@@ -14,6 +15,7 @@ const resetStores = () => {
     activeAction: undefined,
   })
   useProfileStore.setState({ profiles: [DEFAULT_PROFILE], activeProfileId: DEFAULT_PROFILE_ID })
+  useAiMappingsStore.setState({ snapshots: [] })
 }
 
 beforeEach(() => {
@@ -63,6 +65,62 @@ describe('generateValue', () => {
     })
 
     expect(await generateValue({ type: 'text', elem: input })).toBe('SAVE10')
+  })
+
+  it('uses a saved mapper snapshot for the site, but the active action still wins', async () => {
+    const input = document.createElement('input')
+    input.id = 'company'
+
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+
+    expect(await generateValue({ type: 'text', elem: input })).toBe('Acme Inc')
+
+    // Snapshot for another site does not apply.
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-2',
+          name: 'Elsewhere',
+          siteMatcher: 'not-this-site.example',
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+    expect(await generateValue({ type: 'text', elem: input })).not.toBe('Acme Inc')
+
+    // An active action outranks the snapshot tier.
+    useAiMappingsStore.setState({
+      snapshots: [
+        {
+          id: 'snap-1',
+          name: 'Test map',
+          siteMatcher: window.location.hostname,
+          createdAt: '2026-07-09T00:00:00.000Z',
+          fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Acme Inc' }],
+        },
+      ],
+    })
+    contentScriptStore.setState({
+      activeAction: {
+        id: 'demo',
+        name: 'Demo',
+        matcher: { type: 'startsWith', value: 'x' },
+        active: true,
+        fields: [{ attribute: 'id', operator: 'exact', match: 'company', value: 'Override Corp' }],
+      },
+    })
+    expect(await generateValue({ type: 'text', elem: input })).toBe('Override Corp')
   })
 
   it('matches an action field target against a widget element via its ARIA label', async () => {

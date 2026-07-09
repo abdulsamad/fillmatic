@@ -192,7 +192,7 @@ export const matchUrl = (matcher: Action['matcher'], url: string): boolean => {
 export const getMatchingActions = (actions: Action[], url: string): Action[] =>
   actions.filter((action) => action.active && matchUrl(action.matcher, url))
 
-const getAttributeValue = (elem: Element, attribute: AttributeType): string => {
+export const getAttributeValue = (elem: Element, attribute: AttributeType): string => {
   switch (attribute) {
     case 'id':
       return elem.id ?? ''
