@@ -141,7 +141,8 @@ describe('Popup actions', () => {
 })
 
 describe('Popup field mapper button (feature-flagged)', () => {
-  it('opens the side panel and closes the popup when clicked', async () => {
+  it('requests the sidePanel permission, opens the side panel, and closes the popup when granted', async () => {
+    chrome.permissions = { request: vi.fn().mockResolvedValue(true) } as unknown as typeof chrome.permissions
     chrome.sidePanel = { open: vi.fn() } as unknown as typeof chrome.sidePanel
     const closeSpy = vi.spyOn(window, 'close').mockImplementation(() => {})
     const user = userEvent.setup()
@@ -149,8 +150,23 @@ describe('Popup field mapper button (feature-flagged)', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Open field mapper' }))
 
-    expect(chrome.sidePanel.open).toHaveBeenCalledWith({ tabId: baseTab.id })
+    expect(chrome.permissions.request).toHaveBeenCalledWith({ permissions: ['sidePanel'] })
+    await waitFor(() => expect(chrome.sidePanel.open).toHaveBeenCalledWith({ tabId: baseTab.id }))
     expect(closeSpy).toHaveBeenCalled()
+  })
+
+  it('does not open the side panel when the permission is denied', async () => {
+    chrome.permissions = { request: vi.fn().mockResolvedValue(false) } as unknown as typeof chrome.permissions
+    chrome.sidePanel = { open: vi.fn() } as unknown as typeof chrome.sidePanel
+    const closeSpy = vi.spyOn(window, 'close').mockImplementation(() => {})
+    const user = userEvent.setup()
+    render(<Popup />)
+
+    await user.click(await screen.findByRole('button', { name: 'Open field mapper' }))
+
+    await waitFor(() => expect(chrome.permissions.request).toHaveBeenCalled())
+    expect(chrome.sidePanel.open).not.toHaveBeenCalled()
+    expect(closeSpy).not.toHaveBeenCalled()
   })
 
   it('is hidden entirely when the aiMapping feature flag is off', async () => {

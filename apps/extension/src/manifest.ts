@@ -3,6 +3,7 @@ import { defineManifest } from '@crxjs/vite-plugin'
 import { PRODUCT_DESCRIPTION, PRODUCT_NAME } from '@fillmatic/config'
 
 import packageData from '../../../package.json'
+import { isFeatureEnabled } from './utils/featureFlags'
 
 export default defineManifest({
   name: PRODUCT_NAME,
@@ -21,9 +22,15 @@ export default defineManifest({
     default_icon: 'icons/icon192.png',
   },
   options_page: 'options.html',
-  side_panel: {
-    default_path: 'sidepanel.html',
-  },
+  // The side panel (AI field mapper) only exists in builds with the aiMapping
+  // flag on, and its permission is optional: requested at runtime from the
+  // popup's field-mapper button, not at install.
+  ...(isFeatureEnabled('aiMapping') && {
+    side_panel: {
+      default_path: 'sidepanel.html',
+    },
+    optional_permissions: ['sidePanel'],
+  }),
   background: {
     service_worker: 'src/background/index.ts',
     type: 'module',
@@ -41,7 +48,7 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['storage', 'activeTab', 'sidePanel'],
+  permissions: ['storage', 'activeTab'],
   commands: {
     AUTOFILL_ALL: {
       description: 'Fill all inputs on page',
