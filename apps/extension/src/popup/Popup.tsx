@@ -229,12 +229,20 @@ export const Popup = () => {
                   className="h-8 w-8 rounded-full"
                   aria-label="Open field mapper"
                   disabled={isDisabled}
-                  onClick={() => {
-                    if (currentTab?.id) {
-                      // Must run synchronously in the click handler to keep the user gesture.
-                      chrome.sidePanel?.open({ tabId: currentTab.id })
-                      window.close()
-                    }
+                  onClick={async () => {
+                    if (!currentTab?.id) return
+
+                    const tabId = currentTab.id
+                    // sidePanel is an optional permission, requested here on first use
+                    // (no prompt on later clicks once granted). Both request() and open()
+                    // need a user gesture; the grant carries the gesture through the
+                    // await, so open() still qualifies.
+                    const granted = await chrome.permissions.request({ permissions: ['sidePanel'] })
+
+                    if (!granted) return
+
+                    chrome.sidePanel?.open({ tabId })
+                    window.close()
                   }}
                 >
                   <RadarIcon size={16} />
