@@ -192,12 +192,12 @@ export const Popup = () => {
 
           {isDisabled && (
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 relative rounded-lg" role="alert">
+              <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-950/50 dark:border-red-900 dark:text-red-300 px-4 py-3 relative rounded-lg" role="alert">
                 <span className="block sm:inline">{PRODUCT_NAME} cannot be used on internal pages.</span>
               </div>
             </div>
           )}
-          <Toaster theme="light" />
+          <Toaster theme="dark" />
         </main>
         <Separator />
         <footer className="px-2.5 py-1 flex justify-between items-center">

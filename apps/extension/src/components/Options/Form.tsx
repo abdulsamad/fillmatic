@@ -49,7 +49,7 @@ const ProfileBanner = ({ profileName, isDefault }: { profileName: string; isDefa
       These are your <strong>default</strong> settings — used by all profiles unless overridden.
     </div>
   ) : (
-    <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+    <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-200">
       <UserCircleIcon className="h-4 w-4 shrink-0" />
       <span>
         Editing <strong>{profileName}</strong> profile — changes here will be saved to this profile and won't affect your default settings.
@@ -192,7 +192,7 @@ const OptionsForm = () => {
                         onValueChange={(vals) => field.onChange(vals[0])}
                       />
                     </FormControl>
-                    <div className="flex justify-between text-sm text-gray-500">
+                    <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Slow</span>
                       <span>Fast</span>
                       <span>Fastest</span>
@@ -258,7 +258,7 @@ const OptionsForm = () => {
                       name="commonPassword"
                       render={({ field: cpField }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-500">Enter Common Password</FormLabel>
+                          <FormLabel className="text-muted-foreground">Enter Common Password</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
