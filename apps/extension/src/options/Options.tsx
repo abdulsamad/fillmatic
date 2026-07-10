@@ -22,7 +22,7 @@ export const Options = () => {
           <OptionsForm />
         </div>
       </div>
-      <Toaster richColors theme="light" position="bottom-left" />
+      <Toaster richColors theme="dark" position="bottom-left" />
     </TooltipProvider>
   )
 }
