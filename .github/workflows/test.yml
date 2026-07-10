@@ -55,12 +55,14 @@ jobs:
       - name: Commit updated coverage badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          if git diff --quiet -- apps/extension/coverage-badge.svg; then
+          # Stage first so a missing/untracked badge counts as a change —
+          # plain `git diff` can't see untracked files.
+          git add apps/extension/coverage-badge.svg
+          if git diff --cached --quiet; then
             echo "Badge unchanged, nothing to commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add apps/extension/coverage-badge.svg
             git commit -m "chore: update coverage badge [skip ci]"
             git push
           fi
