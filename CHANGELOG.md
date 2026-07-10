@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [v0.1.0] - 2026-07-10
+
+#### Added
+- **feat:** Widget fill engine — `fillElement` now dispatches through a strategy pipeline (`native` → `contenteditable` → `widget`). The widget strategy drives custom framework widgets (ARIA comboboxes, date pickers, switches, sliders, radio groups) like a user — open, wait for the popover to settle (`waitForSettle`, a MutationObserver quiet-period primitive), pick an option, confirm — via pluggable `WidgetAdapter`s (`radixAdapter` + a generic ARIA adapter that covers most libraries). A widget failure skips the field, never aborts the run.
+- **feat:** Editor-aware contenteditable fills — rich text editors (ProseMirror, Lexical, Slate, Quill, Trix) are detected by their host markers and filled via `execCommand('insertText')` / cancelable `beforeinput` so the editor's own document model stays in sync, instead of overwriting the DOM with `textContent`.
+- **feat:** User-defined interaction recipes — teach FillMatic any widget it doesn't recognize: a `Recipe` = URL matcher + CSS selector + declarative steps, managed in the new Options **Recipes** tab with JSON import/export. The recipe pass runs before built-in widget handling and always outranks the adapters.
+- **feat:** Declarative Action steps — Actions and recipes share the `ActionStep` model (`click`, `clickRandom`, `waitFor`, `type`, `selectOption`, `press`) edited in a shared steps editor. `type` values support whitelisted `{{faker.*}}` tokens (no eval — Web-Store-safe); recipe steps can target the matched element via `@self`.
+- **feat:** On-device AI field mapper (side panel) — scan any page, get a heuristic-prefilled field map, optionally refined by Chrome's built-in Prompt API (Gemini Nano) when available; nothing leaves the machine and everything degrades gracefully to heuristics-only. Rows can be edited, highlighted on the page, filled, and saved as **mapping snapshots** — plain `FieldTarget[]`s that fill deterministically (model-free) on any machine, consumed by `generateValue` as a priority tier between the active Action and profile rules.
+- **feat:** Dark theme — all three extension pages (popup, options, side panel) now run permanently in dark mode matching the landing page (indigo-tinted `#0f0f18` background, indigo primary/ring, slate text), via the retuned `.dark` palette in `@fillmatic/ui`.
+- **feat:** In-repo feature flags (`utils/featureFlags.ts`) — build-level kill-switches for `aiMapping` and `recipes`, distinct from the entitlements seam.
+
+#### Changed
+- **chore:** pnpm 8 → 9 with a shared dependency catalog in `pnpm-workspace.yaml` (TypeScript pinned once via `catalog:`).
+- **refactor:** `generateValue` priority order gains the mapping-snapshots tier: active Action → snapshots → profile field rules → `autocomplete` → heuristics → type fallback.
+- **ci:** Workflows updated — latest action versions, env-var based Chrome Web Store upload, tightened push/PR triggers.
+
+---
+
 ### [v0.0.10] - 2026-07-07
 
 #### Added
