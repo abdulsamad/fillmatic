@@ -121,9 +121,9 @@ export const Popup = () => {
   )
 
   return (
-    <div className="animate-popup-in relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col">
+    <div className="animate-popup-in relative w-[250px] h-[400px] bg-background text-foreground box-border flex flex-col overflow-hidden">
       <TooltipProvider>
-        <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
+        <header className="shrink-0 flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground">
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold">
               <div>{PRODUCT_NAME}</div>
@@ -138,7 +138,7 @@ export const Popup = () => {
           </div>
         </header>
         {profiles.length > 1 && (
-          <div className="px-3 py-1 border-b flex items-center gap-2">
+          <div className="shrink-0 px-3 py-1 border-b flex items-center gap-2">
             <CircleUserRoundIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <Select value={activeProfileId} onValueChange={setActiveProfile}>
               <SelectTrigger className="h-6 text-xs border-0 shadow-none p-0 focus:ring-0 flex-1">
@@ -152,7 +152,7 @@ export const Popup = () => {
             </Select>
           </div>
         )}
-        <main className="p-4 space-y-6 h-full relative">
+        <main className="p-4 space-y-6 flex-1 min-h-0 overflow-y-auto relative">
           <div className="space-y-4">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -199,8 +199,8 @@ export const Popup = () => {
           )}
           <Toaster theme="dark" />
         </main>
-        <Separator />
-        <footer className="px-2.5 py-1 flex justify-between items-center">
+        <Separator className="shrink-0" />
+        <footer className="shrink-0 px-2.5 py-1 flex justify-between items-center bg-background">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
