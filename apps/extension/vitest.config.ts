@@ -32,10 +32,10 @@ export default defineConfig({
       ],
       // Ratchet this floor up as coverage improves; never lower it without cause.
       thresholds: {
-        statements: 78,
-        branches: 65,
-        functions: 82,
-        lines: 78,
+        statements: 90,
+        branches: 90,
+        functions: 90,
+        lines: 90,
       },
     },
   },

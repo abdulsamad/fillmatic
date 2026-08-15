@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
-import { type Action, type FieldTarget, getMatchingActions, matchFieldTarget, matchUrl } from './actions'
+import {
+  type Action,
+  type FieldTarget,
+  getActionsFromStorage,
+  getAttributeValue,
+  getMatchingActions,
+  matchFieldTarget,
+  matchUrl,
+  DEFAULT_ACTIONS,
+} from './actions'
 
 describe('matchUrl', () => {
   it('matches hostname exactly', () => {
@@ -13,18 +22,25 @@ describe('matchUrl', () => {
   })
 
   it('matches startsWith and endsWith', () => {
-    expect(matchUrl({ type: 'startsWith', value: 'https://checkout.stripe.com' }, 'https://checkout.stripe.com/c/pay/1')).toBe(
-      true,
-    )
+    expect(
+      matchUrl({ type: 'startsWith', value: 'https://checkout.stripe.com' }, 'https://checkout.stripe.com/c/pay/1'),
+    ).toBe(true)
     expect(matchUrl({ type: 'endsWith', value: '/checkout' }, 'https://example.com/cart/checkout')).toBe(true)
     expect(matchUrl({ type: 'startsWith', value: 'https://checkout.stripe.com' }, 'https://example.com')).toBe(false)
   })
 
   it('matches regex and tolerates an invalid pattern', () => {
-    expect(matchUrl({ type: 'regex', value: 'https://[^.]+\\.lemonsqueezy\\.com/checkout' }, 'https://foo.lemonsqueezy.com/checkout')).toBe(
-      true,
-    )
+    expect(
+      matchUrl(
+        { type: 'regex', value: 'https://[^.]+\\.lemonsqueezy\\.com/checkout' },
+        'https://foo.lemonsqueezy.com/checkout',
+      ),
+    ).toBe(true)
     expect(matchUrl({ type: 'regex', value: '(' }, 'https://example.com')).toBe(false)
+  })
+
+  it('fails closed for an unknown matcher type', () => {
+    expect(matchUrl({ type: 'unknown' as 'hostname', value: '' }, 'https://example.com')).toBe(false)
   })
 })
 
@@ -73,9 +89,9 @@ describe('matchFieldTarget', () => {
   it('matches by placeholder with the regex operator, failing safe on a bad pattern', () => {
     const input = document.createElement('input')
     input.placeholder = 'MM/YY'
-    expect(matchFieldTarget(input, target({ attribute: 'placeholder', operator: 'regex', match: '^\\w{2}/\\w{2}$' }))).toBe(
-      true,
-    )
+    expect(
+      matchFieldTarget(input, target({ attribute: 'placeholder', operator: 'regex', match: '^\\w{2}/\\w{2}$' })),
+    ).toBe(true)
     expect(matchFieldTarget(input, target({ attribute: 'placeholder', operator: 'regex', match: '(' }))).toBe(false)
   })
 
@@ -104,5 +120,67 @@ describe('matchFieldTarget', () => {
     const input = document.createElement('input')
     input.id = 'anything'
     expect(matchFieldTarget(input, target({ attribute: 'id', operator: 'exact', match: '' }))).toBe(false)
+  })
+
+  it('reads attributes from native fields and custom widgets', () => {
+    const textarea = document.createElement('textarea')
+    textarea.name = 'notes'
+    textarea.placeholder = 'Details'
+    const widget = document.createElement('button')
+    widget.setAttribute('name', 'country')
+    widget.setAttribute('placeholder', 'Choose country')
+    widget.setAttribute('autocomplete', 'country-name')
+
+    expect(getAttributeValue(textarea, 'name')).toBe('notes')
+    expect(getAttributeValue(textarea, 'placeholder')).toBe('Details')
+    expect(getAttributeValue(widget, 'name')).toBe('country')
+    expect(getAttributeValue(widget, 'placeholder')).toBe('Choose country')
+    expect(getAttributeValue(widget, 'autocomplete')).toBe('country-name')
+  })
+
+  it('resolves ARIA labels and labelled-by references for custom widgets', () => {
+    const label = document.createElement('span')
+    label.id = 'country-label'
+    label.textContent = 'Billing Country'
+    const widget = document.createElement('button')
+    widget.setAttribute('aria-labelledby', 'missing country-label')
+    document.body.append(label, widget)
+
+    expect(getAttributeValue(widget, 'label')).toBe('Billing Country')
+    widget.setAttribute('aria-label', 'Shipping Country')
+    expect(getAttributeValue(widget, 'label')).toBe('Shipping Country')
+  })
+
+  it('returns safe defaults for absent and unknown attributes or operators', () => {
+    const widget = document.createElement('button')
+    expect(getAttributeValue(widget, 'label')).toBe('')
+    expect(getAttributeValue(widget, 'unknown' as 'id')).toBe('')
+    expect(matchFieldTarget(widget, target({ operator: 'unknown' as 'exact', match: 'x' }))).toBe(false)
+  })
+})
+
+describe('getActionsFromStorage', () => {
+  it('returns persisted actions and falls back when storage is empty or unavailable', async () => {
+    const storageGet = chrome.storage.local.get as unknown as {
+      mockResolvedValueOnce: (value: Record<string, string>) => void
+      mockRejectedValueOnce: (error: Error) => void
+    }
+    const action: Action = {
+      id: 'saved',
+      name: 'Saved',
+      active: true,
+      matcher: { type: 'hostname', value: 'example.com' },
+      fields: [],
+    }
+    storageGet.mockResolvedValueOnce({
+      actions: JSON.stringify({ state: { actions: [action] } }),
+    })
+    expect(await getActionsFromStorage()).toEqual([action])
+
+    storageGet.mockResolvedValueOnce({})
+    expect(await getActionsFromStorage()).toEqual(DEFAULT_ACTIONS)
+
+    storageGet.mockRejectedValueOnce(new Error('storage unavailable'))
+    expect(await getActionsFromStorage()).toEqual(DEFAULT_ACTIONS)
   })
 })
