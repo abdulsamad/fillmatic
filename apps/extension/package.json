@@ -8,7 +8,6 @@
     "lint": "eslint src",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'",
-    "postbuild": "pnpm -C ../.. run postbuild",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage --passWithNoTests",

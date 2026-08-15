@@ -55,9 +55,6 @@ jobs:
       - name: Build extension
         run: pnpm run build:extension
 
-      - name: Zip build output
-        run: pnpm run postbuild
-
       - name: Get package info
         uses: codex-team/action-nodejs-package-info@v1.1
         id: package
