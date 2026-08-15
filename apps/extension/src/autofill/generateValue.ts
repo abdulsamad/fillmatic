@@ -364,6 +364,17 @@ const parseISOWeek = (value: string): Date => {
   return new Date(week1Monday.getFullYear(), week1Monday.getMonth(), week1Monday.getDate() + (week - 1) * 7)
 }
 
+/** Formats a date with its ISO week-year (which can differ from its calendar year near New Year). */
+const formatISOWeek = (date: Date): string => {
+  const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const day = target.getUTCDay() || 7
+  target.setUTCDate(target.getUTCDate() + 4 - day)
+  const isoYear = target.getUTCFullYear()
+  const yearStart = new Date(Date.UTC(isoYear, 0, 1))
+  const week = Math.ceil(((target.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  return `${isoYear}-W${week.toString().padStart(2, '0')}`
+}
+
 /** Caps a value to the element's maxLength when one is set. */
 const sliceToMax = (value: string, elem: HTMLInputElement): string =>
   elem.maxLength > 0 ? value.slice(0, elem.maxLength) : value
@@ -375,24 +386,31 @@ const generateTextDate = (elem: HTMLInputElement): string => {
   const date = isDateOfBirth ? faker.date.birthdate() : faker.date.recent()
 
   const format = elem.placeholder?.toLowerCase()
-  if (
-    format &&
-    format.includes('dd') &&
-    format.includes('mm') &&
-    (format.includes('yy') || format.includes('yyyy'))
-  ) {
+  if (format && format.includes('dd') && format.includes('mm') && (format.includes('yy') || format.includes('yyyy'))) {
     const day = date.getDate().toString().padStart(2, '0')
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const year = date.getFullYear().toString()
     const shortYear = year.slice(-2)
 
     let formattedDate = format.replace('dd', day).replace('mm', month)
-    formattedDate = format.includes('yyyy') ? formattedDate.replace('yyyy', year) : formattedDate.replace('yy', shortYear)
+    formattedDate = format.includes('yyyy')
+      ? formattedDate.replace('yyyy', year)
+      : formattedDate.replace('yy', shortYear)
 
     return formattedDate
   }
 
   return date.toISOString()?.split('T')[0]
+}
+
+/** Formats a local date without converting it through UTC, which can change the calendar day. */
+const formatLocalDateTime = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hour = date.getHours().toString().padStart(2, '0')
+  const minute = date.getMinutes().toString().padStart(2, '0')
+  return `${year}-${month}-${day}T${hour}:${minute}`
 }
 
 /**
@@ -520,7 +538,12 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
     }
     case 'password': {
       if (elem instanceof HTMLInputElement) {
-        if (matchElement(elem, 'confirm') || matchElement(elem, 'reenter') || matchElement(elem, 're-enter')) {
+        if (
+          matchElement(elem, 'confirm') ||
+          matchElement(elem, 'reenter') ||
+          matchElement(elem, 're-enter') ||
+          matchElement(elem, 're enter')
+        ) {
           return handlePasswordGeneration(elem, true)
         }
         return handlePasswordGeneration(elem)
@@ -570,9 +593,9 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
         const min = elem.min ? new Date(elem.min) : new Date('1970-01-01T00:00')
         const max = elem.max ? new Date(elem.max) : new Date()
         const date = faker.date.between({ from: min, to: max })
-        return date.toISOString().slice(0, 16).replace('T', ' ')
+        return formatLocalDateTime(date)
       }
-      return faker.date.recent().toISOString().slice(0, 16).replace('T', ' ')
+      return formatLocalDateTime(faker.date.recent())
     }
     case 'month': {
       if (elem instanceof HTMLInputElement) {
@@ -586,15 +609,9 @@ const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', e
       if (elem instanceof HTMLInputElement) {
         const min = elem.min ? parseISOWeek(elem.min) : new Date('1970-01-01')
         const max = elem.max ? parseISOWeek(elem.max) : new Date()
-        const d = faker.date.between({ from: min, to: max })
-        const onejan = new Date(d.getFullYear(), 0, 1)
-        const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
-        return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
+        return formatISOWeek(faker.date.between({ from: min, to: max }))
       }
-      const d = faker.date.recent()
-      const onejan = new Date(d.getFullYear(), 0, 1)
-      const weekNum = Math.ceil(((d.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7)
-      return `${d.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`
+      return formatISOWeek(faker.date.recent())
     }
     case 'textarea': {
       if (elem instanceof HTMLTextAreaElement && elem.maxLength > 0) {

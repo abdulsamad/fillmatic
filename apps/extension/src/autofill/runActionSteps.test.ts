@@ -81,9 +81,9 @@ describe('runActionSteps', () => {
     input.id = 'email'
     document.body.appendChild(input)
 
-    await expect(runActionSteps([{ kind: 'type', selector: '#email', value: '{{faker.internet.email}}' }])).resolves.toBe(
-      true,
-    )
+    await expect(
+      runActionSteps([{ kind: 'type', selector: '#email', value: '{{faker.internet.email}}' }]),
+    ).resolves.toBe(true)
     expect(input.value).toContain('@')
   })
 
@@ -115,6 +115,15 @@ describe('runActionSteps', () => {
 
     await expect(runActionSteps([{ kind: 'selectOption', selector: '#country', option: 'Chile' }])).resolves.toBe(true)
     expect(select.value).toBe('chile')
+  })
+
+  it('fails when a native select does not contain the requested option', async () => {
+    const select = document.createElement('select')
+    select.id = 'country'
+    select.appendChild(new Option('Canada', 'ca'))
+    document.body.appendChild(select)
+
+    await expect(runActionSteps([{ kind: 'selectOption', selector: '#country', option: 'Chile' }])).resolves.toBe(false)
   })
 
   it('selects a widget option by opening its popover — and fails deterministically when the option is missing', async () => {
@@ -149,6 +158,16 @@ describe('runActionSteps', () => {
     // Re-open with an option that doesn't exist -> deterministic failure, no random pick.
     await expect(runActionSteps([{ kind: 'selectOption', selector: '#size', option: 'Gigantic' }])).resolves.toBe(false)
     expect(clicked).toEqual(['Large'])
+  })
+
+  it('fails widget selection when the trigger does not open a popover', async () => {
+    const trigger = document.createElement('button')
+    trigger.id = 'closed-widget'
+    makeVisible(trigger)
+    document.body.appendChild(trigger)
+    await expect(
+      runActionSteps([{ kind: 'selectOption', selector: '#closed-widget', option: 'Anything' }]),
+    ).resolves.toBe(false)
   })
 
   it('clickRandom clicks one of the visible enabled matches', async () => {
@@ -198,6 +217,25 @@ describe('runActionSteps', () => {
 
     await expect(runActionSteps([{ kind: 'press', selector: '#search', key: 'Enter' }])).resolves.toBe(true)
     expect(keys).toEqual(['Enter'])
+  })
+
+  it.each([
+    [{ kind: 'type', selector: '#plain-button', value: 'nope' } as const],
+    [{ kind: 'selectOption', selector: '#missing', option: 'nope' } as const],
+    [{ kind: 'press', selector: '#missing', key: 'Enter' } as const],
+  ])('fails safely when a step target is absent or cannot accept the operation', async (step) => {
+    const button = document.createElement('button')
+    button.id = 'plain-button'
+    document.body.appendChild(button)
+    await expect(runActionSteps([step])).resolves.toBe(false)
+  })
+
+  it('fails safely for an unknown step kind', async () => {
+    await expect(runActionSteps([{ kind: 'unknown' } as never])).resolves.toBe(false)
+  })
+
+  it('catches selector errors and aborts the run without throwing', async () => {
+    await expect(runActionSteps([{ kind: 'click', selector: '[' }])).resolves.toBe(false)
   })
 
   it('aborts remaining steps after a failure', async () => {

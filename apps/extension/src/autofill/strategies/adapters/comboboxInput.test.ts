@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { faker } from '@faker-js/faker'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { fillComboboxInput, isComboboxTextInput } from '@/autofill/strategies/adapters/comboboxInput'
 
@@ -71,5 +72,53 @@ describe('fillComboboxInput', () => {
     document.body.appendChild(input)
 
     await expect(fillComboboxInput(input, 'anything')).resolves.toBe(false)
+  })
+
+  it('escapes and returns false when the popup contains no selectable options', async () => {
+    const input = document.createElement('input')
+    input.setAttribute('role', 'combobox')
+    input.setAttribute('aria-controls', 'empty-menu')
+    makeVisible(input)
+    document.body.appendChild(input)
+    const menu = document.createElement('div')
+    menu.id = 'empty-menu'
+    menu.setAttribute('role', 'listbox')
+    makeVisible(menu)
+    input.addEventListener('click', () => document.body.appendChild(menu))
+    const keys: string[] = []
+    input.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillComboboxInput(input, 'anything')).resolves.toBe(false)
+    expect(keys).toContain('Escape')
+  })
+
+  it('randomly picks an option when no target matches and closes a popover that stays open', async () => {
+    const input = document.createElement('input')
+    input.setAttribute('role', 'combobox')
+    input.setAttribute('aria-controls', 'persistent-menu')
+    makeVisible(input)
+    document.body.appendChild(input)
+    const menu = document.createElement('div')
+    menu.id = 'persistent-menu'
+    menu.setAttribute('role', 'listbox')
+    makeVisible(menu)
+    const options = ['Alpha', 'Beta'].map((label) => {
+      const option = document.createElement('button')
+      option.setAttribute('role', 'option')
+      option.textContent = label
+      makeVisible(option)
+      menu.appendChild(option)
+      return option
+    })
+    input.addEventListener('click', () => document.body.appendChild(menu))
+    vi.spyOn(faker.helpers, 'arrayElement').mockReturnValue(options[1])
+    const clicks: string[] = []
+    options[1].addEventListener('click', () => clicks.push('Beta'))
+    const keys: string[] = []
+    input.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillComboboxInput(input, 'missing')).resolves.toBe(true)
+    expect(clicks).toEqual(['Beta'])
+    expect(keys).toContain('Escape')
   })
 })
