@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { faker } from '@faker-js/faker'
 
 const { generateValue } = vi.hoisted(() => ({ generateValue: vi.fn() }))
 vi.mock('@/autofill/generateValue', () => ({ generateValue }))
@@ -86,6 +87,44 @@ describe('fillWidgetWithAria — option picker', () => {
 
     await expect(fillWidgetWithAria(trigger)).resolves.toBe(false)
   })
+
+  it('escapes and returns false when an opened popover has no selectable options', async () => {
+    const trigger = document.createElement('button')
+    trigger.setAttribute('role', 'combobox')
+    makeVisible(trigger)
+    document.body.appendChild(trigger)
+    const listbox = document.createElement('div')
+    listbox.setAttribute('role', 'listbox')
+    makeVisible(listbox)
+    trigger.addEventListener('click', () => document.body.appendChild(listbox))
+    const keys: string[] = []
+    document.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillWidgetWithAria(trigger)).resolves.toBe(false)
+    expect(keys).toContain('Escape')
+  })
+
+  it('closes a popover that remains visible after an option is clicked', async () => {
+    generateValue.mockResolvedValue('Apple')
+    const trigger = document.createElement('button')
+    trigger.setAttribute('role', 'combobox')
+    makeVisible(trigger)
+    document.body.appendChild(trigger)
+    const listbox = document.createElement('div')
+    listbox.setAttribute('role', 'listbox')
+    makeVisible(listbox)
+    const option = document.createElement('button')
+    option.setAttribute('role', 'option')
+    option.textContent = 'Apple'
+    makeVisible(option)
+    listbox.appendChild(option)
+    trigger.addEventListener('click', () => document.body.appendChild(listbox))
+    const keys: string[] = []
+    document.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillWidgetWithAria(trigger, { popoverSelector: '[role="listbox"]' })).resolves.toBe(true)
+    expect(keys).toContain('Escape')
+  })
 })
 
 describe('fillWidgetWithAria — calendar', () => {
@@ -124,6 +163,52 @@ describe('fillWidgetWithAria — calendar', () => {
     await expect(fillWidgetWithAria(trigger)).resolves.toBe(true)
     expect(clicked).toEqual(['15'])
   })
+
+  it('escapes when a calendar contains no enabled visible day cells', async () => {
+    const trigger = document.createElement('button')
+    trigger.setAttribute('aria-haspopup', 'dialog')
+    makeVisible(trigger)
+    document.body.appendChild(trigger)
+    const dialog = document.createElement('div')
+    dialog.setAttribute('role', 'dialog')
+    makeVisible(dialog)
+    const disabled = document.createElement('button')
+    disabled.setAttribute('role', 'gridcell')
+    disabled.setAttribute('aria-disabled', 'true')
+    disabled.textContent = '12'
+    makeVisible(disabled)
+    dialog.appendChild(disabled)
+    trigger.addEventListener('click', () => document.body.appendChild(dialog))
+    const keys: string[] = []
+    document.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillWidgetWithAria(trigger)).resolves.toBe(false)
+    expect(keys).toContain('Escape')
+  })
+
+  it('falls back to the middle leaf day for an invalid generated date', async () => {
+    generateValue.mockResolvedValue('not-a-date')
+    const trigger = document.createElement('button')
+    trigger.setAttribute('aria-haspopup', 'dialog')
+    makeVisible(trigger)
+    document.body.appendChild(trigger)
+    const dialog = document.createElement('div')
+    dialog.setAttribute('role', 'dialog')
+    makeVisible(dialog)
+    const clicked: string[] = []
+    for (const day of ['1', '2', '3']) {
+      const cell = document.createElement('button')
+      cell.setAttribute('role', 'gridcell')
+      cell.textContent = day
+      makeVisible(cell)
+      cell.addEventListener('click', () => clicked.push(day))
+      dialog.appendChild(cell)
+    }
+    trigger.addEventListener('click', () => document.body.appendChild(dialog))
+
+    await expect(fillWidgetWithAria(trigger)).resolves.toBe(true)
+    expect(clicked).toEqual(['2'])
+  })
 })
 
 describe('fillWidgetWithAria — switch', () => {
@@ -153,6 +238,17 @@ describe('fillWidgetWithAria — switch', () => {
 
     await expect(fillWidgetWithAria(toggle)).resolves.toBe(true)
     expect(toggle.getAttribute('aria-checked')).toBe('true')
+  })
+
+  it('normalizes string and missing desired values to booleans', async () => {
+    generateValue.mockResolvedValueOnce('true').mockResolvedValueOnce(undefined)
+    const enabled = buildSwitch(false)
+    const disabled = buildSwitch(true)
+
+    await expect(fillWidgetWithAria(enabled)).resolves.toBe(true)
+    await expect(fillWidgetWithAria(disabled)).resolves.toBe(true)
+    expect(enabled.getAttribute('aria-checked')).toBe('true')
+    expect(disabled.getAttribute('aria-checked')).toBe('false')
   })
 })
 
@@ -192,6 +288,23 @@ describe('fillWidgetWithAria — radiogroup', () => {
     await expect(fillWidgetWithAria(group)).resolves.toBe(true)
     expect(clicked).toEqual([])
   })
+
+  it('returns false when a radiogroup has no enabled visible radios', async () => {
+    const group = document.createElement('div')
+    group.setAttribute('role', 'radiogroup')
+    makeVisible(group)
+    document.body.appendChild(group)
+    expect(await fillWidgetWithAria(group)).toBe(false)
+  })
+
+  it('chooses a random radio when no target value matches', async () => {
+    generateValue.mockResolvedValue('Not present')
+    const { group, clicked } = buildRadiogroup(null)
+    vi.spyOn(faker.helpers, 'arrayElement').mockReturnValue(group.querySelectorAll<HTMLElement>('[role="radio"]')[2])
+
+    await expect(fillWidgetWithAria(group)).resolves.toBe(true)
+    expect(clicked).toEqual(['Large'])
+  })
 })
 
 describe('fillWidgetWithAria — slider', () => {
@@ -208,6 +321,24 @@ describe('fillWidgetWithAria — slider', () => {
 
     await expect(fillWidgetWithAria(slider)).resolves.toBe(true)
     expect(presses).toBeGreaterThan(0)
+  })
+
+  it('supports spinbuttons and focuses before stepping', async () => {
+    const spinbutton = document.createElement('div')
+    spinbutton.setAttribute('role', 'spinbutton')
+    makeVisible(spinbutton)
+    document.body.appendChild(spinbutton)
+    const focus = vi.spyOn(spinbutton, 'focus')
+    const keys: string[] = []
+    spinbutton.addEventListener('keydown', (event) => keys.push((event as KeyboardEvent).key))
+
+    await expect(fillWidgetWithAria(spinbutton)).resolves.toBe(true)
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true })
+    expect(keys).toContain('ArrowRight')
+  })
+
+  it('returns false for an element without supported widget semantics', async () => {
+    await expect(fillWidgetWithAria(document.createElement('div'))).resolves.toBe(false)
   })
 })
 
