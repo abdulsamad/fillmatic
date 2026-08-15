@@ -5,7 +5,7 @@ import { getEffectiveConfig, useProfileStore } from '@/store/profiles'
 import { useContentScriptStore as contentScriptStore } from '@/store/content-script'
 import { useAiMappingsStore } from '@/store/ai-mappings'
 import { SupportedInputsType } from '@/types'
-import { clientLog, isSupportedElement, isWidgetElement, matchElement } from '@/utils'
+import { clientLog, isSupportedElement, isWidgetElement, matchElement, matchElementLabel } from '@/utils'
 import { snapshotsForUrl } from '@/utils/ai-mappings'
 import { matchFieldTarget, type FieldTarget } from '@/utils/actions'
 import { isFeatureEnabled } from '@/utils/featureFlags'
@@ -103,6 +103,17 @@ export const generateValue = async ({ type, elem }: GenerateValueParams): Promis
   /* Check user-defined field rules */
   const userRuleTarget = getActiveUserRuleTarget(elem)
   if (userRuleTarget) return resolveFieldTargetValue(userRuleTarget, elem)
+
+  /*
+   * Accessible/native labels are the strongest built-in semantic signal. Run
+   * every text-field rule against labels alone before autocomplete or fallback
+   * identity attributes, so a misleading name such as `username` cannot beat
+   * an aria-label such as `Email Address`.
+   */
+  if (type === 'text' && elem instanceof HTMLInputElement) {
+    const fromLabel = generateFromTextFieldRules(elem, matchElementLabel)
+    if (fromLabel !== undefined) return fromLabel
+  }
 
   /* Generate based on AutoComplete */
   const autoCompleteTokensToSkip = [
@@ -483,17 +494,23 @@ const textFieldRules: TextFieldRule[] = [
   },
 ]
 
+const generateFromTextFieldRules = (
+  elem: HTMLInputElement,
+  matcher: (element: HTMLElement, keyword: string) => boolean = matchElement,
+): string | Promise<string> | undefined => {
+  for (const rule of textFieldRules) {
+    if (rule.match.some((keyword) => matcher(elem, keyword))) return rule.generate(elem)
+  }
+}
+
 const handleDefaultInputs = (type: HTMLInputTypeAttribute | 'contenteditable', elem: SupportedInputsType | Element) => {
   const config = getEffectiveConfig()
 
   switch (type) {
     case 'text': {
       if (elem instanceof HTMLInputElement) {
-        for (const rule of textFieldRules) {
-          if (rule.match.some((keyword) => matchElement(elem, keyword))) {
-            return rule.generate(elem)
-          }
-        }
+        const fromHeuristics = generateFromTextFieldRules(elem)
+        if (fromHeuristics !== undefined) return fromHeuristics
         return sliceToMax(faker.lorem.word(), elem)
       }
       return faker.lorem.word()
