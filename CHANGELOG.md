@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [v0.1.1] - 2026-08-15
+
+#### Fixed
+- **fix:** Prioritize native and ARIA label text when inferring text-field values, while preserving `autocomplete`, `name`, `placeholder`, `id`, `title`, and class fallbacks. Fields labelled as email no longer generate usernames when their underlying `name` or `autocomplete` is `username`.
+
+---
+
 ### [v0.1.0] - 2026-07-10
 
 #### Added

@@ -192,6 +192,27 @@ describe('generateValue', () => {
     expect(value).toContain('@')
   })
 
+  it('prefers an accessible email label over a misleading username name and autocomplete', async () => {
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.id = 'optionalEmail'
+    input.name = 'username'
+    input.autocomplete = 'username'
+    input.setAttribute('aria-label', 'Email Address')
+
+    const value = (await generateValue({ type: 'text', elem: input })) as string
+    expect(value).toContain('@')
+  })
+
+  it('falls back to the input name when no label identifies the field', async () => {
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.name = 'username'
+
+    const value = (await generateValue({ type: 'text', elem: input })) as string
+    expect(value).not.toContain('@')
+  })
+
   it('respects the min/max range for a number input', async () => {
     const input = document.createElement('input')
     input.min = '5'

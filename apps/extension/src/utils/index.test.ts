@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { invalidateMatchCache, isContentEditable, isSupportedElement, isSupportedInput, matchElement } from '.'
+import {
+  invalidateMatchCache,
+  isContentEditable,
+  isSupportedElement,
+  isSupportedInput,
+  matchElement,
+  matchElementLabel,
+} from '.'
 
 describe('isSupportedInput', () => {
   it('recognizes input, textarea and select elements', () => {
@@ -99,6 +106,16 @@ describe('matchElement', () => {
     const byTitle = document.createElement('input')
     byTitle.setAttribute('title', 'Company Name')
     expect(matchElement(byTitle, 'company')).toBe(true)
+  })
+
+  it('can match labels without including fallback identity attributes', () => {
+    const input = document.createElement('input')
+    input.name = 'username'
+    input.setAttribute('aria-label', 'Email Address')
+
+    expect(matchElementLabel(input, 'email')).toBe(true)
+    expect(matchElementLabel(input, 'username')).toBe(false)
+    expect(matchElement(input, 'username')).toBe(true)
   })
 
   it('only matches whole words, not substrings', () => {

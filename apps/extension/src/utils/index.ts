@@ -239,52 +239,59 @@ export const invalidateMatchCache = () => {
   matchCacheGeneration += 1
 }
 
-const elementTextCache = new WeakMap<HTMLElement, { gen: number; text: string }>()
+type ElementSearchText = {
+  label: string
+  all: string
+}
 
-const buildElementSearchText = (element: HTMLElement): string => {
-  const parts: string[] = []
+const elementTextCache = new WeakMap<HTMLElement, { gen: number; text: ElementSearchText }>()
+
+const normalizeParts = (parts: string[]): string => parts.map(normalizeAttr).filter(Boolean).join('\n')
+
+const buildElementSearchText = (element: HTMLElement): ElementSearchText => {
+  const labelParts: string[] = []
+  const fallbackParts: string[] = []
 
   // Associated <label> elements (works for input/textarea/select).
   if (isFormField(element) && element.labels) {
     for (const label of Array.from(element.labels)) {
-      if (label.textContent) parts.push(label.textContent)
+      if (label.textContent) labelParts.push(label.textContent)
     }
   }
 
-  // ARIA + title provide a label for fields that don't use a native <label> —
-  // common in modern component libraries.
+  // ARIA attributes provide the accessible label for fields that don't use a
+  // native <label> — common in modern component libraries.
   const ariaLabel = element.getAttribute('aria-label')
-  if (ariaLabel) parts.push(ariaLabel)
+  if (ariaLabel) labelParts.push(ariaLabel)
 
   const labelledBy = element.getAttribute('aria-labelledby')
   if (labelledBy) {
     for (const refId of labelledBy.split(/\s+/)) {
       const ref = refId ? document.getElementById(refId) : null
-      if (ref?.textContent) parts.push(ref.textContent)
+      if (ref?.textContent) labelParts.push(ref.textContent)
     }
   }
 
   const title = element.getAttribute('title')
-  if (title) parts.push(title)
+  if (title) fallbackParts.push(title)
 
   // Field identity attributes. name/placeholder now also cover textarea/select,
   // not just <input>.
-  if (isFormField(element) && element.name) parts.push(element.name)
+  if (isFormField(element) && element.name) fallbackParts.push(element.name)
   if ((element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) && element.placeholder) {
-    parts.push(element.placeholder)
+    fallbackParts.push(element.placeholder)
   }
-  if (element.id) parts.push(element.id)
-  if (element.className) parts.push(element.className)
+  if (element.id) fallbackParts.push(element.id)
+  if (element.className) fallbackParts.push(element.className)
 
   // Join parts with newlines so a multi-word phrase (e.g. "first name") can't
   // accidentally span two separate attributes, while single words still match.
-  return parts
-    .map(normalizeAttr)
-    .filter(Boolean)
-    .join('\n')
+  const label = normalizeParts(labelParts)
+  const fallback = normalizeParts(fallbackParts)
+  return { label, all: [label, fallback].filter(Boolean).join('\n') }
 }
 
-const getElementSearchText = (element: HTMLElement): string => {
+const getElementSearchText = (element: HTMLElement): ElementSearchText => {
   const cached = elementTextCache.get(element)
   if (cached && cached.gen === matchCacheGeneration) return cached.text
 
@@ -293,8 +300,7 @@ const getElementSearchText = (element: HTMLElement): string => {
   return text
 }
 
-export const matchElement = (element: HTMLElement, word: string): boolean => {
-  const haystack = getElementSearchText(element)
+const matchesText = (haystack: string, word: string): boolean => {
   if (!haystack) return false
 
   for (const regex of getMatchRegexes(word)) {
@@ -303,6 +309,13 @@ export const matchElement = (element: HTMLElement, word: string): boolean => {
 
   return false
 }
+
+/** Matches only native and ARIA label text, excluding name/id/placeholder/class hints. */
+export const matchElementLabel = (element: HTMLElement, word: string): boolean =>
+  matchesText(getElementSearchText(element).label, word)
+
+export const matchElement = (element: HTMLElement, word: string): boolean =>
+  matchesText(getElementSearchText(element).all, word)
 
 export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key] as string).state
 
