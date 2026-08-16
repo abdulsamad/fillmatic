@@ -11,32 +11,34 @@ on:
       - "turbo.json"
       - ".github/workflows/test.yml"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # Check out the PR branch itself (not the detached merge commit) so
-          # the coverage badge can be committed back to it.
-          ref: ${{ github.head_ref }}
+          persist-credentials: false
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: Set Node.js 24.19.0
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24.19.0
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm run lint
@@ -54,23 +56,17 @@ jobs:
         run: pnpm --filter extension run test:e2e:run
 
       - name: Report coverage on PR
-        uses: davelosert/vitest-coverage-report-action@v2
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: davelosert/vitest-coverage-report-action@8b157684c6a6b259b97d45e72b44242865c0f6a5 # v2
         with:
           working-directory: apps/extension
 
       - name: Generate coverage badge
         run: pnpm --filter extension run coverage:badge
 
-      - name: Commit updated coverage badge
-        run: |
-          # Stage first so a missing/untracked badge counts as a change —
-          # plain `git diff` can't see untracked files.
-          git add apps/extension/coverage-badge.svg
-          if git diff --cached --quiet; then
-            echo "Badge unchanged, nothing to commit."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -m "chore: update coverage badge [skip ci]"
-            git push
-          fi
+      - name: Upload generated coverage badge
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: coverage-badge-${{ github.event.pull_request.number }}
+          path: apps/extension/coverage-badge.svg
+          retention-days: 7

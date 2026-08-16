@@ -6,25 +6,35 @@ on:
       - "*"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: chrome-web-store-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: Set Node.js 24.19.0
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24.19.0
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests
         run: pnpm --filter extension run test
@@ -40,6 +50,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: test
     outputs:
       artifact-name: ${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}
@@ -47,29 +58,50 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
 
       - name: Set Node.js 24.19.0
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24.19.0
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify release tag matches package version
+        if: github.event_name == 'push'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node -e '
+            const { version } = require("./package.json")
+            const expected = `v${version}`
+            if (process.env.RELEASE_TAG !== expected) {
+              console.error(`Release tag ${process.env.RELEASE_TAG} must match ${expected}`)
+              process.exit(1)
+            }
+          '
 
       - name: Build extension
         run: pnpm run build:extension
 
       - name: Get package info
-        uses: codex-team/action-nodejs-package-info@v1.1
         id: package
+        run: |
+          node -e '
+            const fs = require("node:fs")
+            const { name, version } = require("./package.json")
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `name=${name}\nversion=${version}\n`)
+          '
 
       - name: Upload zip artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: ${{ steps.package.outputs.name }}-v${{ steps.package.outputs.version }}
           path: ./deploy/*.zip
@@ -77,11 +109,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
 
     steps:
       - name: Download zip artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: ${{ needs.build.outputs.artifact-name }}
           path: ./deploy
@@ -93,4 +126,4 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.CHROME_WEB_STORE_REFRESH_TOKEN }}
           PUBLISHER_ID: ${{ secrets.CHROME_WEB_STORE_PUBLISHER_ID }}
           EXTENSION_ID: ${{ secrets.CHROME_WEB_STORE_EXTENSION_ID }}
-        run: npx chrome-webstore-upload-cli@3 --source ./deploy/${{ needs.build.outputs.zip-file }} --max-await-in-progress 300
+        run: npx --yes chrome-webstore-upload-cli@3.5.0 --source ./deploy/${{ needs.build.outputs.zip-file }} --max-await-in-progress 300
