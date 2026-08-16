@@ -702,7 +702,7 @@ const handlePasswordGeneration = async (elem: HTMLInputElement, reenter = false)
         .toString()
     }
 
-    clientLog('Generated PIN: ', generatedPassword)
+    if (!samePasswordEverytime) clientLog('Generated PIN: ', generatedPassword)
     contentScriptStore.setState({ lastGeneratedPassword: generatedPassword })
   } else {
     const hardcodedPassword = config.commonPassword
@@ -717,7 +717,7 @@ const handlePasswordGeneration = async (elem: HTMLInputElement, reenter = false)
       })
     }
 
-    clientLog('Generated password: ', generatedPassword)
+    if (!samePasswordEverytime) clientLog('Generated password: ', generatedPassword)
     contentScriptStore.setState({ lastGeneratedPassword: generatedPassword })
   }
 

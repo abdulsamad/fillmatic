@@ -1,8 +1,15 @@
 import { faker } from '@faker-js/faker'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { isFeatureEnabled } = vi.hoisted(() => ({ isFeatureEnabled: vi.fn().mockReturnValue(true) }))
+const { clientLog, isFeatureEnabled } = vi.hoisted(() => ({
+  clientLog: vi.fn(),
+  isFeatureEnabled: vi.fn().mockReturnValue(true),
+}))
 vi.mock('@/utils/featureFlags', () => ({ isFeatureEnabled }))
+vi.mock('@/utils', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils')>()),
+  clientLog,
+}))
 
 import { generateValue, resolveFieldTargetValue } from '@/autofill/generateValue'
 import { DEFAULT_PROFILE, DEFAULT_PROFILE_ID, useProfileStore } from '@/store/profiles'
@@ -27,6 +34,7 @@ const randomTarget = (valueType?: FieldTarget['valueType']): FieldTarget => ({
 })
 
 beforeEach(() => {
+  clientLog.mockReset()
   isFeatureEnabled.mockReturnValue(true)
   document.body.innerHTML = ''
   contentScriptStore.setState({
@@ -451,6 +459,7 @@ describe('password safety and consistency', () => {
     const input = inputFor('password', { minLength: 8, maxLength: 10 })
     expect(await generateValue({ type: 'password', elem: input })).toBe('SafePass')
     expect(contentScriptStore.getState().lastGeneratedPassword).toBe('SafePass')
+    expect(clientLog).not.toHaveBeenCalled()
   })
 
   it('uses the deterministic PIN when enabled and it fits the field', async () => {
@@ -460,6 +469,7 @@ describe('password safety and consistency', () => {
     })
     const input = inputFor('password', { placeholder: 'PIN', minLength: 4, maxLength: 6 })
     expect(await generateValue({ type: 'password', elem: input })).toBe('1111')
+    expect(clientLog).not.toHaveBeenCalled()
   })
 
   it('generates a random password when the configured password cannot fit', async () => {
@@ -476,6 +486,14 @@ describe('password safety and consistency', () => {
     })
     const input = inputFor('password', { maxLength: 5, pattern: '[A-Za-z]+' })
     expect(String(await generateValue({ type: 'password', elem: input }))).toHaveLength(5)
+    expect(clientLog).not.toHaveBeenCalled()
+  })
+
+  it('logs a newly generated password when deterministic passwords are disabled', async () => {
+    const input = inputFor('password', { minLength: 8, maxLength: 10 })
+    const password = await generateValue({ type: 'password', elem: input })
+
+    expect(clientLog).toHaveBeenCalledWith('Generated password: ', password)
   })
 
   it('returns an empty confirm value when no password has been generated yet', async () => {
