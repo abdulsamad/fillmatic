@@ -19,7 +19,7 @@ export const SEO_DESCRIPTION =
   "FillMatic instantly fills any web form with realistic fake data. The Chrome extension built for developers who test forms every day.";
 
 /** Support/feedback contact address, used for mailto links and feedback form endpoints. */
-export const SUPPORT_EMAIL = "hello@abdulsamad.dev";
+export const SUPPORT_EMAIL = "hello+fillmatic@abdulsamad.dev";
 
 /** Chrome Web Store listing URL. */
 export const CHROME_WEB_STORE_URL =

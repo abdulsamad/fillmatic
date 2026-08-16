@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
           <CardTitle className="text-3xl font-bold text-center">
             Privacy Policy
           </CardTitle>
-          <CardDescription>Last updated: October 20, 2024</CardDescription>
+          <CardDescription>Last updated: August 16, 2026</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="mb-6">
@@ -61,49 +61,45 @@ const PrivacyPolicy = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <h3 className="text-xl font-semibold mb-2">Google Analytics</h3>
+          <h3 className="text-xl font-semibold mb-2">Usage Analytics</h3>
           <p className="mb-4">
-            To continuously improve FillMatic and its website, we use Google
-            Analytics as described in{" "}
-            <a
-              href="https://policies.google.com/technologies/partner-sites"
-              className="text-blue-600 hover:underline"
-            >
-              How Google uses data when you use our partners' sites or apps
-            </a>
-            &#46; Google Analytics helps us understand how the extension is used
-            and where potential usability issues arise.
-          </p>
-          <p className="mb-4">
-            The information collected through Google Analytics is anonymized and
-            used solely for assessing usage trends. We do not collect personally
-            identifiable information, nor do we share the anonymized data with
-            third parties.
-          </p>
-          <p className="mb-4">
-            You can prevent your data from being used by Google Analytics by
-            installing the{" "}
-            <a
-              href="https://tools.google.com/dlpage/gaoptout"
-              className="text-blue-600 hover:underline"
-            >
-              Google Analytics opt-out browser add-on
-            </a>
-            .
+            FillMatic does not use Google Analytics or another analytics service
+            on its website or in the extension.
           </p>
 
-          <h3 className="text-xl font-semibold mb-2">Support Requests</h3>
+          <h3 className="text-xl font-semibold mb-2">
+            Feedback and Support Requests
+          </h3>
           <p className="mb-4">
-            When you contact us with a support request, we may ask for
-            information relevant to troubleshooting. This may include logs or
-            other data you choose to provide. We can only access this data if
-            you explicitly share it with us.
+            The feedback form on the FillMatic website collects the name, email
+            address, and message you choose to submit. The form sends that data
+            to{" "}
+            <a
+              href="https://airform.io"
+              className="text-blue-600 hover:underline"
+            >
+              Airform
+            </a>
+            , a third-party form-processing service, which processes the
+            submission and forwards it to FillMatic's support inbox.
+          </p>
+          <p className="mb-4">
+            Feedback and support correspondence is used only to understand and
+            respond to your request. It may be retained for as long as
+            reasonably necessary to handle the request and maintain support
+            records. Do not submit passwords, payment details, private page
+            contents, or other sensitive information.
           </p>
           <p>
-            While support correspondence may be archived, any data attached to
-            it is deleted once the issue is resolved. At no point is this data
-            shared with third parties or used beyond the scope of resolving your
-            issue.
+            If you do not want to use Airform, you can contact FillMatic
+            directly at{" "}
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="text-blue-600 hover:underline"
+            >
+              hello+fillmatic[at]abdulsamad.dev
+            </a>
+            .
           </p>
         </CardContent>
       </Card>
@@ -140,6 +136,15 @@ const PrivacyPolicy = () => {
               device, ensuring that your custom settings persist between
               sessions.
             </li>
+            <li>
+              <strong>webNavigation</strong>: This permission lets FillMatic
+              identify frames in the active tab so a user-initiated fill can
+              reach eligible embedded forms.
+            </li>
+            <li>
+              <strong>sidePanel (optional)</strong>: FillMatic requests this
+              permission only when you choose to open the field mapper.
+            </li>
           </ul>
 
           <h3 className="text-xl font-semibold mb-2">
@@ -151,9 +156,9 @@ const PrivacyPolicy = () => {
               form fields necessary for its autofill functionality.
             </li>
             <li>
-              FillMatic cannot send data to external servers or cloud services,
-              and it does not store or transmit any data beyond the anonymized
-              information used for Analytics.
+              The extension does not send page contents, generated values,
+              profiles, recipes, or mappings to a FillMatic server. Its optional
+              field-mapping model runs on-device when supported by Chrome.
             </li>
           </ul>
         </CardContent>
@@ -188,7 +193,7 @@ const PrivacyPolicy = () => {
                   href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-blue-600 hover:underline"
                 >
-                  hello[at]abdulsamad.dev
+                  hello+fillmatic[at]abdulsamad.dev
                 </a>
                 &#46;
               </AlertDescription>

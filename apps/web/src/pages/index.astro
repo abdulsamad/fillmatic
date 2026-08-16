@@ -391,7 +391,12 @@ const STORE_URL = CHROME_WEB_STORE_URL;
           <p>Got an idea or something that's not working? I read every message.</p>
         </div>
         <div class="glass-card feedback-card">
-          <form action={`https://airform.io/${SUPPORT_EMAIL}`} method="POST" class="feedback-form">
+          <form
+            action={`https://airform.io/${SUPPORT_EMAIL}`}
+            method="POST"
+            class="feedback-form"
+            aria-describedby="feedback-privacy-note"
+          >
             <div class="field-row">
               <div class="field">
                 <label for="fb-name">Name</label>
@@ -406,6 +411,9 @@ const STORE_URL = CHROME_WEB_STORE_URL;
               <label for="fb-msg">Message</label>
               <textarea id="fb-msg" name="Feedback" placeholder="What would you like to see improved?" rows="4" required></textarea>
             </div>
+            <p id="feedback-privacy-note" class="form-privacy-note">
+              Your name, email, and message are processed by <a href="https://airform.io">Airform</a> and forwarded to FillMatic. Do not include passwords or other sensitive information.
+            </p>
             <button type="submit" class="btn btn-primary btn-lg w-full">Send feedback</button>
           </form>
         </div>
@@ -1170,6 +1178,21 @@ const STORE_URL = CHROME_WEB_STORE_URL;
     background: rgba(99,102,241,.08);
     box-shadow: 0 0 0 3px rgba(99,102,241,.15);
   }
+
+  .form-privacy-note {
+    margin: 0;
+    color: #64748b;
+    font-size: .78rem;
+    line-height: 1.5;
+  }
+
+  .form-privacy-note a {
+    color: #94a3b8;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .form-privacy-note a:hover { color: #cbd5e1; }
 
   /* ── Footer ── */
   .site-footer {
