@@ -2,5 +2,20 @@ packages:
   - "apps/*"
   - "packages/*"
 
+publicHoistPattern:
+  - "@testing-library/dom"
+enablePrePostScripts: true
+minimumReleaseAge: 10080 # 7 days
+saveExact: true
+engineStrict: true
+autoInstallPeers: true
+frozenLockfile: true
+shamefullyHoist: false
+fund: false
+ignoreScripts: true
+audit:
+  level: high
+storeDir: ~/.pnpm-store
+
 catalog:
   typescript: ^6.0.3
