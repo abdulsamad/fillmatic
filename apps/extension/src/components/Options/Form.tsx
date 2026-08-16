@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { InfoIcon, UserCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -52,7 +52,8 @@ const ProfileBanner = ({ profileName, isDefault }: { profileName: string; isDefa
     <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-200">
       <UserCircleIcon className="h-4 w-4 shrink-0" />
       <span>
-        Editing <strong>{profileName}</strong> profile — changes here will be saved to this profile and won't affect your default settings.
+        Editing <strong>{profileName}</strong> profile — changes here will be saved to this profile and won't affect
+        your default settings.
       </span>
     </div>
   )
@@ -90,25 +91,29 @@ const OptionsForm = () => {
   const activeProfile = profiles.find((p) => p.id === activeProfileId)
 
   // Merges General config with active profile's overrides — what the form shows and saves from
-  const effectiveValues = (): formSchemaType => ({
-    ...config,
-    tempEmailProvider: (activeProfile?.tempEmailProvider ?? config.tempEmailProvider) as formSchemaType['tempEmailProvider'],
-    samePasswordEverytime: activeProfile?.samePasswordEverytime ?? config.samePasswordEverytime,
-    commonPassword: activeProfile?.commonPassword ?? config.commonPassword,
-    ignoredFields: activeProfile?.ignoredFields ?? config.ignoredFields,
-    alwaysCheckFields: activeProfile?.alwaysCheckFields ?? config.alwaysCheckFields,
-  })
+  const effectiveValues = useMemo<formSchemaType>(
+    () => ({
+      ...config,
+      tempEmailProvider: (activeProfile?.tempEmailProvider ??
+        config.tempEmailProvider) as formSchemaType['tempEmailProvider'],
+      samePasswordEverytime: activeProfile?.samePasswordEverytime ?? config.samePasswordEverytime,
+      commonPassword: activeProfile?.commonPassword ?? config.commonPassword,
+      ignoredFields: activeProfile?.ignoredFields ?? config.ignoredFields,
+      alwaysCheckFields: activeProfile?.alwaysCheckFields ?? config.alwaysCheckFields,
+    }),
+    [activeProfile, config],
+  )
 
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
-    defaultValues: effectiveValues(),
+    defaultValues: effectiveValues,
   })
 
-  // Reset form when the active profile changes so the form reflects the new effective values
+  // Chrome storage hydrates asynchronously, so reset when either the active
+  // profile or its effective persisted values arrive.
   useEffect(() => {
-    form.reset(effectiveValues())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeProfileId])
+    form.reset(effectiveValues)
+  }, [activeProfileId, effectiveValues, form])
 
   const onSubmit = async (values: formSchemaType) => {
     if (isDefaultActive) {
@@ -116,7 +121,12 @@ const OptionsForm = () => {
       saveConfig(values)
     } else if (activeProfile) {
       // Custom profile active: non-overridable fields (typing, forceAutofill) → General only
-      saveConfig({ ...config, typingEffect: values.typingEffect, typingSpeed: values.typingSpeed, forceAutofill: values.forceAutofill })
+      saveConfig({
+        ...config,
+        typingEffect: values.typingEffect,
+        typingSpeed: values.typingSpeed,
+        forceAutofill: values.forceAutofill,
+      })
       // Overridable fields → profile only (General keeps its own independent values)
       updateProfile({
         ...activeProfile,
@@ -161,9 +171,9 @@ const OptionsForm = () => {
                         <InfoIcon className="size-5" />
                       </TooltipTrigger>
                       <TooltipContent className="w-1/2 text-pretty">
-                        When enabled, AutoFill will simulate typing and related events (e.g., focus, input, change)
-                        for a more natural experience. When disabled, values will be updated instantly, but still
-                        attempt to trigger a few events.
+                        When enabled, AutoFill will simulate typing and related events (e.g., focus, input, change) for
+                        a more natural experience. When disabled, values will be updated instantly, but still attempt to
+                        trigger a few events.
                       </TooltipContent>
                     </Tooltip>
                   </FormLabel>
@@ -241,9 +251,9 @@ const OptionsForm = () => {
                           <InfoIcon className="size-5" />
                         </TooltipTrigger>
                         <TooltipContent className="w-1/2 text-pretty">
-                          When enabled, the same password will be used for all password inputs, improving
-                          consistency and ease of testing. When disabled, a unique password will be generated for
-                          each form (logged to console).
+                          When enabled, the same password will be used for all password inputs, improving consistency
+                          and ease of testing. When disabled, a unique password will be generated for each form (logged
+                          to console).
                         </TooltipContent>
                       </Tooltip>
                     </FormLabel>

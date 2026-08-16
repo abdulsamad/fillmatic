@@ -16,6 +16,10 @@
 
 FillMatic is a local-first Manifest V3 Chrome extension for developers and QA engineers. It handles more than plain HTML inputs: controlled framework fields, late-mounted checkout controls, rich-text editors, ARIA widgets, open shadow roots, scoped Actions, and user-taught Recipes all run through the same failure-isolated autofill pipeline.
 
+<p align="center">
+  <img src="readme/demo.gif" alt="FillMatic filling a real-browser test form" width="760" />
+</p>
+
 ## Why FillMatic
 
 - **One-click realistic data:** names, emails, addresses, dates, phone numbers, payment test data, files, and more through Faker.
@@ -60,16 +64,16 @@ See [Architecture](docs/ARCHITECTURE.md) for the full lifecycle, value-resolutio
 
 | Surface                                  | Support                                                         | Verification                                       |
 | ---------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------- |
-| Native `input`, `select`, and `textarea` | Supported                                                       | Unit scenarios                                     |
-| React controlled inputs                  | Supported                                                       | Native-setter and event tests                      |
-| Vue-style controlled inputs              | Supported by native-setter/event design                         | Native-setter and event tests                      |
-| Inputs mounted after focus/input         | Supported with a settle-and-regather pass                       | Autofill lifecycle tests                           |
-| Radix Select / shadcn Select             | Supported                                                       | Adapter tests                                      |
+| Native `input`, `select`, and `textarea` | Supported                                                       | Unit scenarios and real Chromium                   |
+| React controlled inputs                  | Supported                                                       | Real Chromium fixture                              |
+| Vue-style controlled inputs              | Supported by native-setter/event design                         | Unit event tests; additional framework E2E welcome |
+| Inputs mounted after focus/input         | Supported with a settle-and-regather pass                       | Real Chromium fixture                              |
+| Radix Select / shadcn Select             | Supported                                                       | Real Radix component in Chromium                   |
 | Generic ARIA widgets                     | Combobox, calendar, switch, slider, spinbutton, radio group     | Adapter unit tests                                 |
-| Rich-text editors                        | ProseMirror, Lexical, Slate, Quill, Trix, plain contenteditable | Editor-path unit tests                             |
-| Open shadow roots                        | Supported                                                       | DOM traversal tests                                |
+| Rich-text editors                        | ProseMirror, Lexical, Slate, Quill, Trix, plain contenteditable | Editor-path unit tests and real Chromium host      |
+| Open shadow roots                        | Supported                                                       | Real Chromium fixture                              |
 | Closed shadow roots                      | Not accessible by browser design                                | Explicitly unsupported                             |
-| Iframes                                  | Content-script injection enabled; explicit frame dispatch pending | Not guaranteed in the current release             |
+| Iframes                                  | Supported when Chrome can inject the content script             | Same-origin real-browser fixture                   |
 | Chrome internal/Web Store pages          | Not accessible by extension policy                              | Explicitly unsupported                             |
 | On-device AI mapping                     | Progressive enhancement on supported Chrome installations       | Wrapper and UI tests; heuristics always available  |
 
@@ -79,7 +83,7 @@ Browser libraries can vary their markup across releases. When a standards-based 
 
 ```text
 apps/
-  extension/   React + Vite Chrome extension and Vitest suite
+  extension/   React + Vite Chrome extension and Playwright/Vitest suites
   web/         Astro marketing, demo, and privacy pages
 packages/
   config/      Canonical product name, copy, email, and URLs
@@ -124,15 +128,34 @@ pnpm --filter extension test:coverage
 
 Vitest and Testing Library cover value generation, event semantics, storage, messaging, adapters, recipes, mapping, and extension UI. Coverage floors are enforced at 90% for statements, branches, functions, and lines.
 
+### Real-browser extension tests
+
+```bash
+pnpm --filter extension exec playwright install chromium
+pnpm test:e2e
+pnpm --filter extension test:e2e:ui
+```
+
+The Playwright suite builds and loads the packaged extension into Chromium with a persistent context. It verifies MV3 service-worker boot, extension pages, real `chrome.tabs` messaging, React-controlled state, late-mounted inputs, an actual Radix Select, rich-text insertion, open Shadow DOM, and iframe injection. Failed runs retain traces and screenshots under `apps/extension/test-results/`.
+
+The `test:e2e:ui` command opens both Playwright's interactive test runner and a visible Chromium window, so extension behavior can be watched and debugged without headless mode.
+
+The README demo is generated from that real-browser fixture rather than hand-animated. With Playwright Chromium and FFmpeg installed, regenerate it with:
+
+```bash
+pnpm --filter extension demo:record
+```
+
 ### Full local gate
 
 ```bash
 pnpm lint
 pnpm --filter extension test:coverage
+pnpm test:e2e
 pnpm build
 ```
 
-Pull requests run the same lint, coverage, and build checks in GitHub Actions.
+Pull requests run the same lint, coverage, build, and real-browser checks in GitHub Actions.
 
 ## Build and release
 

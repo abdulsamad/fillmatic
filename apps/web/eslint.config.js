@@ -31,4 +31,18 @@ export default tseslint.config(
     },
   },
   ...astro.configs.recommended,
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+      },
+    },
+  },
+  {
+    files: ['**/*.astro/*.js'],
+    languageOptions: {
+      parser: tseslint.parser,
+    },
+  },
 )

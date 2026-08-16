@@ -85,7 +85,8 @@ export type Action = {
   group?: string // optional popup section header (e.g. "Stripe")
   matcher: { type: MatcherType; value: string }
   active: boolean
-  matchInIframe?: boolean // preserved passthrough; no behavior change
+  /** When true, a broadcast Action may also execute inside child frames. */
+  matchInIframe?: boolean
   rootSelector?: string // CSS selector scoping autofill to a single element (e.g. one form) instead of the whole page
   steps?: ActionStep[] // declarative steps run before the field fill; a steps-only action (fields: []) skips the fill
   fields: FieldTarget[]

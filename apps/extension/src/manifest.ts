@@ -48,7 +48,7 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['storage', 'activeTab'],
+  permissions: ['storage', 'activeTab', 'webNavigation'],
   commands: {
     AUTOFILL_ALL: {
       description: 'Fill all inputs on page',

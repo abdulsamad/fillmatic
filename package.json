@@ -12,6 +12,7 @@
     "dev:extension": "pnpm --filter extension dev",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:e2e": "pnpm --filter extension test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

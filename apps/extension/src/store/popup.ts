@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware'
 
 import { Form, ExtensionCommands } from '@/types'
 import { MESSAGES } from '@/consts'
+import { sendMessageToAllFrames } from '@/utils/tab-messaging'
 
 interface FillAllParams {
   fillType: 'all'
@@ -83,7 +84,7 @@ export const usePopupStore = create(
           case 'site': {
             if (!('messageId' in restProps)) throw new Error(`messageId is required to run an action`)
 
-            await chrome.tabs.sendMessage(currentTab.id, {
+            await sendMessageToAllFrames(currentTab.id, {
               type: `ACTION_AUTOFILL_${restProps.messageId}`,
               tab: { id: currentTab.id, url: currentTab.url },
             })
@@ -92,7 +93,7 @@ export const usePopupStore = create(
           default: {
             const { INIT_AUTOFILL_ALL } = MESSAGES
 
-            await chrome.tabs.sendMessage(currentTab.id, {
+            await sendMessageToAllFrames(currentTab.id, {
               type: INIT_AUTOFILL_ALL,
               tab: { id: currentTab.id, url: currentTab.url },
             })

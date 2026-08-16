@@ -5,7 +5,13 @@ import { usePopupStore } from '@/store/popup'
 const baseTab = { id: 1, url: 'https://example.com' } as chrome.tabs.Tab
 
 beforeEach(() => {
-  usePopupStore.setState({ isAutofilling: false, isDisabled: false, currentTab: baseTab, forms: [], commands: {} as never })
+  usePopupStore.setState({
+    isAutofilling: false,
+    isDisabled: false,
+    currentTab: baseTab,
+    forms: [],
+    commands: {} as never,
+  })
   vi.mocked(chrome.tabs.sendMessage).mockReset().mockResolvedValue(undefined)
 })
 
@@ -20,6 +26,7 @@ describe('fillData', () => {
     expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(
       baseTab.id,
       expect.objectContaining({ type: 'INIT_AUTOFILL_ALL' }),
+      { frameId: 0 },
     )
     expect(usePopupStore.getState().isAutofilling).toBe(false)
   })
@@ -41,6 +48,7 @@ describe('fillData', () => {
     expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(
       baseTab.id,
       expect.objectContaining({ type: 'ACTION_AUTOFILL_my-action' }),
+      { frameId: 0 },
     )
   })
 
@@ -53,9 +61,9 @@ describe('fillData', () => {
     expect(usePopupStore.getState().isAutofilling).toBe(true)
   })
 
-  it('resets isAutofilling and logs when chrome.tabs.sendMessage rejects', async () => {
+  it('resets isAutofilling and logs when frame discovery rejects', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    vi.mocked(chrome.tabs.sendMessage).mockReset().mockRejectedValue(new Error('boom'))
+    vi.mocked(chrome.webNavigation.getAllFrames).mockRejectedValueOnce(new Error('boom'))
 
     await usePopupStore.getState().fillData({ fillType: 'all' })
 

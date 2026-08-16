@@ -66,7 +66,7 @@ Recipes are declarative interaction steps rather than evaluated JavaScript. They
 
 React and Vue track input state above the DOM property. FillMatic calls the native prototype setter and dispatches focus, keyboard, `beforeinput`, input, change, and blur events so controlled components observe the edit.
 
-**Tradeoff:** simulated events can never perfectly reproduce trusted physical input, so compatibility must be validated against representative framework controls and widgets.
+**Tradeoff:** simulated events can never perfectly reproduce trusted physical input. Real-browser tests cover representative controlled forms and custom widgets.
 
 ### Optional permissions and feature gates
 

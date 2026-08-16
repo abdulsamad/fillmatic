@@ -5,6 +5,10 @@ on:
     paths:
       - "apps/extension/**"
       - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
       - ".github/workflows/test.yml"
 
 jobs:
@@ -39,6 +43,15 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm --filter extension run test:coverage
+
+      - name: Build extension for browser tests
+        run: pnpm --filter extension run build
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter extension exec playwright install --with-deps chromium
+
+      - name: Run real-browser extension tests
+        run: pnpm --filter extension run test:e2e:run
 
       - name: Report coverage on PR
         uses: davelosert/vitest-coverage-report-action@v2

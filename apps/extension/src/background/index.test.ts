@@ -76,7 +76,7 @@ describe('background/index onCommand', () => {
 
     await listener('AUTOFILL_ALL', { id: 1 } as chrome.tabs.Tab)
 
-    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: 'INIT_AUTOFILL_ALL' })
+    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: 'INIT_AUTOFILL_ALL' }, { frameId: 0 })
   })
 
   it('sends INIT_AUTOFILL_FORM for the currently focused form on AUTOFILL_CURRENT_FORM', async () => {
@@ -108,7 +108,7 @@ describe('background/index onCommand', () => {
 
     await listener('AUTOFILL_CURRENT_INPUT', { id: 1 } as chrome.tabs.Tab)
 
-    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: 'INIT_AUTOFILL_INPUT' })
+    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(1, { type: 'INIT_AUTOFILL_INPUT' }, { frameId: 0 })
   })
 
   it('does nothing for an unrecognized command', async () => {
