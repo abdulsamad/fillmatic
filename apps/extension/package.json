@@ -16,6 +16,7 @@
     "test:e2e:ui": "pnpm run build && pnpm run typecheck:e2e && playwright test --ui --headed",
     "typecheck:e2e": "tsc -p tsconfig.e2e.json",
     "demo:record": "pnpm run build && node scripts/record-demo.mjs",
+    "samples:generate": "node scripts/generate-sample-files.mjs",
     "coverage:badge": "node scripts/generate-coverage-badge.mjs"
   },
   "dependencies": {
