@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+### [v0.2.0] - 2026-08-16
+
+#### Added
+- **feat:** Full-page autofill and configured Actions now reach supported child frames. Actions only run in iframes when their explicit `matchInIframe` option is enabled.
+
+#### Fixed
+- **fix:** Generate ISO-compliant values for week fields and local-time values for `datetime-local` fields, including around year and timezone boundaries.
+- **fix:** Recognise `re enter` password confirmations and avoid logging reused user passwords.
+
+---
+
 ### [v0.1.1] - 2026-08-15
 
 #### Fixed
