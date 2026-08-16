@@ -9,6 +9,7 @@ export default defineManifest({
   name: PRODUCT_NAME,
   description: PRODUCT_DESCRIPTION,
   version: packageData.version,
+  // author: { email: 'hello@abdulsamad.dev' },
   manifest_version: 3,
   icons: {
     16: 'icons/icon16.png',
