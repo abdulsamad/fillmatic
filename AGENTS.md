@@ -34,14 +34,15 @@ pnpm test                 # run all workspaces' test suites via turbo
 pnpm --filter extension test:watch
 pnpm --filter extension test:coverage    # writes coverage/coverage-summary.json
 pnpm --filter extension coverage:badge   # regenerates coverage-badge.svg from that summary
+pnpm test:e2e             # build extension, then run Playwright against the packaged MV3 extension
 
 # Web app only
 pnpm --filter web deploy  # build + deploy to Cloudflare Pages
 ```
 
-Node >= 22 required. Package manager: `pnpm@9.15.9` — shared dependency versions (e.g. `typescript`) are pinned via the pnpm catalog in `pnpm-workspace.yaml`; use `catalog:` in workspace `package.json`s instead of repeating versions.
+Node `>=24.19.0 <25` is required. Package manager: `pnpm@11.22.0` — shared dependency versions (e.g. `typescript`) are pinned via the pnpm catalog in `pnpm-workspace.yaml`; use `catalog:` in workspace `package.json`s instead of repeating versions.
 
-The extension build outputs to `apps/extension/build/`. After building, a zip is created at `deploy/fill-matic-v<version>.zip` via `postbuild`.
+The extension build outputs to `apps/extension/build/`. The root `package:extension` script packages it as `deploy/fill-matic-v<version>.zip`; `pnpm build` and `pnpm build:extension` both invoke that script.
 
 ## Internal packages
 
@@ -89,6 +90,12 @@ All extension pages run permanently in **dark mode**: `class="dark"` on each ent
    - Heuristic matching on element `name`, `id`, `placeholder`, `label`, `className` via `matchElement()`
    - Fallback to input `type`-based faker generation
 
+`datetime-local` values must be formatted in local time (never via `toISOString()`, which can shift the calendar day). Week inputs require ISO week-year/week formatting, especially around New Year. Never log a user's configured reusable password or PIN; those values can be sensitive.
+
+### Frame delivery
+
+The manifest has the `webNavigation` permission and the content script is registered with `all_frames: true`. Popup actions and keyboard shortcuts use `utils/tab-messaging.ts#sendMessageToAllFrames()` to enumerate registered frame IDs and explicitly message each frame; individual frame delivery failures are expected during navigation and do not abort the fill. Regular full-page fills run in every supported frame. An Action runs in a child frame only when its `matchInIframe` flag is true—keep that opt-in, because payment/provider embeds should not be filled accidentally.
+
 ### Recipes (`src/utils/recipes.ts`, `src/autofill/recipes.ts`, `src/store/recipes.ts`)
 
 User-taught widget interactions, managed in the Options **Recipes** tab (`components/Options/RecipesTab.tsx`, JSON import/export via `utils/json-io.ts`). A `Recipe` = URL `matcher` (empty value ⇒ everywhere) + CSS `selector` for the widget trigger + `ActionStep[]`. During a fill, `runRecipesPass` drives every visible match; elements it touched are tracked in a `WeakSet` so the widget strategy skips them. Recipes always outrank built-in adapters — the adapters are just editable defaults.
@@ -135,6 +142,27 @@ Two distinct seams:
 ## Testing
 
 Both apps use Vitest + Testing Library (`jsdom` environment). The extension has near-full coverage (`vitest.config.ts` enforces floors: 78% statements/lines, 65% branches, 82% functions via `@vitest/coverage-v8`) — treat those thresholds as a ratchet, don't lower them. Bootstrap/type-only files (`manifest.ts`, `global.d.ts`, `types/index.ts`, `autofill/index.ts`, page entry points, `utils/user-rules.ts`, `utils/user-profiles.ts`) are excluded from coverage. `pnpm --filter extension test:coverage` followed by `coverage:badge` regenerates `apps/extension/coverage-badge.svg` (self-generated, no third-party badge service).
+
+`pnpm test:e2e` builds the production extension and runs four Playwright scenarios against it, including a frame-heavy page with React-controlled, late-mounted, Radix, rich-text, shadow-DOM, and iframe fields. Run it for changes to manifest permissions, message delivery, the content script, or fill strategies; unit tests alone will not catch packaging/runtime regressions.
+
+## Releases
+
+Current release: **v0.2.0** (2026-08-16). Use SemVer: a backwards-compatible user-facing capability is a minor bump; a bug, privacy, or generation correction is a patch bump. The release version is defined **only** in the root `package.json`; `src/manifest.ts` imports it directly, and a pushed release tag must be exactly `v<package-version>`.
+
+Releases are tag-driven. After updating the root version and `CHANGELOG.md`, run:
+
+```bash
+pnpm lint
+pnpm --filter extension test:coverage
+pnpm test:e2e
+pnpm build
+git tag -a v<version> -m "v<version>"
+git push origin main v<version>
+```
+
+The annotated tag starts `.github/workflows/deploy.yml`: it installs from the frozen lockfile, runs extension unit and real-browser tests, verifies that the tag matches `package.json`, builds `deploy/fill-matic-v<version>.zip`, retains it as a GitHub artifact for 7 days, then uploads and publishes it with `chrome-webstore-upload-cli`. Publishing needs the five `CHROME_WEB_STORE_*` secrets documented in `docs/RELEASING.md`. Watch the workflow and then verify the Chrome Web Store listing and public demo using the installed store build.
+
+Do not casually use the workflow's `workflow_dispatch`: its tag/version guard only runs for tag pushes, but its deploy job still attempts a Web Store publish. Also, the trigger listens to every tag; non-version tags fail the version guard but still start CI. Chrome Web Store versions are monotonic—rollback means a fixed follow-up patch with a higher version, never republishing an older build.
 
 ## Web App (`apps/web`)
 
