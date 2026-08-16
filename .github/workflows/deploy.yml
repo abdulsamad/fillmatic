@@ -29,6 +29,15 @@ jobs:
       - name: Run tests
         run: pnpm --filter extension run test
 
+      - name: Build extension for browser tests
+        run: pnpm --filter extension run build
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter extension exec playwright install --with-deps chromium
+
+      - name: Run real-browser extension tests
+        run: pnpm --filter extension run test:e2e:run
+
   build:
     runs-on: ubuntu-latest
     needs: test

@@ -1,6 +1,6 @@
 # Releasing FillMatic
 
-Releases are tag-driven. A pushed Git tag starts `.github/workflows/deploy.yml`, which tests the extension, builds the package, uploads the zip as a GitHub Actions artifact, and publishes it through the Chrome Web Store API.
+Releases are tag-driven. A pushed Git tag starts `.github/workflows/deploy.yml`, which tests the extension, runs the real-browser suite, builds the package, uploads the zip as a GitHub Actions artifact, and publishes it through the Chrome Web Store API.
 
 ## One-time repository configuration
 
@@ -24,6 +24,7 @@ The Google OAuth client and refresh token must belong to an account with access 
    ```bash
    pnpm lint
    pnpm --filter extension test:coverage
+   pnpm test:e2e
    pnpm build
    ```
 

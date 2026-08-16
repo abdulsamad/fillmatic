@@ -211,6 +211,13 @@ chrome.runtime.onMessage.addListener((request: RequestPayload, sender, sendRespo
           if (isActionAutofill) {
             const action = contentScriptStore.getState().activeAction
 
+            // Action messages are broadcast to every frame. Respect the action's
+            // explicit iframe opt-in before running inside a child frame.
+            if (window.top !== window && !action?.matchInIframe) {
+              sendResponse({ type: AUTOFILL_COMPLETE })
+              return null
+            }
+
             // Declarative steps run first; a steps-only action (no fields) skips the fill.
             if (action?.steps?.length) await runActionSteps(action.steps)
 

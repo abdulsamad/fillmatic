@@ -1,6 +1,7 @@
 import { DEMO_URL } from '@fillmatic/config'
 
 import { log } from '@/utils'
+import { sendMessageToAllFrames } from '@/utils/tab-messaging'
 import { MESSAGES } from '@/consts'
 import { ExtensionCommands } from '@/types'
 
@@ -44,7 +45,7 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
   switch (command as ExtensionCommands) {
     case 'AUTOFILL_ALL':
       {
-        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_ALL })
+        await sendMessageToAllFrames(tab.id, { type: INIT_AUTOFILL_ALL })
       }
       break
 
@@ -61,7 +62,7 @@ chrome.commands.onCommand.addListener(async (command: string, tab) => {
       break
     case 'AUTOFILL_CURRENT_INPUT':
       {
-        await chrome.tabs.sendMessage(tab.id, { type: INIT_AUTOFILL_INPUT })
+        await sendMessageToAllFrames(tab.id, { type: INIT_AUTOFILL_INPUT })
       }
       break
 

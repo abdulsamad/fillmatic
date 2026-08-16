@@ -11,7 +11,8 @@ FillMatic is local-first. Form metadata, profiles, recipes, mappings, and genera
 The extension intentionally uses a narrow permission set:
 
 - `storage` persists local settings and mappings;
-- `activeTab` lets an explicit user action operate on the current tab; and
+- `activeTab` lets an explicit user action operate on the current tab;
+- `webNavigation` enumerates the tab's frames so one explicit fill can reach their content scripts; and
 - `sidePanel` is optional and requested only when the user opens the field mapper.
 
 Content scripts run on HTTP and HTTPS pages because filling arbitrary development and testing forms is the product's core function. Closed shadow roots, browser-internal pages, and frames Chrome does not permit the extension to access remain outside its reach.

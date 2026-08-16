@@ -28,6 +28,11 @@ vi.stubGlobal('chrome', {
     query: vi.fn(() => Promise.resolve([])),
     sendMessage: vi.fn(),
   },
+  webNavigation: {
+    getAllFrames: vi.fn(({ tabId }: { tabId: number }) =>
+      Promise.resolve([{ tabId, frameId: 0, parentFrameId: -1, url: 'https://example.test/' }]),
+    ),
+  },
   storage: {
     local: {
       get: vi.fn(() => Promise.resolve({})),
