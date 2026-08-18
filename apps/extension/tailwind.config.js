@@ -1,9 +1,9 @@
-import uiPreset from "@fillmatic/ui/tailwind-preset"
+import uiPreset from '@fillmatic/ui/tailwind-preset'
 
 /** @type {import('tailwindcss').Config} */
 export default {
   presets: [uiPreset],
-  darkMode: ["class"],
+  darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -11,13 +11,13 @@ export default {
     './src/**/*.{ts,tsx}',
     '../../packages/ui/src/**/*.{ts,tsx}',
   ],
-  prefix: "",
+  prefix: '',
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: '2rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
   },

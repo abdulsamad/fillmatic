@@ -13,7 +13,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "test:e2e": "pnpm --filter extension test:e2e",
-    "format": "prettier --write \"**/*.{astro,ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{astro,css,js,json,md,mjs,scss,ts,tsx}\""
   },
   "devDependencies": {
     "bestzip": "^3.0.1",

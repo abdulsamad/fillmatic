@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "@fillmatic/ui/styles.css";
+@import 'tailwindcss';
+@import '@fillmatic/ui/styles.css';
 @config "../../tailwind.config.mjs";
 @plugin "tailwindcss-animate";
 @layer base {
