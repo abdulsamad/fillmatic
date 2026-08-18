@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "@fillmatic/ui/styles.css";
+@import 'tailwindcss';
+@import '@fillmatic/ui/styles.css';
 @config "../tailwind.config.js";
 @plugin "tailwindcss-animate";
 
@@ -13,8 +13,14 @@
 }
 
 @keyframes popup-in {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-popup-in {
