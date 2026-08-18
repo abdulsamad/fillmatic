@@ -162,7 +162,7 @@ git push origin main v<version>
 
 The annotated tag starts `.github/workflows/deploy.yml`: it installs from the frozen lockfile, runs extension unit and real-browser tests, verifies that the tag matches `package.json`, builds `deploy/fill-matic-v<version>.zip`, retains it as a GitHub artifact for 7 days, then uploads and publishes it with `chrome-webstore-upload-cli`. Publishing needs the five `CHROME_WEB_STORE_*` secrets documented in `docs/RELEASING.md`. Watch the workflow and then verify the Chrome Web Store listing and public demo using the installed store build.
 
-Do not casually use the workflow's `workflow_dispatch`: its tag/version guard only runs for tag pushes, but its deploy job still attempts a Web Store publish. Also, the trigger listens to every tag; non-version tags fail the version guard but still start CI. Chrome Web Store versions are monotonic—rollback means a fixed follow-up patch with a higher version, never republishing an older build.
+The release workflow is intentionally tag-only: do not add `workflow_dispatch`, because it bypasses the tag/version guard and would still attempt a Web Store publish. The trigger listens to every tag; non-version tags fail the version guard but still start CI. Chrome Web Store versions are monotonic—rollback means a fixed follow-up patch with a higher version, never republishing an older build.
 
 ## Web App (`apps/web`)
 

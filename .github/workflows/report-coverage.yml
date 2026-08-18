@@ -1,0 +1,47 @@
+name: Report Coverage
+
+on:
+  workflow_run:
+    workflows: ["Test"]
+    types: [completed]
+
+# This workflow runs from the default branch, never from pull-request code.
+# Keep its token scoped to reading the source/artifact and updating the PR comment.
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  report:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # The default-branch checkout supplies only trusted action configuration.
+      - name: Checkout default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      # Artifacts from pull requests are untrusted data. Keep them outside the
+      # workspace: this workflow neither executes nor installs anything from
+      # them; the reporting action only parses the coverage JSON and Vitest
+      # config as text.
+      - name: Download coverage report
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          name: coverage-report
+          path: ${{ runner.temp }}/coverage-report
+
+      - name: Report coverage on PR
+        uses: davelosert/vitest-coverage-report-action@8b157684c6a6b259b97d45e72b44242865c0f6a5 # v2
+        with:
+          json-summary-path: ${{ runner.temp }}/coverage-report/coverage/coverage-summary.json
+          json-final-path: ${{ runner.temp }}/coverage-report/coverage/coverage-final.json
+          vite-config-path: ${{ runner.temp }}/coverage-report/vitest.config.ts
