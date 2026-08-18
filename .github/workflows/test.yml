@@ -53,7 +53,7 @@ jobs:
           path: |
             apps/extension/coverage
             apps/extension/vitest.config.ts
-          retention-days: 7
+          retention-days: 3
 
       - name: Build extension for browser tests
         run: pnpm --filter extension run build
@@ -72,4 +72,4 @@ jobs:
         with:
           name: coverage-badge-${{ github.event.pull_request.number }}
           path: apps/extension/coverage-badge.svg
-          retention-days: 7
+          retention-days: 3
