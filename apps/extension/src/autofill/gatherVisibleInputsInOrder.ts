@@ -44,9 +44,7 @@ export const isInViewport = (elem: Element, margin = 0): boolean => {
   const viewHeight = window.innerHeight || document.documentElement.clientHeight
   const viewWidth = window.innerWidth || document.documentElement.clientWidth
 
-  return (
-    rect.top < viewHeight - margin && rect.bottom > margin && rect.left < viewWidth - margin && rect.right > margin
-  )
+  return rect.top < viewHeight - margin && rect.bottom > margin && rect.left < viewWidth - margin && rect.right > margin
 }
 
 export const gatherVisibleInputsInOrder = (rootElement: Element | null = null): SupportedInputsType[] => {
@@ -92,11 +90,9 @@ export const gatherWidgetElements = (rootElement: Element | null = null): HTMLEl
  * and are written through it.
  */
 export const gatherContenteditableHosts = (rootElement: Element | null = null): HTMLElement[] =>
-  queryDeepAll(rootElement || document, '[contenteditable], [role="textbox"]').filter(
-    (elem): elem is HTMLElement => {
-      if (!(elem instanceof HTMLElement) || !isContentEditable(elem) || !isElementVisible(elem)) return false
+  queryDeepAll(rootElement || document, '[contenteditable], [role="textbox"]').filter((elem): elem is HTMLElement => {
+    if (!(elem instanceof HTMLElement) || !isContentEditable(elem) || !isElementVisible(elem)) return false
 
-      const parentHost = elem.parentElement?.closest('[contenteditable], [role="textbox"]')
-      return !(parentHost instanceof HTMLElement && isContentEditable(parentHost))
-    },
-  )
+    const parentHost = elem.parentElement?.closest('[contenteditable], [role="textbox"]')
+    return !(parentHost instanceof HTMLElement && isContentEditable(parentHost))
+  })

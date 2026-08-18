@@ -357,9 +357,7 @@ describe('resolveFieldTargetValue', () => {
   })
 
   it('returns the literal value for the exact strategy', () => {
-    expect(resolveFieldTargetValue(target({ valueStrategy: 'exact' }), document.createElement('input'))).toBe(
-      'literal',
-    )
+    expect(resolveFieldTargetValue(target({ valueStrategy: 'exact' }), document.createElement('input'))).toBe('literal')
   })
 
   it('generates a fresh email for random/email', () => {

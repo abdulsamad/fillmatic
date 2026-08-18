@@ -74,7 +74,7 @@ export const Popup = () => {
   )
 
   useLayoutEffect(() => {
-    ; (async () => {
+    ;(async () => {
       try {
         // Disable on Interal Pages
         const isInternal = await isInternalPage()
@@ -146,7 +146,9 @@ export const Popup = () => {
               </SelectTrigger>
               <SelectContent>
                 {profiles.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -192,7 +194,10 @@ export const Popup = () => {
 
           {isDisabled && (
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-950/50 dark:border-red-900 dark:text-red-300 px-4 py-3 relative rounded-lg" role="alert">
+              <div
+                className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-950/50 dark:border-red-900 dark:text-red-300 px-4 py-3 relative rounded-lg"
+                role="alert"
+              >
                 <span className="block sm:inline">{PRODUCT_NAME} cannot be used on internal pages.</span>
               </div>
             </div>
@@ -272,7 +277,7 @@ export const Popup = () => {
           </Tooltip>
         </footer>
       </TooltipProvider>
-    </div >
+    </div>
   )
 }
 

@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  getAiMappingsFromStorage,
-  snapshotsForUrl,
-  type MappingSnapshot,
-} from '@/utils/ai-mappings'
+import { getAiMappingsFromStorage, snapshotsForUrl, type MappingSnapshot } from '@/utils/ai-mappings'
 import { useAiMappingsStore } from '@/store/ai-mappings'
 
 const snapshot = (overrides: Partial<MappingSnapshot> = {}): MappingSnapshot => ({
@@ -12,7 +8,9 @@ const snapshot = (overrides: Partial<MappingSnapshot> = {}): MappingSnapshot => 
   name: 'Checkout',
   siteMatcher: 'example.com',
   createdAt: '2026-07-09T00:00:00.000Z',
-  fields: [{ attribute: 'id', operator: 'exact', match: 'email', value: '', valueStrategy: 'random', valueType: 'email' }],
+  fields: [
+    { attribute: 'id', operator: 'exact', match: 'email', value: '', valueStrategy: 'random', valueType: 'email' },
+  ],
   ...overrides,
 })
 
@@ -45,7 +43,7 @@ describe('useAiMappingsStore', () => {
 // chrome.storage.local.get is overloaded (callback vs. Promise forms); cast to the
 // Promise shape we use, mirroring the asAsyncMock pattern in Popup.test.tsx.
 type AsyncMock<T> = { mockResolvedValueOnce: (value: T) => void }
-const asAsyncMock = <T,>(fn: unknown) => fn as AsyncMock<T>
+const asAsyncMock = <T>(fn: unknown) => fn as AsyncMock<T>
 
 describe('getAiMappingsFromStorage', () => {
   it('reads persisted snapshots from chrome.storage.local', async () => {

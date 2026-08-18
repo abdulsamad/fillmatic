@@ -162,7 +162,9 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Button label <span className="text-destructive">*</span></FormLabel>
+                    <FormLabel>
+                      Button label <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. Fill Success Card" {...field} />
                     </FormControl>
@@ -200,7 +202,9 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
                       </FormControl>
                       <SelectContent>
                         {MATCHER_TYPES.map((m) => (
-                          <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                          <SelectItem key={m.value} value={m.value}>
+                            {m.label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -212,7 +216,9 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
                 name="matcherValue"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Value <span className="text-destructive">*</span></FormLabel>
+                    <FormLabel>
+                      Value <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. https://checkout.stripe.com/c/pay/cs_test" {...field} />
                     </FormControl>
@@ -268,7 +274,9 @@ const ActionDialog = ({ open, onClose, initial }: ActionDialogProps) => {
             <ActionStepsEditor name="steps" />
 
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button type="submit">{initial ? 'Save changes' : 'Add action'}</Button>
             </DialogFooter>
           </form>
@@ -295,8 +303,14 @@ const ActionsTab = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Action | undefined>(undefined)
 
-  const openAdd = () => { setEditing(undefined); setDialogOpen(true) }
-  const openEdit = (a: Action) => { setEditing(a); setDialogOpen(true) }
+  const openAdd = () => {
+    setEditing(undefined)
+    setDialogOpen(true)
+  }
+  const openEdit = (a: Action) => {
+    setEditing(a)
+    setDialogOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -304,7 +318,8 @@ const ActionsTab = () => {
         <div>
           <h3 className="text-base font-semibold">Actions</h3>
           <p className="text-sm text-muted-foreground mt-0.5">
-            One-click buttons shown in the popup on matching URLs. Each runs a full autofill and overrides the fields you target with fixed values.
+            One-click buttons shown in the popup on matching URLs. Each runs a full autofill and overrides the fields
+            you target with fixed values.
           </p>
         </div>
         <Button size="sm" onClick={openAdd}>
@@ -325,60 +340,77 @@ const ActionsTab = () => {
           {actions.map((action) => {
             const locked = isDefaultAction(action)
             return (
-            <div
-              key={action.id}
-              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${action.active ? '' : 'opacity-60'} ${locked ? 'bg-muted/30' : 'hover:bg-muted/30'}`}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <ZapIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium">{action.name}</span>
-                    {action.group && (
-                      <Badge variant="secondary" className="text-xs font-normal py-0">{action.group}</Badge>
-                    )}
-                    {!action.active && (
-                      <Badge variant="outline" className="text-xs font-normal py-0">Disabled</Badge>
-                    )}
+              <div
+                key={action.id}
+                className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${action.active ? '' : 'opacity-60'} ${locked ? 'bg-muted/30' : 'hover:bg-muted/30'}`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <ZapIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium">{action.name}</span>
+                      {action.group && (
+                        <Badge variant="secondary" className="text-xs font-normal py-0">
+                          {action.group}
+                        </Badge>
+                      )}
+                      {!action.active && (
+                        <Badge variant="outline" className="text-xs font-normal py-0">
+                          Disabled
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
+                      <GlobeIcon className="h-3 w-3 shrink-0" /> {matcherSummary(action)} · {action.fields.length} field
+                      {action.fields.length === 1 ? '' : 's'}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-                    <GlobeIcon className="h-3 w-3 shrink-0" /> {matcherSummary(action)} · {action.fields.length} field{action.fields.length === 1 ? '' : 's'}
-                  </p>
+                </div>
+                <div className="flex items-center gap-1 ml-2 shrink-0">
+                  {locked ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground cursor-default"
+                      disabled
+                    >
+                      <LockIcon className="h-3.5 w-3.5" />
+                    </Button>
+                  ) : (
+                    <>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(action)}>
+                        <PencilIcon className="h-3.5 w-3.5" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive"
+                          >
+                            <Trash2Icon className="h-3.5 w-3.5" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete "{action.name}"?</AlertDialogTitle>
+                            <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteAction(action.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-1 ml-2 shrink-0">
-                {locked ? (
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground cursor-default" disabled>
-                    <LockIcon className="h-3.5 w-3.5" />
-                  </Button>
-                ) : (
-                  <>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(action)}>
-                      <PencilIcon className="h-3.5 w-3.5" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive">
-                          <Trash2Icon className="h-3.5 w-3.5" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete "{action.name}"?</AlertDialogTitle>
-                          <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteAction(action.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </>
-                )}
-              </div>
-            </div>
             )
           })}
         </div>

@@ -2,7 +2,14 @@ import { faker } from '@faker-js/faker'
 
 import { waitForSettle } from '../../waitForSettle'
 import { isElementVisible } from '../../gatherVisibleInputsInOrder'
-import { clickLikeUser, findOpenedPopover, findOptionByText, getSelectableOptions, getVisiblePopovers, pressKey } from './helpers'
+import {
+  clickLikeUser,
+  findOpenedPopover,
+  findOptionByText,
+  getSelectableOptions,
+  getVisiblePopovers,
+  pressKey,
+} from './helpers'
 
 /**
  * Autocomplete-style comboboxes put `role="combobox"` on a *native text input*

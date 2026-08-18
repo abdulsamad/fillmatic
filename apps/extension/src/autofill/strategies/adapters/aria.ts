@@ -30,10 +30,7 @@ const escapeOut = (elem: HTMLElement) => {
   pressKey(document.activeElement instanceof HTMLElement ? document.activeElement : elem, 'Escape')
 }
 
-const openPopover = async (
-  trigger: HTMLElement,
-  popoverSelector: string,
-): Promise<HTMLElement | undefined> => {
+const openPopover = async (trigger: HTMLElement, popoverSelector: string): Promise<HTMLElement | undefined> => {
   const popoversBefore = new Set<Element>(getVisiblePopovers(popoverSelector))
 
   clickLikeUser(trigger)
@@ -69,7 +66,9 @@ const fillCalendar = async (elem: HTMLElement, popoverSelector: string): Promise
   if (!popover) return false
 
   // Day cells: buttons inside the date grid whose text is a bare day number.
-  const cells = Array.from(popover.querySelectorAll('[role="gridcell"], [role="gridcell"] button, [role="grid"] button')).filter(
+  const cells = Array.from(
+    popover.querySelectorAll('[role="gridcell"], [role="gridcell"] button, [role="grid"] button'),
+  ).filter(
     (cell): cell is HTMLElement =>
       cell instanceof HTMLElement &&
       isElementVisible(cell) &&

@@ -13,16 +13,17 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "test:e2e": "pnpm --filter extension test:e2e",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{astro,ts,tsx,md}\""
   },
   "devDependencies": {
     "bestzip": "^3.0.1",
     "prettier": "^3.9.4",
+    "prettier-plugin-astro": "^0.14.1",
     "turbo": "^2.10.4",
     "typescript": "catalog:"
   },
   "packageManager": "pnpm@11.22.0",
   "engines": {
-    "node": ">=24.19.0 <25"
+    "node": ">=24"
   }
 }

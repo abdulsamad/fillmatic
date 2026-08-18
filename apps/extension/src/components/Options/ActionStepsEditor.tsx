@@ -51,11 +51,15 @@ const ActionStepRow = ({ control, name, index, onRemove }: ActionStepRowProps) =
           <FormItem>
             <Select value={field.value} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {STEP_KIND_OPTIONS.map((k) => (
-                  <SelectItem key={k.value} value={k.value}>{k.label}</SelectItem>
+                  <SelectItem key={k.value} value={k.value}>
+                    {k.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -67,7 +71,9 @@ const ActionStepRow = ({ control, name, index, onRemove }: ActionStepRowProps) =
         name={`${name}.${index}.selector`}
         render={({ field }) => (
           <FormItem>
-            <FormControl><Input placeholder="CSS selector" {...field} /></FormControl>
+            <FormControl>
+              <Input placeholder="CSS selector" {...field} />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -78,7 +84,9 @@ const ActionStepRow = ({ control, name, index, onRemove }: ActionStepRowProps) =
           name={`${name}.${index}.${extra.name}`}
           render={({ field }) => (
             <FormItem>
-              <FormControl><Input placeholder={extra.placeholder} {...field} value={field.value ?? ''} /></FormControl>
+              <FormControl>
+                <Input placeholder={extra.placeholder} {...field} value={field.value ?? ''} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -118,7 +126,9 @@ const ActionStepsEditor = ({ name }: ActionStepsEditorProps) => {
       <div className="flex items-center justify-between">
         <div>
           <label className="text-sm font-medium">Steps (advanced, optional)</label>
-          <p className="text-xs text-muted-foreground">Run in order before the field fill. A failed step stops the rest.</p>
+          <p className="text-xs text-muted-foreground">
+            Run in order before the field fill. A failed step stops the rest.
+          </p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={() => append({ ...EMPTY_ACTION_STEP })}>
           <PlusIcon className="h-3.5 w-3.5 mr-1" /> Add step
@@ -126,7 +136,10 @@ const ActionStepsEditor = ({ name }: ActionStepsEditorProps) => {
       </div>
       {fields.length > 0 && (
         <div className={`grid ${GRID_COLS} gap-2 text-xs font-medium text-muted-foreground px-1`}>
-          <span>Step</span><span>Selector</span><span>Details</span><span />
+          <span>Step</span>
+          <span>Selector</span>
+          <span>Details</span>
+          <span />
         </div>
       )}
       {fields.map((f, i) => (

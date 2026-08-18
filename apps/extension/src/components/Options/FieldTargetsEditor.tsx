@@ -42,11 +42,15 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
           <FormItem>
             <Select value={field.value} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {ATTRIBUTE_OPTIONS.map((a) => (
-                  <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>
+                  <SelectItem key={a.value} value={a.value}>
+                    {a.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -60,11 +64,15 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
           <FormItem>
             <Select value={field.value} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {OPERATOR_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -76,7 +84,9 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
         name={`${name}.${index}.match`}
         render={({ field }) => (
           <FormItem>
-            <FormControl><Input placeholder="e.g. cardNumber" {...field} /></FormControl>
+            <FormControl>
+              <Input placeholder="e.g. cardNumber" {...field} />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -88,11 +98,15 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
           <FormItem>
             <Select value={field.value ?? 'exact'} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {VALUE_STRATEGY_OPTIONS.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -107,11 +121,15 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
             <FormItem>
               <Select value={field.value ?? 'string'} onValueChange={field.onChange}>
                 <FormControl>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {VALUE_TYPE_OPTIONS.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -124,7 +142,9 @@ const FieldTargetRow = ({ control, name, index, onRemove, removeDisabled }: Fiel
           name={`${name}.${index}.value`}
           render={({ field }) => (
             <FormItem>
-              <FormControl><Input placeholder="e.g. 4242424242424242" {...field} /></FormControl>
+              <FormControl>
+                <Input placeholder="e.g. 4242424242424242" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -168,7 +188,12 @@ const FieldTargetsEditor = ({ name, label = 'Fields to fill' }: FieldTargetsEdit
         </Button>
       </div>
       <div className={`grid ${GRID_COLS} gap-2 text-xs font-medium text-muted-foreground px-1`}>
-        <span>Attribute</span><span>Operator</span><span>Match</span><span>Fill with</span><span>Value / type</span><span />
+        <span>Attribute</span>
+        <span>Operator</span>
+        <span>Match</span>
+        <span>Fill with</span>
+        <span>Value / type</span>
+        <span />
       </div>
       {fields.map((f, i) => (
         <FieldTargetRow

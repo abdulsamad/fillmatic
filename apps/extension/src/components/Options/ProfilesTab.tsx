@@ -89,7 +89,9 @@ const ProfileDialog = ({ open, onClose, initial }: ProfileDialogProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='mb-2'>Profile name <span className="text-destructive">*</span></FormLabel>
+                  <FormLabel className="mb-2">
+                    Profile name <span className="text-destructive">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Work, Personal, Staging" autoFocus {...field} />
                   </FormControl>
@@ -97,7 +99,9 @@ const ProfileDialog = ({ open, onClose, initial }: ProfileDialogProps) => {
               )}
             />
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button type="submit">{initial ? 'Save' : 'Add profile'}</Button>
             </DialogFooter>
           </form>
@@ -112,8 +116,14 @@ const ProfilesTab = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Profile | undefined>(undefined)
 
-  const openAdd = () => { setEditing(undefined); setDialogOpen(true) }
-  const openEdit = (p: Profile) => { setEditing(p); setDialogOpen(true) }
+  const openAdd = () => {
+    setEditing(undefined)
+    setDialogOpen(true)
+  }
+  const openEdit = (p: Profile) => {
+    setEditing(p)
+    setDialogOpen(true)
+  }
 
   return (
     <div className="space-y-6">
@@ -121,7 +131,8 @@ const ProfilesTab = () => {
         <div>
           <h3 className="text-base font-semibold">Profiles</h3>
           <p className="text-sm text-muted-foreground mt-0.5 w-140">
-            Switch profiles to use different settings per environment. Edit settings for a profile by selecting it, then going to the General tab.
+            Switch profiles to use different settings per environment. Edit settings for a profile by selecting it, then
+            going to the General tab.
           </p>
         </div>
         <Button size="sm" onClick={openAdd}>
@@ -148,7 +159,11 @@ const ProfilesTab = () => {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium">{profile.name}</span>
-                    {isActive && <Badge variant="outline" className="text-xs text-primary border-primary/40 py-0">Active</Badge>}
+                    {isActive && (
+                      <Badge variant="outline" className="text-xs text-primary border-primary/40 py-0">
+                        Active
+                      </Badge>
+                    )}
                     {isDefault && (
                       <Badge variant="secondary" className="text-xs font-normal py-0 gap-1">
                         <LockIcon className="h-2.5 w-2.5" /> Default
@@ -156,7 +171,9 @@ const ProfilesTab = () => {
                     )}
                   </div>
                   {isDefault && !summary ? (
-                    <p className="text-xs text-muted-foreground">Uses General settings. Select a custom profile to override them.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Uses General settings. Select a custom profile to override them.
+                    </p>
                   ) : (
                     summary && <p className="text-xs text-muted-foreground truncate">{summary}</p>
                   )}
@@ -184,7 +201,9 @@ const ProfilesTab = () => {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete "{profile.name}"?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently delete the <strong>{profile.name}</strong> profile along with all its settings and field rules. Your General (default) settings are not affected. This cannot be undone.
+                          This will permanently delete the <strong>{profile.name}</strong> profile along with all its
+                          settings and field rules. Your General (default) settings are not affected. This cannot be
+                          undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

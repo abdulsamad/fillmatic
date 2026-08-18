@@ -41,8 +41,7 @@ export const relaxedFieldTargetSchema = z.object({
 })
 
 /** True for a row the user never filled in (kept in the form, dropped on save). */
-export const isEmptyFieldTarget = (field: { match?: string; value?: string }): boolean =>
-  !field.match && !field.value
+export const isEmptyFieldTarget = (field: { match?: string; value?: string }): boolean => !field.match && !field.value
 
 export const EMPTY_FIELD_TARGET = {
   attribute: 'id',

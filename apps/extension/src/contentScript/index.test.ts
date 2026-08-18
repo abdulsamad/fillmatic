@@ -103,7 +103,11 @@ describe('contentScript INIT_AUTOFILL_FORM', () => {
     const requestSubmitSpy = vi.spyOn(form, 'requestSubmit')
 
     const sendResponse = vi.fn()
-    listener({ type: MESSAGES.INIT_AUTOFILL_FORM, form: { index: 0 } }, {} as chrome.runtime.MessageSender, sendResponse)
+    listener(
+      { type: MESSAGES.INIT_AUTOFILL_FORM, form: { index: 0 } },
+      {} as chrome.runtime.MessageSender,
+      sendResponse,
+    )
     await flush()
 
     expect(initiateAutofill).toHaveBeenCalledWith({ rootElement: form })
@@ -119,7 +123,11 @@ describe('contentScript INIT_AUTOFILL_FORM', () => {
     const scrollSpy = vi.spyOn(form, 'scrollIntoView')
 
     const sendResponse = vi.fn()
-    listener({ type: MESSAGES.INIT_AUTOFILL_FORM, form: { index: 0 } }, {} as chrome.runtime.MessageSender, sendResponse)
+    listener(
+      { type: MESSAGES.INIT_AUTOFILL_FORM, form: { index: 0 } },
+      {} as chrome.runtime.MessageSender,
+      sendResponse,
+    )
     await vi.runAllTimersAsync()
 
     expect(scrollSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
@@ -241,9 +249,7 @@ describe('contentScript page-field mapping messages', () => {
     expect(sendResponse).toHaveBeenCalledWith({
       type: MESSAGES.GET_PAGE_FIELDS,
       url: window.location.href,
-      fields: [
-        expect.objectContaining({ ref: 0, kind: 'input:email', attribute: 'id', match: 'user_email' }),
-      ],
+      fields: [expect.objectContaining({ ref: 0, kind: 'input:email', attribute: 'id', match: 'user_email' })],
     })
   })
 

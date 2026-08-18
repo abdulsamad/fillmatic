@@ -24,10 +24,7 @@ export const useRecipesStore = create(
         // Imported recipes replace same-id entries and append the rest.
         importRecipes: (imported) =>
           set((state) => ({
-            recipes: [
-              ...state.recipes.filter((r) => !imported.some((i) => i.id === r.id)),
-              ...imported,
-            ],
+            recipes: [...state.recipes.filter((r) => !imported.some((i) => i.id === r.id)), ...imported],
           })),
       }),
       {

@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  actionStepFormSchema,
-  actionStepsToForm,
-  formStepsToActionSteps,
-} from '@/components/Options/actionSteps'
+import { actionStepFormSchema, actionStepsToForm, formStepsToActionSteps } from '@/components/Options/actionSteps'
 
 describe('actionStepFormSchema', () => {
   it('accepts each step kind with its required extras', () => {

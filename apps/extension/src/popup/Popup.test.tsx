@@ -100,7 +100,10 @@ describe('Popup profile selector', () => {
   })
 
   it('is shown when there is more than one profile', async () => {
-    useProfileStore.setState({ profiles: [DEFAULT_PROFILE, { id: 'p1', name: 'Work' }], activeProfileId: DEFAULT_PROFILE_ID })
+    useProfileStore.setState({
+      profiles: [DEFAULT_PROFILE, { id: 'p1', name: 'Work' }],
+      activeProfileId: DEFAULT_PROFILE_ID,
+    })
 
     render(<Popup />)
     await screen.findByRole('button', { name: /Fill all fields/i })

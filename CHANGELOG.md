@@ -1,4 +1,5 @@
-## Changelog  
+## Changelog
+
 All notable changes to this project will be documented in this file.  
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -11,9 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.2.0] - 2026-08-16
 
 #### Added
+
 - **feat:** Full-page autofill and configured Actions now reach supported child frames. Actions only run in iframes when their explicit `matchInIframe` option is enabled.
 
 #### Fixed
+
 - **fix:** Generate ISO-compliant values for week fields and local-time values for `datetime-local` fields, including around year and timezone boundaries.
 - **fix:** Recognise `re enter` password confirmations and avoid logging reused user passwords.
 
@@ -22,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.1.1] - 2026-08-15
 
 #### Fixed
+
 - **fix:** Prioritize native and ARIA label text when inferring text-field values, while preserving `autocomplete`, `name`, `placeholder`, `id`, `title`, and class fallbacks. Fields labelled as email no longer generate usernames when their underlying `name` or `autocomplete` is `username`.
 
 ---
@@ -29,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.1.0] - 2026-07-10
 
 #### Added
+
 - **feat:** Widget fill engine — `fillElement` now dispatches through a strategy pipeline (`native` → `contenteditable` → `widget`). The widget strategy drives custom framework widgets (ARIA comboboxes, date pickers, switches, sliders, radio groups) like a user — open, wait for the popover to settle (`waitForSettle`, a MutationObserver quiet-period primitive), pick an option, confirm — via pluggable `WidgetAdapter`s (`radixAdapter` + a generic ARIA adapter that covers most libraries). A widget failure skips the field, never aborts the run.
 - **feat:** Editor-aware contenteditable fills — rich text editors (ProseMirror, Lexical, Slate, Quill, Trix) are detected by their host markers and filled via `execCommand('insertText')` / cancelable `beforeinput` so the editor's own document model stays in sync, instead of overwriting the DOM with `textContent`.
 - **feat:** User-defined interaction recipes — teach FillMatic any widget it doesn't recognize: a `Recipe` = URL matcher + CSS selector + declarative steps, managed in the new Options **Recipes** tab with JSON import/export. The recipe pass runs before built-in widget handling and always outranks the adapters.
@@ -38,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **feat:** In-repo feature flags (`utils/featureFlags.ts`) — build-level kill-switches for `aiMapping` and `recipes`, distinct from the entitlements seam.
 
 #### Changed
+
 - **chore:** pnpm 8 → 9 with a shared dependency catalog in `pnpm-workspace.yaml` (TypeScript pinned once via `catalog:`).
 - **refactor:** `generateValue` priority order gains the mapping-snapshots tier: active Action → snapshots → profile field rules → `autocomplete` → heuristics → type fallback.
 - **ci:** Workflows updated — latest action versions, env-var based Chrome Web Store upload, tightened push/PR triggers.
@@ -47,18 +53,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.0.10] - 2026-07-07
 
 #### Added
+
 - **feat:** `@fillmatic/config` shared package (`packages/config`) — single source of truth for product identity/copy (`PRODUCT_NAME`, `PRODUCT_DESCRIPTION`, `SEO_DESCRIPTION`, `SUPPORT_EMAIL`, `CHROME_WEB_STORE_URL`, `LANDING_URL`, `DEMO_URL`/`DEMO_URL_DEV`) consumed by both the extension (manifest, popup, options, Demo Action) and the marketing site. Product strings are no longer hardcoded per app.
 - **feat:** `@fillmatic/ui` shared package (`packages/ui`) — shared shadcn/ui component library (Radix + Tailwind v4) extracted from the apps and consumed by both as `workspace:*`, with a shared theme (`./styles.css`) and Tailwind preset (`./tailwind-preset`).
 - **test:** Vitest + Testing Library (`jsdom`) test setup across both apps, comprehensive unit tests for the autofill value generation and field/element matching, and overall extension coverage raised from ~25% to ~82% with enforced coverage thresholds.
 - **feat:** Self-generated coverage badge — `coverage:badge` renders `coverage-badge.svg` from the local coverage summary, no third-party badge service.
 
 #### Changed
+
 - **refactor:** Monorepo reorganised around shared internal packages (`packages/ui`, `packages/config`); duplicated shadcn components and product copy removed from the individual apps.
 - **refactor:** Dropped the Actions store migration path entirely in favour of the seeded editable `DEFAULT_ACTIONS`.
 - **chore:** Moved `typescript` to `devDependencies`.
 - **ci:** PRs now get a per-file Vitest coverage report comment (diff vs base) via `davelosert/vitest-coverage-report-action`, using the built-in `GITHUB_TOKEN` — no third-party service or secret.
 
 #### Fixed
+
 - **fix:** Added a safe margin to the pre-fill autoscroll so a target scrolled into view isn't left flush against the viewport edge before a form or scoped action is filled.
 - **fix:** Demo page checkboxes/radios that weren't toggling, plus unlabeled group captions on the demo form.
 - **fix:** Week (`<input type="week">`) `min`/`max` are now parsed correctly as ISO week dates.
@@ -68,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.0.9] - 2026-06-29
 
 #### Added
+
 - **feat:** Identity profiles — create named profiles (Work, Personal, Staging, etc.) that override specific General settings. Each profile can set its own email provider, password mode, common password, ignored fields, and always-check fields. The Default profile (non-deletable, locked) inherits all General settings.
 - **feat:** Per-profile field rules — define site-specific field overrides (e.g. fill `promo_code` with `SAVE20` on `checkout.myapp.com`) scoped to the active profile. Rules are managed in the new Field Rules tab and stored within the profile.
 - **feat:** Profile selector in the popup — a compact selector bar lets you switch the active profile without opening Options. Switching takes effect on the next fill.
@@ -79,6 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **feat:** Redesigned landing page — new sections: integrations strip, Core Features (4-up), Power Features (asymmetric grid with Actions, Profiles, Field Rules), "Everything you get, free" checklist, and Payment Integrations callout. Header now includes a CTA button and the hero links to the `/demo` page.
 
 #### Changed
+
 - **refactor:** `generateValue.ts` now calls `getEffectiveConfig()` (merges General config with active profile overrides) instead of reading directly from the config store — profile settings take priority in the autofill pipeline.
 - **refactor:** Options page reorganised into four tabs: General, Profiles, Field Rules, and Actions.
 - **refactor:** Field Rules fully migrated to the explicit FieldTarget model (attribute × operator × match × value) — no more fuzzy heuristic matching for user-defined rules.
@@ -89,6 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **refactor:** Demo Action renamed to "Fill Demo Form" / "FillMatic Demo"; prod matcher updated to `https://fillmatic.pages.dev/demo` (no trailing slash ambiguity).
 
 #### Fixed
+
 - **fix:** React / Vue controlled inputs now correctly trigger `onChange` — fills use native prototype setters (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set`) to bypass framework value trackers so the dispatched `input` event is seen as a real change.
 - **fix:** Real DOM `focus({ preventScroll: true })` and `blur()` are now called around every fill in addition to synthetic focus/blur events, so framework listeners keyed off actual focus state fire correctly.
 - **fix:** `<select>` elements are now set once via `setNativeValue` + `triggerEvent` instead of being char-typed through `typeWithEffect`.
@@ -102,13 +114,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### [v0.0.8] - 2026-06-22
 
 #### Fixed
+
 - **fix:** Confirm password field was always missing the last character. Root cause: `HTMLInputElement.maxLength` returns `-1` when unset, and `-1` is truthy in JS, so `slice(0, -1)` silently dropped the final character on every confirm/reenter field without an explicit `maxlength` attribute.
 
 #### Added
+
 - **feat:** Redesigned landing page — features grid, "How it works" steps, and feedback form. Removed coming-soon feel.
 - **chore:** ESLint v9 flat config set up for both `apps/extension` and `apps/web`. All lint errors and warnings resolved.
 
 #### Changed
+
 - **refactor:** Upgraded all dependencies across the monorepo — React 18 → 19, TypeScript 5 → 6, Tailwind CSS 3 → 4, Astro 4 → 6, recharts 2 → 3, react-resizable-panels 2 → 4, wrangler 3 → 4, and more.
 - **refactor:** Migrated to Tailwind CSS v4 API (`@import "tailwindcss"`, `@tailwindcss/vite` for extension, `@tailwindcss/postcss` for web).
 - **fix:** Smooth scrolling on nav link click with `scroll-behavior: smooth`; sections offset correctly below the sticky header with `scroll-mt-16`.
@@ -116,92 +131,116 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ---
 
 ### [v0.0.6] - 2024-11-04
+
 #### Added
+
 - **feat**: New landing page base with shadcn design components.
 
 #### Changed
+
 - **refactor**: Updated logo link for Chrome Webstore and revised privacy policy page.
 - **refactor**: Enhanced initialization of popup and improved block-level scoping for switch cases.
 - **refactor**: Turbo repo and Vite CRX plugin updated.
 
 #### Fixed
+
 - **fix:** Ignored readonly inputs to prevent autofill issues.
 - **fix:** Resolved build failure impacting deployment.
 
 ---
 
-### [v0.0.5] - 2024-10-20  
-#### Added  
-- **feat:** Sites rules logic and Stripe integration.  
-- **feat:** Site rules core logic with Lemon Squeezy support.  
+### [v0.0.5] - 2024-10-20
 
-#### Fixed  
+#### Added
+
+- **feat:** Sites rules logic and Stripe integration.
+- **feat:** Site rules core logic with Lemon Squeezy support.
+
+#### Fixed
+
 - **fix:** Lemon Squeezy button not appearing on the store.
 
-#### Changed  
-- **refactor:** Improved handling for radio buttons, checkboxes, and name fields.  
-- **refactor:** Moved fill actions and message passing logic to the popup store.  
-- **refactor:** Enhanced error handling and dependency updates.  
+#### Changed
+
+- **refactor:** Improved handling for radio buttons, checkboxes, and name fields.
+- **refactor:** Moved fill actions and message passing logic to the popup store.
+- **refactor:** Enhanced error handling and dependency updates.
 
 ---
 
-### [v0.0.4] - 2024-09-18  
-#### Added  
-- **feat:** New popup look with smooth scroll form into view.  
-- **feat:** Hotkeys and tooltips for quick access.  
+### [v0.0.4] - 2024-09-18
 
-#### Changed  
-- **refactor:** Updated turborepo configuration.  
-- **refactor:** Improved scroll behavior across pages.  
-- **refactor:** Open demo page automatically on start in the local environment.  
-- **refactor:** Organized `Options` components into a dedicated directory.  
+#### Added
 
-#### Fixed  
-- **fix:** Build error resolved.  
+- **feat:** New popup look with smooth scroll form into view.
+- **feat:** Hotkeys and tooltips for quick access.
 
-#### Removed  
-- **chore:** Deprecated code removed and warnings addressed.  
+#### Changed
 
----
+- **refactor:** Updated turborepo configuration.
+- **refactor:** Improved scroll behavior across pages.
+- **refactor:** Open demo page automatically on start in the local environment.
+- **refactor:** Organized `Options` components into a dedicated directory.
 
-### [v0.0.3] - 2024-08-30  
-#### Added  
-- **feat:** Extension configurations added.  
-- **feat:** New landing page with **shadcn** design components.  
-- **feat:** Support for `autocomplete` attributes and mounted inputs.  
+#### Fixed
 
-#### Changed  
-- **refactor:** Updated extension links and internal page check utilities.  
-- **refactor:** Improved password behavior with consistent values.  
+- **fix:** Build error resolved.
+
+#### Removed
+
+- **chore:** Deprecated code removed and warnings addressed.
 
 ---
 
-## [Unreleased]  
-#### Added  
-- **feat:** Support for credit card fields, date of birth, and company input types.  
-- **feat:** File input handling added.  
+### [v0.0.3] - 2024-08-30
 
-#### Changed  
-- **refactor:** Migrated from lodash to es-toolkit for better performance.  
-- **refactor:** Abstracted logic for element matching by name, ID, class, or label.  
-- **refactor:** Removed side panels and unused logs for a cleaner experience.  
+#### Added
 
-#### Fixed  
-- **fix:** Mobile number deprecation warning handled.  
-- **fix:** Disabled inputs are now filtered correctly.  
+- **feat:** Extension configurations added.
+- **feat:** New landing page with **shadcn** design components.
+- **feat:** Support for `autocomplete` attributes and mounted inputs.
 
----
+#### Changed
 
-### [v0.0.2] - 2024-07-18  
-#### Added  
-- **feat:** Single form autofill and submit support.  
-- **feat:** Integration with Lemon Squeezy and Stripe Checkout.  
+- **refactor:** Updated extension links and internal page check utilities.
+- **refactor:** Improved password behavior with consistent values.
 
 ---
 
-### [v0.0.1] - 2024-06-30  
-#### Added  
-- **feat:** Basic autofill functionality for all inputs on a page.  
-- **feat:** New logo and demo page integration.  
+## [Unreleased]
+
+#### Added
+
+- **feat:** Support for credit card fields, date of birth, and company input types.
+- **feat:** File input handling added.
+
+#### Changed
+
+- **refactor:** Migrated from lodash to es-toolkit for better performance.
+- **refactor:** Abstracted logic for element matching by name, ID, class, or label.
+- **refactor:** Removed side panels and unused logs for a cleaner experience.
+
+#### Fixed
+
+- **fix:** Mobile number deprecation warning handled.
+- **fix:** Disabled inputs are now filtered correctly.
+
+---
+
+### [v0.0.2] - 2024-07-18
+
+#### Added
+
+- **feat:** Single form autofill and submit support.
+- **feat:** Integration with Lemon Squeezy and Stripe Checkout.
+
+---
+
+### [v0.0.1] - 2024-06-30
+
+#### Added
+
+- **feat:** Basic autofill functionality for all inputs on a page.
+- **feat:** New logo and demo page integration.
 
 ---

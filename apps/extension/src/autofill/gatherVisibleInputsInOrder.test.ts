@@ -86,7 +86,8 @@ describe('isInViewport', () => {
   it('returns false when the element is entirely below the viewport', () => {
     const input = document.createElement('input')
     const viewHeight = window.innerHeight || document.documentElement.clientHeight
-    input.getBoundingClientRect = () => ({ top: viewHeight + 10, bottom: viewHeight + 50, left: 10, right: 30 }) as DOMRect
+    input.getBoundingClientRect = () =>
+      ({ top: viewHeight + 10, bottom: viewHeight + 50, left: 10, right: 30 }) as DOMRect
 
     expect(isInViewport(input)).toBe(false)
   })

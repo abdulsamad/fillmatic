@@ -1,34 +1,34 @@
 ---
-import '@/styles/globals.css';
-import { SEO_DESCRIPTION } from '@fillmatic/config';
+import "@/styles/globals.css";
+import { SEO_DESCRIPTION } from "@fillmatic/config";
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang='en'>
-	<head>
-		<meta charset='UTF-8' />
-		<meta name='description' content={SEO_DESCRIPTION} />
-		<meta name='viewport' content='width=device-width, initial-scale=1' />
-		<link rel='icon' href='/icon192.png' />
-		<meta name='generator' content={Astro.generator} />
-		<title>{title}</title>
-		<meta
-			name='google-site-verification'
-			content='S3v-mEbuzH_kX7aXk66SXuRTZeLEfICczWxbLgUtuwk'
-		/>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={SEO_DESCRIPTION} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/icon192.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta
+      name="google-site-verification"
+      content="S3v-mEbuzH_kX7aXk66SXuRTZeLEfICczWxbLgUtuwk"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 <style is:global>
-	body {
-		font-family: system-ui, sans-serif;
-	}
+  body {
+    font-family: system-ui, sans-serif;
+  }
 </style>

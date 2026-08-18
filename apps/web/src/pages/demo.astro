@@ -5,19 +5,19 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
 <Layout title={`Demo — ${PRODUCT_NAME}`}>
   <div class="page-bg">
-
     <!-- Hero -->
     <section class="hero">
       <div class="hero-badge">Interactive Demo</div>
       <h1>Try it out</h1>
       <p class="hero-sub">
-        Open FillMatic and hit <strong>Fill all fields</strong> to fill everything at once. Named forms show up as their own buttons in the popup so you can fill and submit just that one.
+        Open FillMatic and hit <strong>Fill all fields</strong> to fill everything
+        at once. Named forms show up as their own buttons in the popup so you can
+        fill and submit just that one.
       </p>
     </section>
 
     <!-- Top two forms -->
     <section class="forms-grid">
-
       <!-- Form 1: Signup -->
       <div class="form-card">
         <div class="form-card-header">
@@ -27,42 +27,93 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="field-row">
             <div class="field">
               <label for="signup-first">First name</label>
-              <input type="text" id="signup-first" name="first_name" placeholder="Jane" autocomplete="given-name" />
+              <input
+                type="text"
+                id="signup-first"
+                name="first_name"
+                placeholder="Jane"
+                autocomplete="given-name"
+              />
             </div>
             <div class="field">
               <label for="signup-last">Last name</label>
-              <input type="text" id="signup-last" name="last_name" placeholder="Smith" autocomplete="family-name" />
+              <input
+                type="text"
+                id="signup-last"
+                name="last_name"
+                placeholder="Smith"
+                autocomplete="family-name"
+              />
             </div>
           </div>
           <div class="field">
             <label for="signup-username">Username</label>
-            <input type="text" id="signup-username" name="username" placeholder="janesmith" autocomplete="username" />
+            <input
+              type="text"
+              id="signup-username"
+              name="username"
+              placeholder="janesmith"
+              autocomplete="username"
+            />
           </div>
           <div class="field">
             <label for="signup-email">Email address</label>
-            <input type="email" id="signup-email" name="email" placeholder="jane@example.com" autocomplete="email" />
+            <input
+              type="email"
+              id="signup-email"
+              name="email"
+              placeholder="jane@example.com"
+              autocomplete="email"
+            />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" />
+              <input
+                type="password"
+                id="signup-password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                minlength="8"
+              />
             </div>
             <div class="field">
               <label for="signup-confirm">Confirm password</label>
-              <input type="password" id="signup-confirm" name="confirm_password" placeholder="••••••••" autocomplete="new-password" minlength="8" />
+              <input
+                type="password"
+                id="signup-confirm"
+                name="confirm_password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                minlength="8"
+              />
             </div>
           </div>
           <div class="field">
             <label for="signup-phone">Phone number</label>
-            <input type="tel" id="signup-phone" name="phone" placeholder="+1 555 000 0000" autocomplete="tel" />
+            <input
+              type="tel"
+              id="signup-phone"
+              name="phone"
+              placeholder="+1 555 000 0000"
+              autocomplete="tel"
+            />
           </div>
           <div class="field">
             <label for="signup-dob">Date of birth</label>
-            <input type="date" id="signup-dob" name="date_of_birth" autocomplete="bday" />
+            <input
+              type="date"
+              id="signup-dob"
+              name="date_of_birth"
+              autocomplete="bday"
+            />
           </div>
           <div class="field checkbox-field">
             <input type="checkbox" id="signup-terms" name="terms" />
-            <label for="signup-terms">I agree to the <a href="#">Terms &amp; Conditions</a></label>
+            <label for="signup-terms"
+              >I agree to the <a href="#">Terms &amp; Conditions</a></label
+            >
           </div>
           <button type="submit" class="submit-btn">Create account</button>
         </form>
@@ -70,7 +121,11 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="success-icon">✓</div>
           <h3>Account created!</h3>
           <p>FillMatic filled and submitted this form instantly.</p>
-          <button class="reset-btn" data-target="signup-form" data-success="signup-success">Try again</button>
+          <button
+            class="reset-btn"
+            data-target="signup-form"
+            data-success="signup-success">Try again</button
+          >
         </div>
       </div>
 
@@ -83,29 +138,66 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="field-row">
             <div class="field">
               <label for="checkout-first">First name</label>
-              <input type="text" id="checkout-first" name="first_name" placeholder="Jane" autocomplete="given-name" />
+              <input
+                type="text"
+                id="checkout-first"
+                name="first_name"
+                placeholder="Jane"
+                autocomplete="given-name"
+              />
             </div>
             <div class="field">
               <label for="checkout-last">Last name</label>
-              <input type="text" id="checkout-last" name="last_name" placeholder="Smith" autocomplete="family-name" />
+              <input
+                type="text"
+                id="checkout-last"
+                name="last_name"
+                placeholder="Smith"
+                autocomplete="family-name"
+              />
             </div>
           </div>
           <div class="field">
             <label for="checkout-email">Email</label>
-            <input type="email" id="checkout-email" name="email" placeholder="jane@example.com" autocomplete="email" />
+            <input
+              type="email"
+              id="checkout-email"
+              name="email"
+              placeholder="jane@example.com"
+              autocomplete="email"
+            />
           </div>
           <div class="field">
             <label for="checkout-address">Street address</label>
-            <input type="text" id="checkout-address" name="address" placeholder="123 Main St" autocomplete="street-address" />
+            <input
+              type="text"
+              id="checkout-address"
+              name="address"
+              placeholder="123 Main St"
+              autocomplete="street-address"
+            />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="checkout-city">City</label>
-              <input type="text" id="checkout-city" name="city" placeholder="San Francisco" autocomplete="address-level2" />
+              <input
+                type="text"
+                id="checkout-city"
+                name="city"
+                placeholder="San Francisco"
+                autocomplete="address-level2"
+              />
             </div>
             <div class="field">
               <label for="checkout-zip">ZIP / Postal</label>
-              <input type="text" id="checkout-zip" name="postal_code" placeholder="94103" autocomplete="postal-code" maxlength="10" />
+              <input
+                type="text"
+                id="checkout-zip"
+                name="postal_code"
+                placeholder="94103"
+                autocomplete="postal-code"
+                maxlength="10"
+              />
             </div>
           </div>
           <div class="field">
@@ -125,20 +217,47 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="section-label">Payment</div>
           <div class="field">
             <label for="checkout-card-name">Name on card</label>
-            <input type="text" id="checkout-card-name" name="card_name" placeholder="Jane Smith" autocomplete="cc-name" />
+            <input
+              type="text"
+              id="checkout-card-name"
+              name="card_name"
+              placeholder="Jane Smith"
+              autocomplete="cc-name"
+            />
           </div>
           <div class="field">
             <label for="checkout-card-number">Card number</label>
-            <input type="text" id="checkout-card-number" name="card_number" placeholder="4242 4242 4242 4242" autocomplete="cc-number" maxlength="19" />
+            <input
+              type="text"
+              id="checkout-card-number"
+              name="card_number"
+              placeholder="4242 4242 4242 4242"
+              autocomplete="cc-number"
+              maxlength="19"
+            />
           </div>
           <div class="field-row">
             <div class="field">
               <label for="checkout-expiry">Expiry (MM/YY)</label>
-              <input type="text" id="checkout-expiry" name="cc_exp" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5" />
+              <input
+                type="text"
+                id="checkout-expiry"
+                name="cc_exp"
+                placeholder="MM/YY"
+                autocomplete="cc-exp"
+                maxlength="5"
+              />
             </div>
             <div class="field">
               <label for="checkout-cvv">CVV</label>
-              <input type="text" id="checkout-cvv" name="cvv" placeholder="123" autocomplete="cc-csc" maxlength="4" />
+              <input
+                type="text"
+                id="checkout-cvv"
+                name="cvv"
+                placeholder="123"
+                autocomplete="cc-csc"
+                maxlength="4"
+              />
             </div>
           </div>
           <button type="submit" class="submit-btn">Pay now</button>
@@ -147,10 +266,13 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="success-icon">✓</div>
           <h3>Order placed!</h3>
           <p>FillMatic filled and submitted this form instantly.</p>
-          <button class="reset-btn" data-target="checkout-form" data-success="checkout-success">Try again</button>
+          <button
+            class="reset-btn"
+            data-target="checkout-form"
+            data-success="checkout-success">Try again</button
+          >
         </div>
       </div>
-
     </section>
 
     <!-- Full-width kitchen sink form -->
@@ -160,70 +282,148 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
         <div class="form-card-header">
           <h2>All input types</h2>
         </div>
-        <form name="All inputs" id="allinputs-form" class="glass-form kitchen-sink" novalidate>
-
+        <form
+          name="All inputs"
+          id="allinputs-form"
+          class="glass-form kitchen-sink"
+          novalidate
+        >
           <div class="section-label">Text inputs</div>
           <div class="field-row three-col">
             <div class="field">
               <label for="k-text">Text</label>
-              <input type="text" id="k-text" name="text" placeholder="Plain text" minlength="1" maxlength="100" />
+              <input
+                type="text"
+                id="k-text"
+                name="text"
+                placeholder="Plain text"
+                minlength="1"
+                maxlength="100"
+              />
             </div>
             <div class="field">
               <label for="k-search">Search</label>
-              <input type="search" id="k-search" name="search" placeholder="Search…" />
+              <input
+                type="search"
+                id="k-search"
+                name="search"
+                placeholder="Search…"
+              />
             </div>
             <div class="field">
               <label for="k-url">URL</label>
-              <input type="url" id="k-url" name="url" placeholder="https://example.com" />
+              <input
+                type="url"
+                id="k-url"
+                name="url"
+                placeholder="https://example.com"
+              />
             </div>
           </div>
           <div class="field-row three-col">
             <div class="field">
               <label for="k-email">Email</label>
-              <input type="email" id="k-email" name="email" placeholder="you@example.com" autocomplete="email" />
+              <input
+                type="email"
+                id="k-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
             </div>
             <div class="field">
               <label for="k-tel">Phone</label>
-              <input type="tel" id="k-tel" name="phone" placeholder="+1 555 000 0000" autocomplete="tel" />
+              <input
+                type="tel"
+                id="k-tel"
+                name="phone"
+                placeholder="+1 555 000 0000"
+                autocomplete="tel"
+              />
             </div>
             <div class="field">
               <label for="k-number">Number</label>
-              <input type="number" id="k-number" name="number" placeholder="42" min="0" max="1000" />
+              <input
+                type="number"
+                id="k-number"
+                name="number"
+                placeholder="42"
+                min="0"
+                max="1000"
+              />
             </div>
           </div>
 
           <div class="field">
             <label for="k-textarea">Message</label>
-            <textarea id="k-textarea" name="message" placeholder="Write something…" rows="3"></textarea>
+            <textarea
+              id="k-textarea"
+              name="message"
+              placeholder="Write something…"
+              rows="3"></textarea>
           </div>
           <div class="field">
             <label for="k-demo-note">Demo action note</label>
-            <textarea id="k-demo-note" name="demo_note" placeholder="Click 'Fill Demo Form' in the FillMatic popup to see this filled with custom text from the action…" rows="4"></textarea>
+            <textarea
+              id="k-demo-note"
+              name="demo_note"
+              placeholder="Click 'Fill Demo Form' in the FillMatic popup to see this filled with custom text from the action…"
+              rows="4"></textarea>
           </div>
 
           <div class="section-label">Date &amp; time</div>
           <div class="field-row three-col">
             <div class="field">
               <label for="k-date">Date</label>
-              <input type="date" id="k-date" name="date" min="2000-01-01" max="2030-12-31" />
+              <input
+                type="date"
+                id="k-date"
+                name="date"
+                min="2000-01-01"
+                max="2030-12-31"
+              />
             </div>
             <div class="field">
               <label for="k-time">Time</label>
-              <input type="time" id="k-time" name="time" min="00:00" max="23:59" />
+              <input
+                type="time"
+                id="k-time"
+                name="time"
+                min="00:00"
+                max="23:59"
+              />
             </div>
             <div class="field">
               <label for="k-datetime">Date &amp; time</label>
-              <input type="datetime-local" id="k-datetime" name="datetime" min="2000-01-01T00:00" max="2030-12-31T23:59" />
+              <input
+                type="datetime-local"
+                id="k-datetime"
+                name="datetime"
+                min="2000-01-01T00:00"
+                max="2030-12-31T23:59"
+              />
             </div>
           </div>
           <div class="field-row">
             <div class="field">
               <label for="k-month">Month</label>
-              <input type="month" id="k-month" name="month" min="2000-01" max="2030-12" />
+              <input
+                type="month"
+                id="k-month"
+                name="month"
+                min="2000-01"
+                max="2030-12"
+              />
             </div>
             <div class="field">
               <label for="k-week">Week</label>
-              <input type="week" id="k-week" name="week" min="2000-W01" max="2030-W52" />
+              <input
+                type="week"
+                id="k-week"
+                name="week"
+                min="2000-W01"
+                max="2030-W52"
+              />
             </div>
           </div>
 
@@ -231,11 +431,24 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="field-row three-col">
             <div class="field">
               <label for="k-color">Color</label>
-              <input type="color" id="k-color" name="color" class="color-input" />
+              <input
+                type="color"
+                id="k-color"
+                name="color"
+                class="color-input"
+              />
             </div>
             <div class="field">
               <label for="k-range">Range <span id="range-val">50</span></label>
-              <input type="range" id="k-range" name="range" min="0" max="100" value="50" class="range-input" />
+              <input
+                type="range"
+                id="k-range"
+                name="range"
+                min="0"
+                max="100"
+                value="50"
+                class="range-input"
+              />
             </div>
             <div class="field">
               <label for="k-select">Preference</label>
@@ -284,11 +497,23 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="field-row">
             <div class="field">
               <label for="k-password">Password</label>
-              <input type="password" id="k-password" name="password" placeholder="••••••••" minlength="8" />
+              <input
+                type="password"
+                id="k-password"
+                name="password"
+                placeholder="••••••••"
+                minlength="8"
+              />
             </div>
             <div class="field">
               <label for="k-confirm">Confirm password</label>
-              <input type="password" id="k-confirm" name="confirm_password" placeholder="••••••••" minlength="8" />
+              <input
+                type="password"
+                id="k-confirm"
+                name="confirm_password"
+                placeholder="••••••••"
+                minlength="8"
+              />
             </div>
           </div>
 
@@ -298,7 +523,11 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
           <div class="success-icon">✓</div>
           <h3>All done!</h3>
           <p>Every input type filled successfully.</p>
-          <button class="reset-btn" data-target="allinputs-form" data-success="allinputs-success">Try again</button>
+          <button
+            class="reset-btn"
+            data-target="allinputs-form"
+            data-success="allinputs-success">Try again</button
+          >
         </div>
       </div>
     </section>
@@ -311,8 +540,10 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
         </div>
         <div class="glass-form kitchen-sink" id="widgets-panel">
           <p class="widgets-note">
-            These controls are built from plain <code>div</code>s and <code>button</code>s with ARIA roles — the way
-            component libraries like Radix, MUI or Headless UI render them. No native inputs involved.
+            These controls are built from plain <code>div</code>s and <code
+              >button</code
+            >s with ARIA roles — the way component libraries like Radix, MUI or
+            Headless UI render them. No native inputs involved.
           </p>
 
           <div class="field-row">
@@ -327,13 +558,27 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
                 aria-expanded="false"
                 aria-controls="w-fruit-listbox"
                 aria-labelledby="w-fruit-label"
-                data-placeholder="Select a fruit…"
-              >Select a fruit…</button>
-              <div class="widget-listbox" id="w-fruit-listbox" role="listbox" aria-labelledby="w-fruit-label" hidden>
-                <div class="widget-option" role="option" aria-selected="false">Apple</div>
-                <div class="widget-option" role="option" aria-selected="false">Banana</div>
-                <div class="widget-option" role="option" aria-selected="false">Cherry</div>
-                <div class="widget-option" role="option" aria-selected="false">Dragonfruit</div>
+                data-placeholder="Select a fruit…">Select a fruit…</button
+              >
+              <div
+                class="widget-listbox"
+                id="w-fruit-listbox"
+                role="listbox"
+                aria-labelledby="w-fruit-label"
+                hidden
+              >
+                <div class="widget-option" role="option" aria-selected="false">
+                  Apple
+                </div>
+                <div class="widget-option" role="option" aria-selected="false">
+                  Banana
+                </div>
+                <div class="widget-option" role="option" aria-selected="false">
+                  Cherry
+                </div>
+                <div class="widget-option" role="option" aria-selected="false">
+                  Dragonfruit
+                </div>
               </div>
             </div>
             <div class="field">
@@ -346,9 +591,15 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
                 aria-expanded="false"
                 aria-controls="w-date-dialog"
                 aria-labelledby="w-date-label"
-                data-placeholder="Pick a date…"
-              >Pick a date…</button>
-              <div class="widget-dialog" id="w-date-dialog" role="dialog" aria-label="Choose date" hidden>
+                data-placeholder="Pick a date…">Pick a date…</button
+              >
+              <div
+                class="widget-dialog"
+                id="w-date-dialog"
+                role="dialog"
+                aria-label="Choose date"
+                hidden
+              >
                 <div class="widget-grid" role="grid" aria-label="Days"></div>
               </div>
             </div>
@@ -364,14 +615,41 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
                 role="switch"
                 aria-checked="false"
                 aria-labelledby="w-news-label"
-              ><span class="widget-switch-thumb"></span></button>
+                ><span class="widget-switch-thumb"></span></button
+              >
             </div>
             <div class="field">
               <span class="field-label" id="w-size-label">T-shirt size</span>
-              <div class="widget-radiogroup" role="radiogroup" aria-labelledby="w-size-label" id="w-size">
-                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Small</div>
-                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Medium</div>
-                <div class="widget-radio" role="radio" aria-checked="false" tabindex="0">Large</div>
+              <div
+                class="widget-radiogroup"
+                role="radiogroup"
+                aria-labelledby="w-size-label"
+                id="w-size"
+              >
+                <div
+                  class="widget-radio"
+                  role="radio"
+                  aria-checked="false"
+                  tabindex="0"
+                >
+                  Small
+                </div>
+                <div
+                  class="widget-radio"
+                  role="radio"
+                  aria-checked="false"
+                  tabindex="0"
+                >
+                  Medium
+                </div>
+                <div
+                  class="widget-radio"
+                  role="radio"
+                  aria-checked="false"
+                  tabindex="0"
+                >
+                  Large
+                </div>
               </div>
             </div>
           </div>
@@ -387,37 +665,56 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
         </div>
         <div class="glass-form kitchen-sink" id="editable-panel">
           <p class="widgets-note">
-            Editable <code>div</code>s the way rich-text editors render them — a plain
-            <code>contenteditable</code> host, a <code>plaintext-only</code> host, and a fake ProseMirror-style
-            editor that only accepts text through <code>beforeinput</code>.
+            Editable <code>div</code>s the way rich-text editors render them — a
+            plain
+            <code>contenteditable</code> host, a <code>plaintext-only</code> host,
+            and a fake ProseMirror-style editor that only accepts text through <code
+              >beforeinput</code
+            >.
           </p>
 
           <div class="field-row">
             <div class="field">
-              <span class="field-label" id="ce-notes-label">Notes (contenteditable)</span>
-              <div class="editable-host" contenteditable="true" role="textbox" aria-labelledby="ce-notes-label"></div>
+              <span class="field-label" id="ce-notes-label"
+                >Notes (contenteditable)</span
+              >
+              <div
+                class="editable-host"
+                contenteditable="true"
+                role="textbox"
+                aria-labelledby="ce-notes-label"
+              >
+              </div>
             </div>
             <div class="field">
-              <span class="field-label" id="ce-plain-label">Comment (plaintext-only)</span>
+              <span class="field-label" id="ce-plain-label"
+                >Comment (plaintext-only)</span
+              >
               <div
                 class="editable-host"
                 contenteditable="plaintext-only"
                 role="textbox"
                 aria-labelledby="ce-plain-label"
-              ></div>
+              >
+              </div>
             </div>
           </div>
 
           <div class="field">
-            <span class="field-label" id="ce-editor-label">Bio (model-backed editor)</span>
+            <span class="field-label" id="ce-editor-label"
+              >Bio (model-backed editor)</span
+            >
             <div
               class="editable-host editable-tall ProseMirror"
               id="ce-editor"
               contenteditable="true"
               role="textbox"
               aria-labelledby="ce-editor-label"
-            ></div>
-            <p class="widgets-note" id="ce-editor-state">Editor model: (empty)</p>
+            >
+            </div>
+            <p class="widgets-note" id="ce-editor-state">
+              Editor model: (empty)
+            </p>
           </div>
         </div>
       </div>
@@ -425,9 +722,10 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
     <footer class="demo-footer">
       Nothing here is real — all values are dummy data. ·
-      <a href={`mailto:${SUPPORT_EMAIL}?subject=${PRODUCT_NAME} Feedback`}>Send feedback</a>
+      <a href={`mailto:${SUPPORT_EMAIL}?subject=${PRODUCT_NAME} Feedback`}
+        >Send feedback</a
+      >
     </footer>
-
   </div>
 </Layout>
 
@@ -444,9 +742,14 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   document.querySelectorAll<HTMLButtonElement>(".reset-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const formEl = document.getElementById(btn.dataset.target!) as HTMLFormElement;
+      const formEl = document.getElementById(
+        btn.dataset.target!,
+      ) as HTMLFormElement;
       const successEl = document.getElementById(btn.dataset.success!);
-      if (formEl) { formEl.reset(); formEl.hidden = false; }
+      if (formEl) {
+        formEl.reset();
+        formEl.hidden = false;
+      }
       if (successEl) successEl.hidden = true;
     });
   });
@@ -454,12 +757,17 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   const rangeEl = document.getElementById("k-range") as HTMLInputElement;
   const rangeVal = document.getElementById("range-val");
   if (rangeEl && rangeVal) {
-    rangeEl.addEventListener("input", () => { rangeVal.textContent = rangeEl.value; });
+    rangeEl.addEventListener("input", () => {
+      rangeVal.textContent = rangeEl.value;
+    });
   }
 
   /* --- Custom ARIA widgets (combobox, date dialog, switch, radiogroup) --- */
 
-  const setupPopoverTrigger = (trigger: HTMLButtonElement, popover: HTMLElement) => {
+  const setupPopoverTrigger = (
+    trigger: HTMLButtonElement,
+    popover: HTMLElement,
+  ) => {
     const close = () => {
       popover.hidden = true;
       trigger.setAttribute("aria-expanded", "false");
@@ -469,7 +777,9 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
       popover.hidden = !opening;
       trigger.setAttribute("aria-expanded", String(opening));
     });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
     return close;
   };
 
@@ -477,14 +787,18 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   const fruitListbox = document.getElementById("w-fruit-listbox")!;
   if (fruitTrigger && fruitListbox) {
     const close = setupPopoverTrigger(fruitTrigger, fruitListbox);
-    fruitListbox.querySelectorAll<HTMLElement>('[role="option"]').forEach((option) => {
-      option.addEventListener("click", () => {
-        fruitListbox.querySelectorAll('[role="option"]').forEach((o) => o.setAttribute("aria-selected", "false"));
-        option.setAttribute("aria-selected", "true");
-        fruitTrigger.textContent = option.textContent;
-        close();
+    fruitListbox
+      .querySelectorAll<HTMLElement>('[role="option"]')
+      .forEach((option) => {
+        option.addEventListener("click", () => {
+          fruitListbox
+            .querySelectorAll('[role="option"]')
+            .forEach((o) => o.setAttribute("aria-selected", "false"));
+          option.setAttribute("aria-selected", "true");
+          fruitTrigger.textContent = option.textContent;
+          close();
+        });
       });
-    });
   }
 
   const dateTrigger = document.getElementById("w-date") as HTMLButtonElement;
@@ -493,7 +807,11 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   if (dateTrigger && dateDialog && dateGrid) {
     const close = setupPopoverTrigger(dateTrigger, dateDialog);
     const now = new Date();
-    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+    ).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
       const cell = document.createElement("button");
       cell.type = "button";
@@ -515,14 +833,17 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     newsletterSwitch.setAttribute("aria-checked", String(!checked));
   });
 
-  document.querySelectorAll<HTMLElement>("#w-size [role='radio']").forEach((radio) => {
-    radio.addEventListener("click", () => {
-      radio.closest("[role='radiogroup']")
-        ?.querySelectorAll("[role='radio']")
-        .forEach((r) => r.setAttribute("aria-checked", "false"));
-      radio.setAttribute("aria-checked", "true");
+  document
+    .querySelectorAll<HTMLElement>("#w-size [role='radio']")
+    .forEach((radio) => {
+      radio.addEventListener("click", () => {
+        radio
+          .closest("[role='radiogroup']")
+          ?.querySelectorAll("[role='radio']")
+          .forEach((r) => r.setAttribute("aria-checked", "false"));
+        radio.setAttribute("aria-checked", "true");
+      });
     });
-  });
 
   /* --- Model-backed editor: only accepts text through beforeinput (like ProseMirror/Lexical) --- */
 
@@ -545,26 +866,39 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 </script>
 
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
   .page-bg {
     min-height: 100vh;
     background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,.18) 0%, transparent 70%),
+      radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        rgba(99, 102, 241, 0.18) 0%,
+        transparent 70%
+      ),
       linear-gradient(160deg, #0f0f18 0%, #141420 45%, #0d1117 100%);
     padding: 3rem 1.5rem 4rem;
     font-family: "Inter", "Segoe UI", system-ui, sans-serif;
     color: #e2e8f0;
   }
 
-  a { color: #818cf8; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  a {
+    color: #818cf8;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 
   code {
     font-family: "JetBrains Mono", "Fira Code", monospace;
-    font-size: .8em;
-    background: rgba(255,255,255,.08);
-    padding: .15em .4em;
+    font-size: 0.8em;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15em 0.4em;
     border-radius: 4px;
     color: #a5b4fc;
   }
@@ -578,15 +912,15 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   .hero-badge {
     display: inline-block;
-    font-size: .72rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: .1em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #818cf8;
-    background: rgba(99,102,241,.12);
-    border: 1px solid rgba(99,102,241,.3);
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
     border-radius: 999px;
-    padding: .3em .9em;
+    padding: 0.3em 0.9em;
     margin-bottom: 1.25rem;
   }
 
@@ -594,7 +928,7 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
     line-height: 1.15;
-    letter-spacing: -.02em;
+    letter-spacing: -0.02em;
     margin: 0 0 1rem;
     background: linear-gradient(135deg, #e2e8f0 30%, #818cf8 100%);
     -webkit-background-clip: text;
@@ -624,25 +958,36 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   /* Form card */
   .form-card {
-    background: rgba(255,255,255,.04);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.06) inset;
-    transition: box-shadow .3s ease, transform .3s ease;
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
   }
 
   .form-card:hover {
-    box-shadow: 0 12px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(99,102,241,.2), 0 1px 0 rgba(255,255,255,.06) inset;
+    box-shadow:
+      0 12px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(99, 102, 241, 0.2),
+      0 1px 0 rgba(255, 255, 255, 0.06) inset;
     transform: translateY(-2px);
   }
 
   .form-card-header {
     padding: 1.75rem 2rem 1.25rem;
-    border-bottom: 1px solid rgba(255,255,255,.06);
-    background: linear-gradient(180deg, rgba(99,102,241,.06) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(
+      180deg,
+      rgba(99, 102, 241, 0.06) 0%,
+      transparent 100%
+    );
   }
 
   .form-card-header h2 {
@@ -679,15 +1024,15 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   .field {
     display: flex;
     flex-direction: column;
-    gap: .4rem;
+    gap: 0.4rem;
   }
 
   .field > label,
   .field > .field-label {
-    font-size: .78rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: #94a3b8;
-    letter-spacing: .02em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
   }
 
@@ -695,15 +1040,18 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   .field select,
   .field textarea {
     width: 100%;
-    padding: .65rem .9rem;
-    font-size: .9rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
     font-family: inherit;
     color: #e2e8f0;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     outline: none;
-    transition: border-color .2s, background .2s, box-shadow .2s;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
     appearance: none;
     -webkit-appearance: none;
     resize: vertical;
@@ -712,21 +1060,26 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   .field select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right .9rem center;
+    background-position: right 0.9rem center;
     padding-right: 2.2rem;
     cursor: pointer;
   }
 
-  .field select option { background: #1e1b2e; color: #e2e8f0; }
+  .field select option {
+    background: #1e1b2e;
+    color: #e2e8f0;
+  }
   .field input::placeholder,
-  .field textarea::placeholder { color: #475569; }
+  .field textarea::placeholder {
+    color: #475569;
+  }
 
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
-    border-color: rgba(99,102,241,.6);
-    background: rgba(99,102,241,.08);
-    box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+    border-color: rgba(99, 102, 241, 0.6);
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   }
 
   /* Color + range special styling */
@@ -736,22 +1089,27 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     cursor: pointer;
   }
 
-  .color-input::-webkit-color-swatch-wrapper { padding: 0; }
-  .color-input::-webkit-color-swatch { border: none; border-radius: 7px; }
+  .color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 7px;
+  }
 
   .range-input {
     padding: 0;
     height: 4px;
     accent-color: #6366f1;
     cursor: pointer;
-    margin-top: .6rem;
+    margin-top: 0.6rem;
   }
 
   /* Checkbox / radio groups */
   .checkbox-field {
     flex-direction: row;
     align-items: center;
-    gap: .6rem;
+    gap: 0.6rem;
   }
 
   .checkbox-field input[type="checkbox"] {
@@ -763,7 +1121,7 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   }
 
   .checkbox-field label {
-    font-size: .85rem;
+    font-size: 0.85rem;
     font-weight: 400;
     color: #94a3b8;
     text-transform: none;
@@ -775,15 +1133,15 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
   .checkbox-group {
     display: flex;
     flex-wrap: wrap;
-    gap: .75rem;
-    margin-top: .25rem;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
   }
 
   .radio-label {
     display: flex;
     align-items: center;
-    gap: .4rem;
-    font-size: .875rem;
+    gap: 0.4rem;
+    font-size: 0.875rem;
     color: #94a3b8;
     cursor: pointer;
   }
@@ -796,20 +1154,20 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   /* Section divider */
   .section-label {
-    font-size: .7rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: .1em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #4f46e5;
-    padding-top: .5rem;
-    border-top: 1px solid rgba(255,255,255,.06);
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   /* Buttons */
   .submit-btn {
-    margin-top: .4rem;
-    padding: .75rem 1.5rem;
-    font-size: .9rem;
+    margin-top: 0.4rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
     color: #fff;
@@ -817,12 +1175,21 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(79,70,229,.35);
-    transition: opacity .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
+    transition:
+      opacity 0.2s,
+      transform 0.15s,
+      box-shadow 0.2s;
   }
 
-  .submit-btn:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,70,229,.45); }
-  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(79, 70, 229, 0.45);
+  }
+  .submit-btn:active {
+    transform: translateY(0);
+  }
 
   /* Success */
   .form-success {
@@ -830,7 +1197,7 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .75rem;
+    gap: 0.75rem;
     text-align: center;
   }
 
@@ -844,31 +1211,42 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     justify-content: center;
     font-size: 1.5rem;
     color: #fff;
-    box-shadow: 0 8px 24px rgba(16,185,129,.35);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
   }
 
-  .form-success h3 { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin: 0; }
-  .form-success p { font-size: .875rem; color: #64748b; margin: 0; }
+  .form-success h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+  }
+  .form-success p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
 
   .reset-btn {
-    margin-top: .5rem;
-    padding: .55rem 1.25rem;
-    font-size: .85rem;
+    margin-top: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.85rem;
     font-weight: 600;
     font-family: inherit;
     color: #a5b4fc;
-    background: rgba(99,102,241,.1);
-    border: 1px solid rgba(99,102,241,.25);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
     border-radius: 8px;
     cursor: pointer;
-    transition: background .2s;
+    transition: background 0.2s;
   }
 
-  .reset-btn:hover { background: rgba(99,102,241,.18); }
+  .reset-btn:hover {
+    background: rgba(99, 102, 241, 0.18);
+  }
 
   /* Custom ARIA widgets */
   .widgets-note {
-    font-size: .85rem;
+    font-size: 0.85rem;
     color: #94a3b8;
     margin: 0 0 1.25rem;
     line-height: 1.5;
@@ -876,61 +1254,69 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
 
   .widget-trigger {
     width: 100%;
-    padding: .65rem .85rem;
+    padding: 0.65rem 0.85rem;
     text-align: left;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     color: #e2e8f0;
-    font-size: .9rem;
+    font-size: 0.9rem;
     cursor: pointer;
   }
 
   .widget-trigger[aria-expanded="true"],
-  .widget-trigger:hover { border-color: #6366f1; }
+  .widget-trigger:hover {
+    border-color: #6366f1;
+  }
 
   .widget-listbox,
   .widget-dialog {
-    margin-top: .4rem;
-    padding: .35rem;
+    margin-top: 0.4rem;
+    padding: 0.35rem;
     background: #1a1a2a;
-    border: 1px solid rgba(255,255,255,.14);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
   }
 
   .widget-option {
-    padding: .5rem .7rem;
+    padding: 0.5rem 0.7rem;
     border-radius: 6px;
-    font-size: .9rem;
+    font-size: 0.9rem;
     cursor: pointer;
   }
 
-  .widget-option:hover { background: rgba(99,102,241,.18); }
-  .widget-option[aria-selected="true"] { background: rgba(99,102,241,.3); }
+  .widget-option:hover {
+    background: rgba(99, 102, 241, 0.18);
+  }
+  .widget-option[aria-selected="true"] {
+    background: rgba(99, 102, 241, 0.3);
+  }
 
   .widget-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: .2rem;
+    gap: 0.2rem;
   }
 
   .widget-day {
-    padding: .4rem 0;
+    padding: 0.4rem 0;
     background: none;
     border: none;
     border-radius: 6px;
     color: #e2e8f0;
-    font-size: .8rem;
+    font-size: 0.8rem;
     cursor: pointer;
   }
 
-  .widget-day:hover { background: rgba(99,102,241,.25); }
+  .widget-day:hover {
+    background: rgba(99, 102, 241, 0.25);
+  }
 
   .widget-switch {
     width: 46px;
     height: 26px;
     padding: 2px;
-    background: rgba(255,255,255,.12);
+    background: rgba(255, 255, 255, 0.12);
     border: none;
     border-radius: 999px;
     cursor: pointer;
@@ -943,56 +1329,78 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from "@fillmatic/config";
     height: 22px;
     background: #e2e8f0;
     border-radius: 50%;
-    transition: transform .15s;
+    transition: transform 0.15s;
   }
 
-  .widget-switch[aria-checked="true"] { background: #6366f1; }
-  .widget-switch[aria-checked="true"] .widget-switch-thumb { transform: translateX(20px); }
+  .widget-switch[aria-checked="true"] {
+    background: #6366f1;
+  }
+  .widget-switch[aria-checked="true"] .widget-switch-thumb {
+    transform: translateX(20px);
+  }
 
-  .widget-radiogroup { display: flex; gap: .5rem; }
+  .widget-radiogroup {
+    display: flex;
+    gap: 0.5rem;
+  }
 
   .widget-radio {
-    padding: .45rem .9rem;
-    border: 1px solid rgba(255,255,255,.14);
+    padding: 0.45rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
-    font-size: .85rem;
+    font-size: 0.85rem;
     cursor: pointer;
     user-select: none;
   }
 
-  .widget-radio:hover { border-color: #6366f1; }
-  .widget-radio[aria-checked="true"] { background: rgba(99,102,241,.3); border-color: #6366f1; }
+  .widget-radio:hover {
+    border-color: #6366f1;
+  }
+  .widget-radio[aria-checked="true"] {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: #6366f1;
+  }
 
   /* Contenteditable hosts */
   .editable-host {
     min-height: 2.6rem;
-    padding: .65rem .85rem;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.12);
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     color: #e2e8f0;
-    font-size: .9rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     outline: none;
   }
 
-  .editable-host:focus { border-color: #6366f1; }
+  .editable-host:focus {
+    border-color: #6366f1;
+  }
 
-  .editable-tall { min-height: 4.5rem; }
+  .editable-tall {
+    min-height: 4.5rem;
+  }
 
   /* Footer */
   .demo-footer {
     text-align: center;
     margin-top: 3rem;
-    font-size: .8rem;
+    font-size: 0.8rem;
     color: #334155;
   }
 
   /* Responsive */
   @media (max-width: 680px) {
     .field-row,
-    .three-col { grid-template-columns: 1fr; }
-    .glass-form { padding: 1.25rem 1.25rem 1.5rem; }
-    .form-card-header { padding: 1.25rem 1.25rem 1rem; }
+    .three-col {
+      grid-template-columns: 1fr;
+    }
+    .glass-form {
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+    .form-card-header {
+      padding: 1.25rem 1.25rem 1rem;
+    }
   }
 </style>

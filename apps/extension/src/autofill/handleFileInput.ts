@@ -1,4 +1,3 @@
-
 const sampleFiles = {
   aac: 'sample.aac',
   csv: 'sample.csv',

@@ -11,7 +11,10 @@ interface WaitForSettleOptions {
  * clicking a combobox/date-picker trigger, the portaled popover has finished
  * rendering when the DOM goes quiet.
  */
-export const waitForSettle = (root: Node, { quietMs = 150, timeoutMs = 2000 }: WaitForSettleOptions = {}): Promise<void> =>
+export const waitForSettle = (
+  root: Node,
+  { quietMs = 150, timeoutMs = 2000 }: WaitForSettleOptions = {},
+): Promise<void> =>
   new Promise((resolve) => {
     let quietTimer: ReturnType<typeof setTimeout>
 

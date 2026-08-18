@@ -33,8 +33,7 @@ export const PREMIUM_PLAN: Plan = {
 export const currentPlan: Plan = PREMIUM_PLAN
 
 /** Returns true when the current plan unlocks the given feature. */
-export const can = (feature: Feature): boolean =>
-  currentPlan.features === '*' || currentPlan.features.includes(feature)
+export const can = (feature: Feature): boolean => currentPlan.features === '*' || currentPlan.features.includes(feature)
 
 /** Returns true when adding one more `resource` stays within the current plan's limit. */
 export const withinLimit = (resource: LimitKey, currentCount: number): boolean => {

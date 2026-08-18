@@ -49,6 +49,7 @@ The extension build outputs to `apps/extension/build/`. The root `package:extens
 ### `@fillmatic/ui` (`packages/ui`)
 
 Shared shadcn/ui component library (Radix primitives + Tailwind), consumed by both apps as `workspace:*`. Exports:
+
 - `.` (`src/index.ts`) — all components/hooks, e.g. `import { Button, Form, Tabs } from '@fillmatic/ui'`
 - `./styles.css` — the shared theme (`src/styles/theme.css`)
 - `./tailwind-preset` — Tailwind v4 preset (`tailwind-preset.js`) each app's Tailwind config extends
@@ -63,13 +64,13 @@ Single source of truth for product identity/copy shared by the extension and the
 
 Manifest V3 extension with entry points wired in `src/manifest.ts`:
 
-| Entry | Path | Role |
-|---|---|---|
-| Popup | `src/popup/` | Main UI; sends fill messages to content script |
-| Options page | `src/options/` | Tabbed settings (`components/Options/Form.tsx`): General, Profiles, Field Rules, Actions, Recipes (flag-gated); saves to `chrome.storage.local` |
-| Side panel | `src/sidepanel/` | AI field mapper: scan the page, edit the field map, fill, save snapshots |
-| Background service worker | `src/background/index.ts` | Handles keyboard shortcuts, opens onboarding tab |
-| Content script | `src/contentScript/index.ts` | Receives messages, drives autofill on the page |
+| Entry                     | Path                         | Role                                                                                                                                            |
+| ------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Popup                     | `src/popup/`                 | Main UI; sends fill messages to content script                                                                                                  |
+| Options page              | `src/options/`               | Tabbed settings (`components/Options/Form.tsx`): General, Profiles, Field Rules, Actions, Recipes (flag-gated); saves to `chrome.storage.local` |
+| Side panel                | `src/sidepanel/`             | AI field mapper: scan the page, edit the field map, fill, save snapshots                                                                        |
+| Background service worker | `src/background/index.ts`    | Handles keyboard shortcuts, opens onboarding tab                                                                                                |
+| Content script            | `src/contentScript/index.ts` | Receives messages, drives autofill on the page                                                                                                  |
 
 All extension pages run permanently in **dark mode**: `class="dark"` on each entry HTML's `<html>` root activates the `.dark` palette in `@fillmatic/ui`'s `theme.css` (tuned to match the landing page — indigo-tinted `#0f0f18` background, indigo primary). The web app never applies the `dark` class. Prefer theme tokens (`text-muted-foreground`, `bg-card`…) over raw palette classes; any hardcoded light-only color needs a `dark:` variant.
 
@@ -132,7 +133,8 @@ User-configurable one-click fill buttons, managed in the Options **Actions** tab
 ### Feature flags & gating (`src/utils/featureFlags.ts`, `src/utils/entitlements.ts`)
 
 Two distinct seams:
-- **`featureFlags.ts`** — in-repo build-level flags (`aiMapping`, `recipes`, both on), checked via `isFeatureEnabled(flag)`. A flag gates whether a feature exists *at all* in this build; flip it as a kill-switch without shipping a new build path.
+
+- **`featureFlags.ts`** — in-repo build-level flags (`aiMapping`, `recipes`, both on), checked via `isFeatureEnabled(flag)`. A flag gates whether a feature exists _at all_ in this build; flip it as a kill-switch without shipping a new build path.
 - **`entitlements.ts`** — dormant seam for future login/pricing. `currentPlan` is hardcoded to `PREMIUM_PLAN` (all features, no limits). Gate via `can(feature)` and `withinLimit(resource, count)` — nothing is wired yet. When billing lands, swap `currentPlan` for a server-resolved value; consumers should only call the helpers. Check a flag first — a disabled feature has no entitlement to speak of.
 
 ### Path alias

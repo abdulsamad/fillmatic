@@ -100,7 +100,9 @@ describe('getEffectiveConfig', () => {
 })
 
 type PersistedProfileState = { profiles: Profile[]; activeProfileId: string }
-type PersistApi = { persist: { getOptions: () => { merge: (persisted: unknown, current: unknown) => PersistedProfileState } } }
+type PersistApi = {
+  persist: { getOptions: () => { merge: (persisted: unknown, current: unknown) => PersistedProfileState } }
+}
 
 describe('persisted state merge (back-compat)', () => {
   it('prepends DEFAULT_PROFILE when persisted state predates it being present', () => {

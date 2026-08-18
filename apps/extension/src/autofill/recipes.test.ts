@@ -81,10 +81,7 @@ describe('runRecipesPass', () => {
     document.body.appendChild(invisible)
 
     useRecipesStore.setState({
-      recipes: [
-        calendarRecipe({ active: false }),
-        calendarRecipe({ id: 'r-bad', selector: ':::not-a-selector' }),
-      ],
+      recipes: [calendarRecipe({ active: false }), calendarRecipe({ id: 'r-bad', selector: ':::not-a-selector' })],
     })
 
     await runRecipesPass(null)

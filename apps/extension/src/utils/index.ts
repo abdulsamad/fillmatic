@@ -57,18 +57,22 @@ export const isWidgetElement = (elem: Element): boolean =>
  * the dispatched event is detected as a real change. (Same approach used by Testing Library.)
  */
 // Guard with typeof — these DOM globals don't exist in the service worker context.
-const inputValueSetter = typeof HTMLInputElement !== 'undefined'
-  ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
-  : undefined
-const textareaValueSetter = typeof HTMLTextAreaElement !== 'undefined'
-  ? Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set
-  : undefined
-const selectValueSetter = typeof HTMLSelectElement !== 'undefined'
-  ? Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set
-  : undefined
-const checkedSetter = typeof HTMLInputElement !== 'undefined'
-  ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set
-  : undefined
+const inputValueSetter =
+  typeof HTMLInputElement !== 'undefined'
+    ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+    : undefined
+const textareaValueSetter =
+  typeof HTMLTextAreaElement !== 'undefined'
+    ? Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set
+    : undefined
+const selectValueSetter =
+  typeof HTMLSelectElement !== 'undefined'
+    ? Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set
+    : undefined
+const checkedSetter =
+  typeof HTMLInputElement !== 'undefined'
+    ? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set
+    : undefined
 
 export const setNativeValue = (el: SupportedInputsType, value: string) => {
   const setter =
@@ -317,7 +321,8 @@ export const matchElementLabel = (element: HTMLElement, word: string): boolean =
 export const matchElement = (element: HTMLElement, word: string): boolean =>
   matchesText(getElementSearchText(element).all, word)
 
-export const getStoreFromStorage = async (key: string) => JSON.parse((await chrome.storage.local.get(key))[key] as string).state
+export const getStoreFromStorage = async (key: string) =>
+  JSON.parse((await chrome.storage.local.get(key))[key] as string).state
 
 export const getAllCommands = async (): Promise<Record<ExtensionCommands, string>> => {
   const commandsRef: Record<string, string | undefined> = {}

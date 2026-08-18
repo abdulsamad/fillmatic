@@ -80,7 +80,9 @@ const RuleDialog = ({ open, onClose, initial, onSave }: RuleDialogProps) => {
               name="siteMatcher"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-sm font-medium">Site matcher <span className="text-destructive">*</span></label>
+                  <label className="text-sm font-medium">
+                    Site matcher <span className="text-destructive">*</span>
+                  </label>
                   <FormControl>
                     <Input placeholder="e.g. checkout.myapp.com" {...field} />
                   </FormControl>
@@ -95,7 +97,9 @@ const RuleDialog = ({ open, onClose, initial, onSave }: RuleDialogProps) => {
             <FieldTargetsEditor name="rules" label="Field rules" />
 
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button type="submit">{initial ? 'Save changes' : 'Add rule'}</Button>
             </DialogFooter>
           </form>
@@ -114,15 +118,19 @@ const FieldRulesTab = () => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<UserRule | undefined>(undefined)
 
-  const openAdd = () => { setEditing(undefined); setDialogOpen(true) }
-  const openEdit = (r: UserRule) => { setEditing(r); setDialogOpen(true) }
+  const openAdd = () => {
+    setEditing(undefined)
+    setDialogOpen(true)
+  }
+  const openEdit = (r: UserRule) => {
+    setEditing(r)
+    setDialogOpen(true)
+  }
 
   const handleSave = (rule: UserRule) => {
     if (!activeProfile) return
     const existing = profileRules.find((r) => r.id === rule.id)
-    const updatedRules = existing
-      ? profileRules.map((r) => (r.id === rule.id ? rule : r))
-      : [...profileRules, rule]
+    const updatedRules = existing ? profileRules.map((r) => (r.id === rule.id ? rule : r)) : [...profileRules, rule]
     updateProfile({ ...activeProfile, rules: updatedRules })
   }
 
@@ -149,7 +157,11 @@ const FieldRulesTab = () => {
         <UserCircleIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
         <span className="text-muted-foreground">Rules for:</span>
         <span className="font-medium">{activeProfile?.name ?? 'Unknown'}</span>
-        {isDefault && <Badge variant="secondary" className="text-xs font-normal py-0">Default</Badge>}
+        {isDefault && (
+          <Badge variant="secondary" className="text-xs font-normal py-0">
+            Default
+          </Badge>
+        )}
       </div>
 
       {profileRules.length === 0 ? (
@@ -163,14 +175,21 @@ const FieldRulesTab = () => {
       ) : (
         <div className="space-y-2">
           {profileRules.map((rule) => (
-            <div key={rule.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors">
+            <div
+              key={rule.id}
+              className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+            >
               <div className="flex items-center gap-3 min-w-0">
                 <GlobeIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{rule.siteMatcher}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {rule.rules.slice(0, 3).map((r, idx) => (
-                      <Badge key={`${r.attribute}-${r.match}-${idx}`} variant="secondary" className="text-xs font-normal py-0">
+                      <Badge
+                        key={`${r.attribute}-${r.match}-${idx}`}
+                        variant="secondary"
+                        className="text-xs font-normal py-0"
+                      >
                         {r.match} → {r.value}
                       </Badge>
                     ))}
@@ -199,7 +218,10 @@ const FieldRulesTab = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(rule.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      <AlertDialogAction
+                        onClick={() => handleDelete(rule.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
                         Delete
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -211,12 +233,7 @@ const FieldRulesTab = () => {
         </div>
       )}
 
-      <RuleDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        initial={editing}
-        onSave={handleSave}
-      />
+      <RuleDialog open={dialogOpen} onClose={() => setDialogOpen(false)} initial={editing} onSave={handleSave} />
     </div>
   )
 }

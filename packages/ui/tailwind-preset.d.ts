@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-declare const preset: Partial<Config>
-export default preset
+declare const preset: Partial<Config>;
+export default preset;

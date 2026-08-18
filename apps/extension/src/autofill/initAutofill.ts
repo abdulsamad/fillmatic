@@ -3,7 +3,13 @@ import { useContentScriptStore as contentScriptStore } from '@/store/content-scr
 import { invalidateMatchCache, log } from '@/utils'
 import { isFeatureEnabled } from '@/utils/featureFlags'
 
-import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements, fillElement, waitForSettle } from '.'
+import {
+  gatherContenteditableHosts,
+  gatherVisibleInputsInOrder,
+  gatherWidgetElements,
+  fillElement,
+  waitForSettle,
+} from '.'
 import { resetRecipeRun, runRecipesPass } from './recipes'
 
 interface IinitiateAutofill {

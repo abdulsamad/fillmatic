@@ -48,7 +48,7 @@ describe('useRecipesStore', () => {
 
 describe('getRecipesFromStorage', () => {
   // chrome.storage.local.get is overloaded; cast to the Promise shape we use.
-  const asAsyncMock = <T,>(fn: unknown) => fn as { mockResolvedValueOnce: (value: T) => void }
+  const asAsyncMock = <T>(fn: unknown) => fn as { mockResolvedValueOnce: (value: T) => void }
 
   it('reads persisted recipes and falls back to [] on bad payloads', async () => {
     asAsyncMock<Record<string, string>>(chrome.storage.local.get).mockResolvedValueOnce({

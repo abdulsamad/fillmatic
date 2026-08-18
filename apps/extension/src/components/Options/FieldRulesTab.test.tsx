@@ -97,9 +97,7 @@ describe('FieldRulesTab', () => {
     const alertDialog = screen.getByRole('alertdialog')
     await user.click(within(alertDialog).getByRole('button', { name: 'Delete' }))
 
-    const activeProfile = useProfileStore
-      .getState()
-      .profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
+    const activeProfile = useProfileStore.getState().profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
     expect(activeProfile?.rules?.find((r) => r.id === 'r1')).toBeUndefined()
   })
 
@@ -116,9 +114,7 @@ describe('FieldRulesTab', () => {
     const alertDialog = screen.getByRole('alertdialog')
     await user.click(within(alertDialog).getByRole('button', { name: 'Cancel' }))
 
-    const activeProfile = useProfileStore
-      .getState()
-      .profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
+    const activeProfile = useProfileStore.getState().profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
     expect(activeProfile?.rules?.find((r) => r.id === 'r1')).toBeDefined()
   })
 
@@ -136,9 +132,7 @@ describe('FieldRulesTab', () => {
 
     await user.click(within(dialog).getByRole('button', { name: 'Add rule' }))
 
-    const activeProfile = useProfileStore
-      .getState()
-      .profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
+    const activeProfile = useProfileStore.getState().profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
     expect(activeProfile?.rules).toHaveLength(1)
     expect(activeProfile?.rules?.[0]).toMatchObject({
       siteMatcher: 'newsite.com',
@@ -175,9 +169,7 @@ describe('FieldRulesTab', () => {
     }
     await user.click(within(dialog).getByRole('button', { name: 'Save changes' }))
 
-    const activeProfile = useProfileStore
-      .getState()
-      .profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
+    const activeProfile = useProfileStore.getState().profiles.find((p) => p.id === DEFAULT_PROFILE_ID)
     expect(activeProfile?.rules).toHaveLength(1)
     expect(activeProfile?.rules?.[0]).toMatchObject({ id: 'r1', siteMatcher: 'changed.com' })
   })

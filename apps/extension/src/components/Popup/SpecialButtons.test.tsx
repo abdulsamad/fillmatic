@@ -20,7 +20,11 @@ const fillData = vi.fn().mockResolvedValue(undefined)
 
 beforeEach(() => {
   useActionsStore.setState({ actions: [] })
-  usePopupStore.setState({ isAutofilling: false, currentTab: { url: 'https://example.com/checkout' } as never, fillData })
+  usePopupStore.setState({
+    isAutofilling: false,
+    currentTab: { url: 'https://example.com/checkout' } as never,
+    fillData,
+  })
   fillData.mockClear()
 })
 

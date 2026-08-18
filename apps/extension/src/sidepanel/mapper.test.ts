@@ -6,7 +6,15 @@ const row = (target: Partial<MapperField['target']> = {}): MapperField => ({
   ref: 0,
   label: 'Email',
   kind: 'input:email',
-  target: { attribute: 'id', operator: 'exact', match: 'email', value: '', valueStrategy: 'random', valueType: 'email', ...target },
+  target: {
+    attribute: 'id',
+    operator: 'exact',
+    match: 'email',
+    value: '',
+    valueStrategy: 'random',
+    valueType: 'email',
+    ...target,
+  },
 })
 
 describe('toFieldTargets', () => {

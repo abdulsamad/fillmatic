@@ -1,16 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DownloadIcon, RadarIcon, SparklesIcon, Trash2Icon, UploadIcon, WandSparklesIcon, XIcon } from 'lucide-react'
 
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Separator,
-} from '@fillmatic/ui'
+import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator } from '@fillmatic/ui'
 import { PRODUCT_NAME } from '@fillmatic/config'
 
 import { MESSAGES } from '@/consts'
@@ -20,17 +11,8 @@ import { can } from '@/utils/entitlements'
 import { isFeatureEnabled } from '@/utils/featureFlags'
 import { downloadJson, readJsonFile } from '@/utils/json-io'
 import { snapshotsForUrl, type MappingSnapshot } from '@/utils/ai-mappings'
-import {
-  ATTRIBUTE_OPTIONS,
-  VALUE_STRATEGY_OPTIONS,
-  VALUE_TYPE_OPTIONS,
-  type FieldTarget,
-} from '@/utils/actions'
-import {
-  getLocalModelAvailability,
-  inferFieldMap,
-  type LocalModelAvailability,
-} from '@/utils/localModel'
+import { ATTRIBUTE_OPTIONS, VALUE_STRATEGY_OPTIONS, VALUE_TYPE_OPTIONS, type FieldTarget } from '@/utils/actions'
+import { getLocalModelAvailability, inferFieldMap, type LocalModelAvailability } from '@/utils/localModel'
 import type { PageField } from '@/autofill/pageFields'
 
 import {
@@ -108,7 +90,9 @@ const FieldRow = ({ field, onChange, onRemove, onHover }: FieldRowProps) => {
           </SelectTrigger>
           <SelectContent>
             {ATTRIBUTE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -130,21 +114,27 @@ const FieldRow = ({ field, onChange, onRemove, onHover }: FieldRowProps) => {
           </SelectTrigger>
           <SelectContent>
             {VALUE_STRATEGY_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {strategy === 'random' ? (
           <Select
             value={field.target.valueType ?? 'string'}
-            onValueChange={(valueType) => onChange({ ...field.target, valueType: valueType as FieldTarget['valueType'] })}
+            onValueChange={(valueType) =>
+              onChange({ ...field.target, valueType: valueType as FieldTarget['valueType'] })
+            }
           >
             <SelectTrigger className="h-8 text-xs" aria-label="Value type">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {VALUE_TYPE_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -193,8 +183,7 @@ export const SidePanel = () => {
     setBusy(true)
     try {
       const response = (await sendToActiveTab({ type: MESSAGES.GET_PAGE_FIELDS })) as
-        | { fields: PageField[]; url: string }
-        | undefined
+        { fields: PageField[]; url: string } | undefined
       if (!response) return
 
       setPageUrl(response.url)
@@ -342,7 +331,11 @@ export const SidePanel = () => {
             <h2 className="text-xs font-medium text-muted-foreground">Saved snapshots</h2>
             {siteSnapshots.map((snapshot) => (
               <div key={snapshot.id} className="flex items-center gap-2">
-                <button type="button" className="flex-1 text-left text-xs hover:underline" onClick={() => loadSnapshot(snapshot)}>
+                <button
+                  type="button"
+                  className="flex-1 text-left text-xs hover:underline"
+                  onClick={() => loadSnapshot(snapshot)}
+                >
                   {snapshot.name}
                   <span className="text-muted-foreground"> · {snapshot.fields.length} fields</span>
                 </button>

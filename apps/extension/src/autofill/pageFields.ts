@@ -7,7 +7,11 @@ import {
   type ValueTypeType,
 } from '@/utils/actions'
 
-import { gatherContenteditableHosts, gatherVisibleInputsInOrder, gatherWidgetElements } from './gatherVisibleInputsInOrder'
+import {
+  gatherContenteditableHosts,
+  gatherVisibleInputsInOrder,
+  gatherWidgetElements,
+} from './gatherVisibleInputsInOrder'
 
 /**
  * A serializable description of one fillable element, sent to the side panel
@@ -114,9 +118,7 @@ const describeField = (elem: Element, ref: number): PageField => {
  * heuristic prefills — the non-AI baseline the mapper always has. The parallel
  * `elements` array (same indices as `ref`) stays on the content-script side.
  */
-export const buildPageFields = (
-  rootElement: Element | null = null,
-): { fields: PageField[]; elements: Element[] } => {
+export const buildPageFields = (rootElement: Element | null = null): { fields: PageField[]; elements: Element[] } => {
   const elements: Element[] = [
     ...gatherVisibleInputsInOrder(rootElement).filter(
       (input) => !(input instanceof HTMLInputElement && UNFILLABLE_INPUT_TYPES.includes(input.type)),

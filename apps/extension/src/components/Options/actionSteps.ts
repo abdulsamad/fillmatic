@@ -40,6 +40,10 @@ export const formStepsToActionSteps = (steps: ActionStepFormValues): ActionStep[
 export const actionStepsToForm = (steps: ActionStep[] | undefined): ActionStepFormValues =>
   (steps ?? []).map((step) =>
     step.kind === 'waitFor'
-      ? { kind: 'waitFor', selector: step.selector, timeoutMs: step.timeoutMs != null ? String(step.timeoutMs) : undefined }
+      ? {
+          kind: 'waitFor',
+          selector: step.selector,
+          timeoutMs: step.timeoutMs != null ? String(step.timeoutMs) : undefined,
+        }
       : step,
   )

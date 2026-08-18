@@ -3,15 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import {
-  DownloadIcon,
-  GlobeIcon,
-  PencilIcon,
-  PlusIcon,
-  Trash2Icon,
-  UploadIcon,
-  WandIcon,
-} from 'lucide-react'
+import { DownloadIcon, GlobeIcon, PencilIcon, PlusIcon, Trash2Icon, UploadIcon, WandIcon } from 'lucide-react'
 
 import {
   AlertDialog,
@@ -168,11 +160,15 @@ const RecipeDialog = ({ open, onClose, initial }: RecipeDialogProps) => {
                     <FormLabel>Applies on</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {MATCHER_TYPES.map((m) => (
-                          <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                          <SelectItem key={m.value} value={m.value}>
+                            {m.label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -204,8 +200,8 @@ const RecipeDialog = ({ open, onClose, initial }: RecipeDialogProps) => {
                     <Input placeholder="e.g. .datepicker-trigger" {...field} />
                   </FormControl>
                   <p className="text-xs text-muted-foreground">
-                    Every visible element matching this selector is driven by the steps below. Use{' '}
-                    <code>@self</code> as a step selector to target the matched element itself.
+                    Every visible element matching this selector is driven by the steps below. Use <code>@self</code> as
+                    a step selector to target the matched element itself.
                   </p>
                   <FormMessage />
                 </FormItem>
@@ -228,7 +224,9 @@ const RecipeDialog = ({ open, onClose, initial }: RecipeDialogProps) => {
             <ActionStepsEditor name="steps" />
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
               <Button type="submit">{initial ? 'Save changes' : 'Add recipe'}</Button>
             </div>
           </form>
@@ -255,8 +253,14 @@ const RecipesTab = () => {
   const [editing, setEditing] = useState<Recipe | undefined>(undefined)
   const importInputRef = useRef<HTMLInputElement>(null)
 
-  const openAdd = () => { setEditing(undefined); setDialogOpen(true) }
-  const openEdit = (r: Recipe) => { setEditing(r); setDialogOpen(true) }
+  const openAdd = () => {
+    setEditing(undefined)
+    setDialogOpen(true)
+  }
+  const openEdit = (r: Recipe) => {
+    setEditing(r)
+    setDialogOpen(true)
+  }
 
   const onImportFile = async (file: File | undefined) => {
     if (!file) return
@@ -282,9 +286,9 @@ const RecipesTab = () => {
         <div>
           <h3 className="text-base font-semibold">Recipes</h3>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Teach FillMatic how to fill any custom input — regardless of framework — with a selector and a few
-            steps (e.g. click a calendar trigger, then click a random day). Recipes run during every autofill on
-            matching sites and take priority over the built-in widget support.
+            Teach FillMatic how to fill any custom input — regardless of framework — with a selector and a few steps
+            (e.g. click a calendar trigger, then click a random day). Recipes run during every autofill on matching
+            sites and take priority over the built-in widget support.
           </p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
@@ -334,17 +338,25 @@ const RecipesTab = () => {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium">{recipe.name}</span>
                     {!recipe.active && (
-                      <Badge variant="outline" className="text-xs font-normal py-0">Disabled</Badge>
+                      <Badge variant="outline" className="text-xs font-normal py-0">
+                        Disabled
+                      </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-                    <GlobeIcon className="h-3 w-3 shrink-0" /> {matcherSummary(recipe)} · <code>{recipe.selector}</code> ·{' '}
-                    {recipe.steps.length} step{recipe.steps.length === 1 ? '' : 's'}
+                    <GlobeIcon className="h-3 w-3 shrink-0" /> {matcherSummary(recipe)} · <code>{recipe.selector}</code>{' '}
+                    · {recipe.steps.length} step{recipe.steps.length === 1 ? '' : 's'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-1 ml-2 shrink-0">
-                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={`Edit ${recipe.name}`} onClick={() => openEdit(recipe)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  aria-label={`Edit ${recipe.name}`}
+                  onClick={() => openEdit(recipe)}
+                >
                   <PencilIcon className="h-3.5 w-3.5" />
                 </Button>
                 <AlertDialog>
