@@ -1,4 +1,11 @@
 import {
+  CHROME_WEB_STORE_URL,
+  LANDING_URL,
+  PRIVACY_POLICY_LAST_UPDATED,
+  PRODUCT_NAME,
+  SUPPORT_EMAIL,
+} from "@fillmatic/config";
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -8,13 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@fillmatic/ui";
-import { SUPPORT_EMAIL } from "@fillmatic/config";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const PrivacyPolicy = () => {
   const sections = [
-    { id: "information", title: "Information Collected and Received" },
+    { id: "extension-data", title: "Extension Data" },
+    { id: "website-data", title: "Website Data" },
     { id: "permissions", title: "Extension Permissions" },
+    { id: "sharing", title: "Sharing and Third Parties" },
+    { id: "choices", title: "Your Choices" },
     { id: "changes", title: "Changes to This Policy" },
   ];
 
@@ -25,79 +34,110 @@ const PrivacyPolicy = () => {
           <CardTitle className="text-3xl font-bold text-center">
             Privacy Policy
           </CardTitle>
-          <CardDescription>Last updated: August 16, 2026</CardDescription>
+          <CardDescription>
+            Last updated: {PRIVACY_POLICY_LAST_UPDATED}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="mb-6">
-            At FillMatic, we value and respect your privacy. We are committed to
-            safeguarding your data and ensuring that our development decisions
-            prioritize security and privacy protection. This privacy policy
-            explains what information FillMatic collects, how it is used, and
-            your options concerning the collection and use of this information.
+            {PRODUCT_NAME} is built for local-first form testing. This policy
+            explains what information the {PRODUCT_NAME} Chrome extension and
+            website handle, why they handle it, and your available choices. The
+            extension does not require an account.
           </p>
 
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Table of Contents</h2>
-            <ul className="list-disc pl-6">
-              {sections.map((section) => (
-                <li key={section.id} className="mb-2">
-                  <a
-                    href={`#${section.id}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {section.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <h2 className="text-xl font-semibold mb-4">Table of Contents</h2>
+          <ul className="list-disc pl-6">
+            {sections.map((section) => (
+              <li key={section.id} className="mb-2">
+                <a
+                  href={`#${section.id}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  {section.title}
+                </a>
+              </li>
+            ))}
+          </ul>
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-4xl mx-auto mb-8" id="information">
+      <Card className="w-full max-w-4xl mx-auto mb-8" id="extension-data">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold">
-            Information Collected and Received
+            Extension Data
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <h3 className="text-xl font-semibold mb-2">Usage Analytics</h3>
+          <h3 className="text-xl font-semibold mb-2">Processed locally</h3>
           <p className="mb-4">
-            FillMatic does not use Google Analytics or another analytics service
-            on its website or in the extension.
+            When you activate a fill, the extension locally inspects supported
+            form controls and related metadata such as labels, names, IDs,
+            placeholders, autocomplete attributes, and widget state. It then
+            generates dummy values and writes them into the page. This
+            processing is required for autofill and is not sent to a{" "}
+            {PRODUCT_NAME} server.
           </p>
 
           <h3 className="text-xl font-semibold mb-2">
-            Feedback and Support Requests
+            Saved in Chrome storage
           </h3>
           <p className="mb-4">
-            The feedback form on the FillMatic website collects the name, email
-            address, and message you choose to submit. The form sends that data
-            to{" "}
+            The extension stores settings and configuration in
+            <code className="mx-1">chrome.storage.local</code> on your device.
+            This can include profiles, field rules, Actions, recipes, mapping
+            snapshots, typing preferences, ignored fields, and any reusable
+            password or PIN you configure. These values can be sensitive, so do
+            not configure secrets you do not want stored in your browser.
+          </p>
+
+          <h3 className="text-xl font-semibold mb-2">AI field mapping</h3>
+          <p>
+            If you use the optional field mapper, it scans serializable field
+            metadata and may use Chrome&apos;s on-device Prompt API when
+            available. The model is not required for normal autofill, and saved
+            mappings remain local field rules that can be used without a model.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-4xl mx-auto mb-8" id="website-data">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold">Website Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <h3 className="text-xl font-semibold mb-2">Analytics</h3>
+          <p className="mb-4">
+            The {PRODUCT_NAME} website does not use Google Analytics or another
+            analytics service.
+          </p>
+
+          <h3 className="text-xl font-semibold mb-2">
+            Feedback and support requests
+          </h3>
+          <p className="mb-4">
+            The feedback form on the {PRODUCT_NAME} website collects the name,
+            email address, and message you choose to submit. The form sends that
+            data to{" "}
             <a
               href="https://airform.io"
               className="text-blue-600 hover:underline"
             >
               Airform
             </a>
-            , a third-party form-processing service, which processes the
-            submission and forwards it to FillMatic's support inbox.
-          </p>
-          <p className="mb-4">
-            Feedback and support correspondence is used only to understand and
-            respond to your request. It may be retained for as long as
-            reasonably necessary to handle the request and maintain support
-            records. Do not submit passwords, payment details, private page
-            contents, or other sensitive information.
+            , a third-party form-processing service that forwards the submission
+            to our support inbox.
           </p>
           <p>
-            If you do not want to use Airform, you can contact FillMatic
-            directly at{" "}
+            Feedback is used to understand and respond to your request. It may
+            be retained as reasonably necessary for support records. Do not
+            submit passwords, payment details, private page contents, or other
+            sensitive information. You can contact us directly at{" "}
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
               className="text-blue-600 hover:underline"
             >
-              hello+fillmatic[at]abdulsamad.dev
+              {SUPPORT_EMAIL}
             </a>
             .
           </p>
@@ -111,54 +151,119 @@ const PrivacyPolicy = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <h3 className="text-xl font-semibold mb-2">
-            What FillMatic Is Allowed To Do
-          </h3>
-          <p className="mb-2">
-            FillMatic requests the following permissions to perform its core
-            functions:
+          <p className="mb-4">
+            {PRODUCT_NAME} requests these permissions for its user-triggered
+            autofill features:
           </p>
           <ul className="list-disc pl-6 mb-4">
             <li>
-              <strong>Host permission (all URL access)</strong>: This permission
-              is required to allow FillMatic to interact with the Document
-              Object Model (DOM) of the web pages you visit, enabling it to read
-              and fill form fields.
+              <strong>Website access on HTTP and HTTPS pages</strong>: The
+              content script runs on ordinary websites so {PRODUCT_NAME} can
+              inspect supported form fields and fill them when you request it.
+              Browser-internal pages such as <code>chrome://</code> are not
+              targeted.
             </li>
             <li>
-              <strong>activeTab</strong>: This permission allows FillMatic to
-              access and modify the currently active tab to perform autofill
-              operations when you interact with the extension.
+              <strong>activeTab</strong>: Lets a user-initiated popup, keyboard
+              shortcut, or side-panel action interact with the current tab.
             </li>
             <li>
-              <strong>Storage</strong>: FillMatic uses the storage permission to
-              save configurations, settings, and preferences locally on your
-              device, ensuring that your custom settings persist between
-              sessions.
+              <strong>storage</strong>: Saves profiles, rules, Actions, recipes,
+              mappings, preferences, and other configuration locally on your
+              device.
             </li>
             <li>
-              <strong>webNavigation</strong>: This permission lets FillMatic
-              identify frames in the active tab so a user-initiated fill can
-              reach eligible embedded forms.
+              <strong>webNavigation</strong>: Identifies frames in the active
+              tab so autofill can reach forms embedded in iframes. Actions only
+              run in child frames when their iframe option is enabled.
             </li>
             <li>
-              <strong>sidePanel (optional)</strong>: FillMatic requests this
-              permission only when you choose to open the field mapper.
+              <strong>sidePanel (optional)</strong>: Requested only when you
+              choose the optional field mapper. It provides a reviewable
+              interface for scanning, editing, and applying field mappings.
             </li>
           </ul>
 
-          <h3 className="text-xl font-semibold mb-2">
-            What FillMatic Is NOT Allowed To Do
-          </h3>
+          <h3 className="text-xl font-semibold mb-2">What we do not do</h3>
           <ul className="list-disc pl-6">
             <li>
-              FillMatic does not read the content of any web pages beyond the
-              form fields necessary for its autofill functionality.
+              We do not collect or transmit general page contents, browsing
+              history, or form submissions.
             </li>
             <li>
-              The extension does not send page contents, generated values,
-              profiles, recipes, or mappings to a FillMatic server. Its optional
-              field-mapping model runs on-device when supported by Chrome.
+              We do not send page contents, generated values, profiles, recipes,
+              or mappings to a {PRODUCT_NAME} server. Optional field mapping
+              runs on-device when supported by Chrome.
+            </li>
+            <li>We do not sell extension data or share it with advertisers.</li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-4xl mx-auto mb-8" id="sharing">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold">
+            Sharing and Third Parties
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-4">
+            The only website data disclosure described by this policy is the
+            voluntary feedback form, which is processed by{" "}
+            <a
+              href="https://airform.io"
+              className="text-blue-600 hover:underline"
+            >
+              Airform
+            </a>{" "}
+            before being forwarded to our support inbox. Review Airform&apos;s
+            own policy before submitting feedback.
+          </p>
+          <p>
+            The website is hosted at{" "}
+            <a href={LANDING_URL} className="text-blue-600 hover:underline">
+              {LANDING_URL}
+            </a>
+            . The extension is distributed through the{" "}
+            <a
+              href={CHROME_WEB_STORE_URL}
+              className="text-blue-600 hover:underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Chrome Web Store
+            </a>
+            , whose own policies apply to that service.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-4xl mx-auto mb-8" id="choices">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold">Your Choices</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc pl-6">
+            <li>
+              Use normal autofill without enabling the optional side panel.
+            </li>
+            <li>
+              Remove saved extension data through the extension settings or
+              Chrome&apos;s extension storage controls.
+            </li>
+            <li>
+              Uninstall the extension to stop its content script from operating
+              on webpages.
+            </li>
+            <li>
+              Contact us at{" "}
+              <a
+                href={`mailto:${SUPPORT_EMAIL}`}
+                className="text-blue-600 hover:underline"
+              >
+                {SUPPORT_EMAIL}
+              </a>{" "}
+              about a support submission or privacy question.
             </li>
           </ul>
         </CardContent>
@@ -172,10 +277,8 @@ const PrivacyPolicy = () => {
         </CardHeader>
         <CardContent>
           <p>
-            If FillMatic introduces new features that affect data collection,
-            storage, or sharing, this privacy policy will be updated
-            accordingly, and changes will be communicated to you through the
-            extension or email, where applicable.
+            If {PRODUCT_NAME} introduces a feature that changes data collection,
+            storage, or sharing, this policy will be updated accordingly.
           </p>
         </CardContent>
       </Card>
@@ -187,15 +290,14 @@ const PrivacyPolicy = () => {
             <div className="ml-3">
               <AlertTitle>Contact Us</AlertTitle>
               <AlertDescription>
-                If you have any questions or concerns about this privacy policy,
-                please contact us at{" "}
+                Questions or concerns about this policy? Email{" "}
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
                   className="text-blue-600 hover:underline"
                 >
-                  hello+fillmatic[at]abdulsamad.dev
+                  {SUPPORT_EMAIL}
                 </a>
-                &#46;
+                .
               </AlertDescription>
             </div>
           </Alert>

@@ -21,6 +21,9 @@ export const SEO_DESCRIPTION =
 /** Support/feedback contact address, used for mailto links and feedback form endpoints. */
 export const SUPPORT_EMAIL = "hello+fillmatic@abdulsamad.dev";
 
+/** Date displayed on the public privacy policy. */
+export const PRIVACY_POLICY_LAST_UPDATED = "August 18, 2026";
+
 /** Chrome Web Store listing URL. */
 export const CHROME_WEB_STORE_URL =
   "https://chromewebstore.google.com/detail/fillmatic/mpkjmebmnkhpfomlopbehcpmgmfndfje";
