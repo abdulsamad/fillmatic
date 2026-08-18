@@ -147,6 +147,11 @@ Both apps use Vitest + Testing Library (`jsdom` environment). The extension has 
 
 `pnpm test:e2e` builds the production extension and runs four Playwright scenarios against it, including a frame-heavy page with React-controlled, late-mounted, Radix, rich-text, shadow-DOM, and iframe fields. Run it for changes to manifest permissions, message delivery, the content script, or fill strategies; unit tests alone will not catch packaging/runtime regressions.
 
+## Git authorship
+
+When the agent materially authors a change and creates the commit, include a Co-authored-by trailer for the agent when a valid agent identity is available. Use the repository's existing authorship convention when one exists.
+Do not add an agent co-author trailer to commits whose code was not materially authored by the agent, or when the user explicitly says not to add one.
+
 ## Releases
 
 Current release: **v0.2.0** (2026-08-16). Use SemVer: a backwards-compatible user-facing capability is a minor bump; a bug, privacy, or generation correction is a patch bump. The release version is defined **only** in the root `package.json`; `src/manifest.ts` imports it directly, and a pushed release tag must be exactly `v<package-version>`.
