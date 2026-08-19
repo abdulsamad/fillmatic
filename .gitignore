@@ -58,7 +58,10 @@ chrome-extension/public/manifest.json
 .idea
 
 # AI
+.claude
+.codex
 CLAUDE.md
+graphify-out
 
 # deploy
 deploy/*
