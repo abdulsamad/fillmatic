@@ -176,3 +176,33 @@ The release workflow is intentionally tag-only: do not add `workflow_dispatch`, 
 Static Astro site. Pages: `/` (landing), `/demo`, `/privacy`. Deployed to Cloudflare Pages — `wrangler.toml` configures the deployment; no Cloudflare bindings are active. Product copy (name, SEO description, support email, store/demo URLs) comes from `@fillmatic/config`, not hardcoded strings.
 
 Preview locally: `pnpm --filter web preview` (builds + runs via wrangler pages dev on port 3000).
+
+### Do
+
+- use Astro for page structure and React islands only where interactivity is needed
+- use `@fillmatic/ui` for shared UI; add reusable components to `packages/ui` and export them from `src/index.ts`
+- use the shared Tailwind preset and theme tokens from `@fillmatic/ui/styles.css` instead of inventing app-specific design tokens
+- use semantic HTML and accessible Radix/shadcn components, including keyboard and focus behavior
+- keep product identity, copy, and URLs sourced from `@fillmatic/config`
+- keep components focused, files small, and diffs narrowly scoped
+- reuse the existing dependency stack; choose the lightest existing solution before adding a package
+- preserve the static-site boundary: browser-only code belongs in client-loaded components and must not run during Astro build or SSR
+
+### Don't
+
+- do not add MUI, MobX, Emotion, `DynamicStyles.tsx`, or ApexCharts patterns; they are not part of this project
+- do not hardcode product names, descriptions, support details, or URLs in consuming apps
+- do not hardcode theme colors when a shared token is available; use raw colors only when required for dynamic/demo data and keep them intentional
+- do not duplicate components that belong in `@fillmatic/ui`
+- do not use non-semantic elements where a native element or shared component fits
+- do not run browser-only APIs at module load or build time
+- do not add heavy dependencies without approval
+
+### Safety and permissions
+
+Ask first:
+
+- package installs,
+- git push
+- deleting files, chmod
+- running full build or end to end suites
