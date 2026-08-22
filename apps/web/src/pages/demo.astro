@@ -496,6 +496,7 @@ import { PRODUCT_NAME, SUPPORT_EMAIL } from '@fillmatic/config'
   document.querySelectorAll<HTMLFormElement>('.glass-form').forEach((form) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault()
+      window.posthog?.capture('demo_form_submitted', { form_type: form.id.replace('-form', '') })
       const successId = form.id.replace('-form', '-success')
       form.hidden = true
       const success = document.getElementById(successId)

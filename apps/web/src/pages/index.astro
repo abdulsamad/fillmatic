@@ -39,7 +39,14 @@ const STORE_URL = CHROME_WEB_STORE_URL
             developers who test the same forms day after day.
           </p>
           <div class="hero-actions">
-            <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary btn-lg"
+              data-posthog-event="chrome_web_store_cta_clicked"
+              data-cta-location="hero"
+            >
               Add to Chrome
               <svg
                 aria-hidden="true"
@@ -52,7 +59,9 @@ const STORE_URL = CHROME_WEB_STORE_URL
                 stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
               >
             </a>
-            <a href="/demo" class="btn btn-ghost btn-lg">Try the demo</a>
+            <a href="/demo" class="btn btn-ghost btn-lg" data-posthog-event="demo_opened" data-cta-location="hero">
+              Try the demo
+            </a>
           </div>
           <p class="hero-footnote">
             No account needed <span aria-hidden="true">&nbsp;·&nbsp;</span> Works on any input, any framework
@@ -482,7 +491,14 @@ const STORE_URL = CHROME_WEB_STORE_URL
             }
           </div>
           <div class="cta-center">
-            <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary btn-lg"
+              data-posthog-event="chrome_web_store_cta_clicked"
+              data-cta-location="how_it_works"
+            >
               Get FillMatic
               <svg
                 aria-hidden="true"
@@ -539,8 +555,24 @@ const STORE_URL = CHROME_WEB_STORE_URL
             }
           </div>
           <div class="cta-center">
-            <a href={STORE_URL} target="_blank" rel="noopener" class="btn btn-light btn-lg">Add to Chrome</a>
-            <a href="/demo" class="btn btn-ghost-light btn-lg">See it in action</a>
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noopener"
+              class="btn btn-light btn-lg"
+              data-posthog-event="chrome_web_store_cta_clicked"
+              data-cta-location="features"
+            >
+              Add to Chrome
+            </a>
+            <a
+              href="/demo"
+              class="btn btn-ghost-light btn-lg"
+              data-posthog-event="demo_opened"
+              data-cta-location="features"
+            >
+              See it in action
+            </a>
           </div>
         </div>
       </section>
@@ -618,6 +650,7 @@ const STORE_URL = CHROME_WEB_STORE_URL
               method="POST"
               class="feedback-form"
               aria-describedby="feedback-privacy-note"
+              data-posthog-event="feedback_submitted"
             >
               <div class="field-row">
                 <div class="field">
@@ -668,6 +701,20 @@ const STORE_URL = CHROME_WEB_STORE_URL
     </footer>
   </div>
 </Layout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-posthog-event][data-cta-location]').forEach((element) => {
+    element.addEventListener('click', () => {
+      window.posthog?.capture(element.dataset.posthogEvent!, {
+        cta_location: element.dataset.ctaLocation,
+      })
+    })
+  })
+
+  document.querySelector<HTMLFormElement>('[data-posthog-event="feedback_submitted"]')?.addEventListener('submit', () => {
+    window.posthog?.capture('feedback_submitted')
+  })
+</script>
 
 <style>
   *,

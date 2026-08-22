@@ -19,6 +19,44 @@ const { title } = Astro.props
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="google-site-verification" content="S3v-mEbuzH_kX7aXk66SXuRTZeLEfICczWxbLgUtuwk" />
+    <script
+      is:inline
+      define:vars={{
+        posthogKey: import.meta.env.PUBLIC_POSTHOG_KEY,
+        posthogHost: import.meta.env.PUBLIC_POSTHOG_HOST,
+        posthogDev: import.meta.env.DEV,
+      }}
+    >
+      if (!posthogKey) {
+        if (posthogDev) {
+          throw new Error(
+            'PUBLIC_POSTHOG_KEY variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once PUBLIC_POSTHOG_KEY is configured',
+          )
+        }
+      } else if (!posthogHost) {
+        if (posthogDev) {
+          throw new Error(
+            'PUBLIC_POSTHOG_HOST variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once PUBLIC_POSTHOG_HOST is configured',
+          )
+        }
+      } else {
+        const posthogScript = document.createElement('script')
+        posthogScript.async = true
+        posthogScript.src = posthogHost.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js'
+        posthogScript.onload = () => {
+          window.posthog.init(posthogKey, {
+            api_host: posthogHost,
+            defaults: '2026-05-30',
+            capture_exceptions: {
+              capture_unhandled_errors: true,
+              capture_unhandled_rejections: true,
+              capture_console_errors: false,
+            },
+          })
+        }
+        document.head.appendChild(posthogScript)
+      }
+    </script>
   </head>
   <body>
     <slot />
