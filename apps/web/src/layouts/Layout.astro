@@ -24,6 +24,7 @@ const { title } = Astro.props
       define:vars={{
         posthogKey: import.meta.env.PUBLIC_POSTHOG_KEY,
         posthogHost: import.meta.env.PUBLIC_POSTHOG_HOST,
+        posthogUiHost: import.meta.env.PUBLIC_POSTHOG_UI_HOST,
         posthogDev: import.meta.env.DEV,
       }}
     >
@@ -39,13 +40,23 @@ const { title } = Astro.props
             'PUBLIC_POSTHOG_HOST variable required by PostHog is missing or un-configured, this causes events to be silently missed. This error stops appearing once PUBLIC_POSTHOG_HOST is configured',
           )
         }
+      } else if (!posthogUiHost) {
+        if (posthogDev) {
+          throw new Error(
+            'PUBLIC_POSTHOG_UI_HOST variable required by PostHog is missing or un-configured, this causes PostHog UI links to be incorrect. This error stops appearing once PUBLIC_POSTHOG_UI_HOST is configured',
+          )
+        }
       } else {
+        const posthogApiHost = posthogHost.startsWith('/')
+          ? new URL(posthogHost, window.location.origin).toString().replace(/\/$/, '')
+          : posthogHost.replace(/\/$/, '')
         const posthogScript = document.createElement('script')
         posthogScript.async = true
-        posthogScript.src = posthogHost.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js'
+        posthogScript.src = posthogApiHost + '/static/array.js'
         posthogScript.onload = () => {
           window.posthog.init(posthogKey, {
-            api_host: posthogHost,
+            api_host: posthogApiHost,
+            ui_host: posthogUiHost,
             defaults: '2026-05-30',
             capture_exceptions: {
               capture_unhandled_errors: true,
